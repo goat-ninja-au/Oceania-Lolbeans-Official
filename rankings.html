@@ -454,6 +454,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
             <li>Click a player to see their records, their biggest gaps to the Oceania record and their best map rankings, and to try the What-if simulator.</li>
           </ul>
           <p class="muted">Times are read from the spreadsheet each time the page loads.</p>
+          <p class="muted">Map pictures used with permission from tanabesan (<a href="https://tanabesan.github.io/probeans/total-scores.html" target="_blank" rel="noopener">ProBeans</a>).</p>
         </div>
       </div>
     </section>
@@ -481,35 +482,35 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   var MISSING = 60;      // a time of 60 in the sheet means "no time entered"
   var PAGE = 48;         // player cards shown before "Show more"
 
-  // Map order = column order in the sheet (after Country, Place, Name). "img" = picture file in the repo.
+  // Map order = column order in the sheet (after Country, Place, Name). "img" = picture file in the repo's maps folder (thumbnails used with permission from tanabesan / ProBeans).
   var MAPS = [
-    { n: "Beacon Bay", img: "beacon bay.png" },
-    { n: "Boulder Hill", img: "boulder hill.png" },
-    { n: "Circus Contest", img: "circus contest.png" },
-    { n: "Devil's Trick", img: "devil's trick.png" },
-    { n: "Escape Tsunami", img: "escape tsunami.png" },
-    { n: "Dash Cup", img: "dash cup.png" },
-    { n: "Lava Lake", img: "lava lake.png" },
-    { n: "Gravity Gates", img: "gravity gates.png" },
-    { n: "Hammer Ville", img: "hammer ville.png" },
-    { n: "Jungle Temple", img: "jungle temple.png" },
-    { n: "Kittie Kegs", img: "kittie kegs.png" },
-    { n: "Mecha Maze", img: "mecha maze.png" },
-    { n: "Mill Valley", img: "mill valley.png" },
-    { n: "Monster Manor", img: "monster manor.png" },
-    { n: "Nasty Seals", img: "nasty seals.png" },
-    { n: "Neon City", img: "neon city.png" },
-    { n: "Polar Path", img: "images/map16.png" },
-    { n: "1-2-3 Red Light", img: "images/map17.png" },
-    { n: "Rickety Run", img: "images/map18.png" },
-    { n: "Risky Cliffs", img: "images/map19.png" },
-    { n: "Shark Park", img: "images/map20.png" },
-    { n: "Silly Slide", img: "images/map21.png" },
-    { n: "Spiky Slopes", img: "images/map22.png" },
-    { n: "Splash Dash", img: "images/map23.png" },
-    { n: "Tricky Traps", img: "images/map24.png" },
-    { n: "Tumble Town", img: "images/map25.png" },
-    { n: "UFO Attack", img: "images/map26.png" }
+    { n: "Beacon Bay", img: "maps/BeaconBay.png" },
+    { n: "Boulder Hill", img: "maps/BoulderHill.png" },
+    { n: "Circus Contest", img: "maps/CircusContest.png" },
+    { n: "Devil's Trick", img: "maps/DevilsTrick.png" },
+    { n: "Escape Tsunami", img: "maps/EscapeTsunami.png" },
+    { n: "Dash Cup", img: "maps/DashCup.png" },
+    { n: "Lava Lake", img: "maps/LavaLake.png" },
+    { n: "Gravity Gates", img: "maps/GravityGates.png" },
+    { n: "Hammer Ville", img: "maps/HammerVille.png" },
+    { n: "Jungle Temple", img: "maps/JungleTemple.png" },
+    { n: "Kittie Kegs", img: "maps/KittieKegs.png" },
+    { n: "Mecha Maze", img: "maps/MechaMaze.png" },
+    { n: "Mill Valley", img: "maps/MillValley.png" },
+    { n: "Monster Manor", img: "maps/MonsterManor.png" },
+    { n: "Nasty Seals", img: "maps/NastySeals.png" },
+    { n: "Neon City", img: "maps/NeonCity.png" },
+    { n: "Polar Path", img: "maps/PolarPath.png" },
+    { n: "1-2-3 Red Light", img: "maps/1-2-3RedLight.png" },
+    { n: "Rickety Run", img: "maps/RicketyRun.png" },
+    { n: "Risky Cliffs", img: "maps/RiskyCliffs.png" },
+    { n: "Shark Park", img: "maps/SharkPark.png" },
+    { n: "Silly Slide", img: "maps/SillySlide.png" },
+    { n: "Spiky Slopes", img: "maps/SpikySlopes.png" },
+    { n: "Splash Dash", img: "maps/SplashDash.png" },
+    { n: "Tricky Traps", img: "maps/TrickyTraps.png" },
+    { n: "Tumble Town", img: "maps/TumbleTown.png" },
+    { n: "UFO Attack", img: "maps/UFOAttack.png" }
   ];
   var FIRST_MAP_COL = 3, TOTAL_COL = 3 + MAPS.length;
 
