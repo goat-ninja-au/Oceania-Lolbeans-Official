@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beacon Bay – Level 1 Tutorial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2>Beacon Bay – Level 1 Tutorial</h2>
+<a href="tutorials.html" class="back-btn">← Back</a>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+    <h3>Table of Contents</h3>
+    <ul>
+        <li><a href="#module1">Module 1: Avoiding the Hammers and the bhop</a></li>
+        <li><a href="#module2">Module 2: Full run</a></li>
+    </ul>
+</div>
+
+<!-- MODULE 1 -->
+<div id="module1" class="module-card">
+    <h4>Module 1: Start + Avoiding the Hammers</h4>
+
+    <button class="watch-btn" onclick="showVideo('video1')">Watch</button>
+
+    <div id="video1" class="video-box" style="display:none; margin-top:15px;">
+        <iframe width="560" height="315"
+        src="https://www.youtube.com/embed/g_tXwPM8888"
+        frameborder="0" allowfullscreen></iframe>
+    </div>
+</div>
+
+<!-- MODULE 2 -->
+<div id="module2" class="module-card">
+    <h4>Module 2: Full run</h4>
+
+    <button class="watch-btn" onclick="showVideo('video2')">Watch</button>
+
+    <div id="video2" class="video-box" style="display:none; margin-top:15px;">
+        <iframe width="560" height="315"
+        src="https://www.youtube.com/embed/JBZj0Fo1eoA"
+        frameborder="0" allowfullscreen></iframe>
+    </div>
+</div>
+
+<script>
+function showVideo(id) {
+    document.getElementById(id).style.display = "block";
+}
+</script>
+</body>
+</html>

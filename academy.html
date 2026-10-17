@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Password</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a href="index.html" class="back-btn">← Back</a>
+
+<section class="password-box">
+    <h2>Enter Password</h2>
+
+    <input type="password" id="passwordInput" placeholder="Password">
+    <button onclick="checkPassword()">Enter</button>
+
+    <p id="error" style="color:red; display:none;">Incorrect password</p>
+</section>
+
+<script>
+function checkPassword() {
+    const correctPassword = "lolbeans123";
+    const input = document.getElementById("passwordInput").value;
+
+    if (input === correctPassword) {
+        window.location.href = "tutorials.html"; // where to go after correct password
+    } else {
+        document.getElementById("error").style.display = "block";
+    }
+}
+
+// let Enter key submit too
+document.getElementById("passwordInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") checkPassword();
+});
+</script>
+</body>
+</html>

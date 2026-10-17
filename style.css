@@ -1,0 +1,160 @@
+body {
+    background: #0f0f0f;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+/* PASSWORD / PB BOX */
+.password-box {
+    width: 300px;
+    max-width: 100%;
+    margin: 150px auto;
+    background: white;
+    color: #111;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-sizing: border-box;
+}
+
+.password-box input {
+    width: 90%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+}
+
+.password-box button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #4a6cf7;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.password-box button:hover {
+    background: #324ed4;
+}
+
+/* TUTORIALS GRID */
+.tutorials {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.tutorial-grid {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 20px;
+}
+
+/* fewer columns on smaller screens so cards stay readable */
+@media (max-width: 1100px) { .tutorial-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 600px)  { .tutorial-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.tutorial-card {
+    background: rgb(74, 209, 11);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: 0.2s;
+}
+
+.tutorial-card:hover {
+    transform: translateY(-5px);
+}
+
+.tutorial-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.tutorial-card h3 {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.tutorial-card a {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #4a6cf7;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* TABLE OF CONTENTS */
+.toc {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.toc ul {
+    list-style: none;
+    padding: 0;
+}
+
+.toc li {
+    margin: 10px 0;
+}
+
+.toc a {
+    color: #4da3ff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* MODULE CARDS */
+.module-card {
+    background: #0e160f;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border: 1px solid #333;
+}
+
+.video-box iframe {
+    max-width: 100%;
+}
+
+.watch-btn {
+    background: #4da3ff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.back-btn {
+    display: inline-block;
+    background: #333;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.back-btn:hover {
+    background: #555;
+}
