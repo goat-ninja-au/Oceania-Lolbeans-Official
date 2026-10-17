@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oceania LOLBeans Official</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Figtree:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a bold "reef" hero band, then stacked content bands with a 960px column; pill shapes echo jelly beans */
+:root {
+  --bg: #f2f7f8;
+  --surface: #ffffff;
+  --fg: #0d2a33;
+  --muted: #4b6670;
+  --line: #d3e2e6;
+  --ocean: #0b5e73;
+  --ocean-deep: #073d4b;
+  --sun: #ffc23d;
+  --coral: #ff6a55;
+  --on-ocean: #f2fbfd;
+  --font-display: "Bowlby One", "Arial Black", Impact, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #071d24; --surface: #0d2a33; --fg: #e4f1f4; --muted: #9bb7bf; --line: #1d4350;
+    --ocean: #0e6f87; --ocean-deep: #04313c; --sun: #ffcd5c; --coral: #ff8270; --on-ocean: #f2fbfd;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #071d24; --surface: #0d2a33; --fg: #e4f1f4; --muted: #9bb7bf; --line: #1d4350;
+  --ocean: #0e6f87; --ocean-deep: #04313c; --sun: #ffcd5c; --coral: #ff8270; --on-ocean: #f2fbfd;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 960px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.05; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.7rem, 4vw, 2.4rem); }
+h3 { font-size: 1.15rem; }
+p { margin: 0; max-width: 62ch; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; border-radius: 6px; }
+.eyebrow { font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--coral); }
+
+/* Hero */
+.hero { background: var(--ocean-deep); color: var(--on-ocean); position: relative; overflow: hidden; }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; }
+.hero .wrap { position: relative; padding-block: 28px 64px; display: grid; gap: 40px; }
+.topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.badge { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .04em; }
+.bean { width: 26px; height: 16px; border-radius: 999px; background: var(--sun); transform: rotate(-18deg); box-shadow: 8px 6px 0 -2px var(--coral); }
+nav { display: flex; flex-wrap: wrap; gap: 6px; }
+nav a { text-decoration: none; font-weight: 600; font-size: .92rem; padding: 6px 12px; border-radius: 999px; }
+nav a:hover { background: rgba(255,255,255,.12); }
+.hero h1 { font-size: clamp(2.6rem, 9vw, 5.6rem); letter-spacing: -.01em; }
+.hero h1 span { color: var(--sun); display: block; }
+.hero-copy { display: grid; gap: 22px; }
+.hero-copy p { font-size: 1.15rem; color: var(--on-ocean); opacity: .9; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 800 1rem var(--font-body); padding: 12px 22px; border-radius: 999px; border: 2px solid transparent; text-decoration: none; cursor: pointer; }
+.btn-sun { background: var(--sun); color: #2a1d00; }
+.btn-sun:hover { filter: brightness(1.06); }
+.btn-ghost { background: transparent; color: var(--on-ocean); border-color: rgba(242,251,253,.5); }
+.btn-ghost:hover { border-color: var(--on-ocean); }
+
+/* Sections */
+section.band { padding-block: 64px; }
+section.band + section.band { border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 10px; margin-bottom: 32px; }
+.sec-head p { color: var(--muted); }
+
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.about-item { display: grid; gap: 8px; padding: 20px 0; border-top: 3px solid var(--fg); }
+.about-item p { color: var(--muted); }
+
+/* Tournament callout */
+.btn-dark { background: #2b0b06; color: #fff3f0; white-space: nowrap; }
+.btn-dark:hover { filter: brightness(1.3); }
+.callout { background: var(--coral); color: #2b0b06; border-radius: 28px; padding: clamp(20px, 4vw, 36px); display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+.callout h3 { font-size: clamp(1.4rem, 3.5vw, 2rem); }
+.callout p { opacity: .85; margin-top: 8px; }
+@media (max-width: 560px) { .callout { grid-template-columns: 1fr; } .callout .btn { justify-self: start; } }
+
+/* Contact */
+.contact { display: grid; grid-template-columns: minmax(0, 420px); gap: 16px; }
+.contact-card { display: grid; gap: 10px; padding: 22px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.contact-card .label { font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.contact-card .value { font-family: var(--font-mono); font-size: 1.05rem; overflow-wrap: anywhere; user-select: all; }
+.copy { justify-self: start; font: 600 .9rem var(--font-body); padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; }
+.copy:hover { border-color: var(--ocean); }
+
+footer { background: var(--ocean-deep); color: var(--on-ocean); }
+footer .wrap { padding-block: 28px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: .9rem; opacity: .85; }
+
+@media (prefers-reduced-motion: reduce) { .hero canvas { display: none; } }
+</style>
+</head>
+<body style="margin:0">
+
+<header class="hero" id="top">
+  <canvas id="waves" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="badge"><span class="bean" aria-hidden="true"></span>OCEANIA LOLBEANS</div>
+      <nav aria-label="Sections">
+        <a href="#about">About</a>
+        <a href="#tournaments">Tournaments</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <div class="hero-copy">
+      <h1>Oceania LOLBeans <span>Official</span></h1>
+      <p>The home of competitive LOLBeans for Australia, New Zealand and the Pacific. A friendly server for finding lobbies, teammates and competition, run by players from the region.</p>
+      <div class="cta-row">
+        <a class="btn btn-sun" href="#contact">Join the Discord</a>
+        <a class="btn btn-ghost" href="#tournaments">Tournaments</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="band" id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">The community</div>
+        <h2>One server for every Oceania bean</h2>
+        <p>Oceania LOLBeans is the regional Discord server for players on Australian and New Zealand time. It is owned and moderated by phoenix001699 (ninja) with a team of community mods.</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-item"><h3>Play on our time zone</h3><p>Find lobbies and teammates in AEST and NZST hours, without waiting up for overseas players.</p></div>
+        <div class="about-item"><h3>Compete with locals</h3><p>The server hosts its own competitive events. See the Tournaments section for the details.</p></div>
+        <div class="about-item"><h3>Moderated and friendly</h3><p>A mod team keeps chats welcoming for new players and regulars alike.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="tournaments">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Tournaments</div>
+        <h2>Want to compete?</h2>
+        <p>The server runs its own competitive events, including the Oceania Championships. Everything about entering, formats and dates lives on the tournament website.</p>
+      </div>
+      <div class="callout">
+        <div>
+          <h3>Interested in joining the tournament?</h3>
+          <p>Head to the tournament site for sign-ups, schedules and brackets.</p>
+        </div>
+        <a class="btn btn-dark" href="TOURNAMENT_LINK_HERE" target="_blank" rel="noopener">Go to tournament site</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="contact">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Get in touch</div>
+        <h2>Join the server</h2>
+        <p>Message the owner on Discord to get an invite to the server or ask a question.</p>
+      </div>
+      <div class="contact">
+        <div class="contact-card">
+          <span class="label">Discord</span>
+          <span class="value">phoenix001699</span>
+          <button class="copy" type="button" id="copy-discord" data-copy="phoenix001699">Copy username</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Oceania LOLBeans Official · Run by the community</span>
+    <span>A fan community, not affiliated with the LOLBeans developers.</span>
+  </div>
+</footer>
+
+<script>
+// Copy buttons
+document.querySelectorAll(".copy").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var text = btn.dataset.copy, orig = btn.textContent;
+    var done = function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = orig; }, 1500); };
+    var fallback = function () {
+      var r = document.createRange(); r.selectNodeContents(btn.previousElementSibling);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = "Selected, press copy";
+      setTimeout(function () { btn.textContent = orig; }, 2000);
+    };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  });
+});
+
+// Gentle wave lines in the hero
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var c = document.getElementById("waves"), ctx = c.getContext("2d"), t = 0;
+  function size() { c.width = c.offsetWidth * devicePixelRatio; c.height = c.offsetHeight * devicePixelRatio; }
+  size(); addEventListener("resize", size);
+  function draw() {
+    var w = c.width, h = c.height;
+    ctx.clearRect(0, 0, w, h);
+    for (var k = 0; k < 6; k++) {
+      ctx.beginPath();
+      var base = h * (0.35 + k * 0.12);
+      for (var x = 0; x <= w; x += 8) {
+        var y = base + Math.sin(x / (120 * devicePixelRatio) + t + k) * 10 * devicePixelRatio;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = k % 2 ? "rgba(255,194,61,0.18)" : "rgba(120,210,230,0.22)";
+      ctx.lineWidth = 2 * devicePixelRatio;
+      ctx.stroke();
+    }
+    t += 0.012;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+</body>
+</html>
