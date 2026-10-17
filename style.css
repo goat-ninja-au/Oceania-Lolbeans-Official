@@ -1,6 +1,6 @@
 body {
-    background: #0f0f0f;
-    color: white;
+    background: #c3e1f4;
+    color: #0c2a43;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
@@ -16,7 +16,7 @@ body {
     padding: 25px;
     border-radius: 12px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 14px rgba(12,42,67,0.12);
     box-sizing: border-box;
 }
 
@@ -25,13 +25,13 @@ body {
     padding: 10px;
     margin-top: 10px;
     border-radius: 6px;
-    border: 1px solid #aaa;
+    border: 1px solid #8fbad8;
 }
 
 .password-box button {
     margin-top: 15px;
     padding: 10px 20px;
-    background: #4a6cf7;
+    background: #1478c2;
     color: white;
     border: none;
     border-radius: 6px;
@@ -39,7 +39,7 @@ body {
 }
 
 .password-box button:hover {
-    background: #324ed4;
+    background: #0f62a0;
 }
 
 /* TUTORIALS GRID */
@@ -64,6 +64,7 @@ body {
 
 .tutorial-card {
     background: rgb(74, 209, 11);
+    color: #0c2a43;
     padding: 15px;
     border-radius: 10px;
     text-align: center;
@@ -91,7 +92,7 @@ body {
     display: inline-block;
     margin-top: 8px;
     padding: 8px 12px;
-    background: #4a6cf7;
+    background: #1478c2;
     color: white;
     border-radius: 6px;
     text-decoration: none;
@@ -100,7 +101,8 @@ body {
 
 /* TABLE OF CONTENTS */
 .toc {
-    background: #1e1e1e;
+    background: #ffffff;
+    border: 1px solid #98c5e2;
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 30px;
@@ -116,18 +118,18 @@ body {
 }
 
 .toc a {
-    color: #4da3ff;
+    color: #1478c2;
     text-decoration: none;
     font-weight: bold;
 }
 
 /* MODULE CARDS */
 .module-card {
-    background: #0e160f;
+    background: #ffffff;
     padding: 20px;
     border-radius: 12px;
     margin: 20px 0;
-    border: 1px solid #333;
+    border: 1px solid #98c5e2;
 }
 
 .video-box iframe {
@@ -135,7 +137,7 @@ body {
 }
 
 .watch-btn {
-    background: #4da3ff;
+    background: #1478c2;
     color: white;
     padding: 10px 15px;
     border-radius: 8px;
@@ -146,7 +148,7 @@ body {
 
 .back-btn {
     display: inline-block;
-    background: #333;
+    background: #0c2a43;
     color: white;
     padding: 10px 15px;
     border-radius: 8px;
@@ -156,5 +158,5 @@ body {
 }
 
 .back-btn:hover {
-    background: #555;
+    background: #1e4a6e;
 }

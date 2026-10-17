@@ -5,265 +5,165 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Oceania LOLBeans Official</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Figtree:wght@400;600;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
-/* Layout: one deliberate night-ocean look. Full-bleed colour bands (hero, ticker, tiles, tournament, gallery, join), 1080px inner column. Candy colours pop against deep sea. */
+/* Layout: clean light-blue site matching the recoloured Academy pages. Sticky header, left-aligned hero, simple stacked sections in a 1040px column. */
 :root {
-  --sea: #061c2b;
-  --sea-2: #0a2c42;
-  --sea-3: #0f3d58;
-  --foam: #eaf6fb;
-  --mist: #9fc3d4;
-  --sun: #ffc93c;
-  --coral: #ff5d4a;
-  --lagoon: #2ee0c4;
-  --grape: #8f6bff;
-  --ink: #1c0f00;
-  --font-display: "Bowlby One", "Arial Black", Impact, sans-serif;
-  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-  color-scheme: dark;
+  --bg: #c3e1f4;
+  --panel: #ffffff;
+  --panel-2: #acd3ec;
+  --line: #98c5e2;
+  --text: #0c2a43;
+  --muted: #3a5a73;
+  --blue: #1478c2;
+  --blue-hover: #0f62a0;
+  --green: #3fb80a;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
-body { background: var(--sea); color: var(--foam); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
-.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
-h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1; text-wrap: balance; margin: 0; }
-p { margin: 0; max-width: 60ch; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; line-height: 1.15; text-wrap: balance; font-weight: 800; }
+p { margin: 0; max-width: 62ch; }
 a { color: inherit; }
-:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; border-radius: 8px; }
-.kicker { font-weight: 900; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
 
-/* ---------- Hero ---------- */
-.hero { position: relative; overflow: hidden; background: radial-gradient(120% 90% at 80% 0%, var(--sea-3) 0%, var(--sea-2) 45%, var(--sea) 100%); }
-.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.hero .wrap { position: relative; padding-block: 22px 150px; display: grid; gap: 56px; }
-.topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
-.logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 900; letter-spacing: .06em; text-decoration: none; }
-.logo img { width: 54px; height: 54px; object-fit: cover; border-radius: 14px; box-shadow: 0 0 0 2px rgba(234,246,251,.25); }
-.logo i { width: 30px; height: 18px; border-radius: 999px; background: var(--sun); transform: rotate(-20deg); box-shadow: 10px 8px 0 -2px var(--coral), -6px 10px 0 -4px var(--lagoon); }
-nav { display: flex; flex-wrap: wrap; gap: 4px; }
-nav a { text-decoration: none; font-weight: 800; font-size: .95rem; padding: 8px 14px; border-radius: 999px; }
-nav a:hover { background: rgba(234,246,251,.12); }
-.hero-title { display: grid; gap: 26px; max-width: 820px; }
-.hero h1 { font-size: clamp(3rem, 11vw, 7.4rem); letter-spacing: -.01em; text-shadow: 0 6px 0 rgba(0,0,0,.25); }
-.hero h1 .line2 { color: var(--sun); display: block; }
-.sticker { display: inline-block; font-family: var(--font-display); font-size: clamp(1.1rem, 3vw, 1.7rem); background: var(--coral); color: var(--foam); padding: 8px 20px 10px; border-radius: 999px; transform: rotate(-4deg); box-shadow: 0 6px 0 #a5281a; margin-top: 10px; text-shadow: none; }
-.hero-copy { font-size: clamp(1.1rem, 2.4vw, 1.3rem); color: var(--foam); opacity: .92; }
-.flags { display: flex; flex-wrap: wrap; gap: 8px; }
-.flags span { font-weight: 900; font-size: .8rem; letter-spacing: .12em; padding: 6px 12px; border-radius: 999px; border: 2px solid rgba(234,246,251,.35); }
-.cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
-.btn { display: inline-flex; align-items: center; gap: 10px; font: 900 1.05rem var(--font-body); padding: 15px 26px; border-radius: 999px; border: 0; text-decoration: none; cursor: pointer; transition: transform .15s ease; }
-.btn:hover { transform: translateY(-2px); }
-.btn:active { transform: translateY(2px); }
-.btn-sun { background: var(--sun); color: var(--ink); box-shadow: 0 6px 0 #b98400; }
-.btn-ghost { background: rgba(234,246,251,.1); color: var(--foam); box-shadow: inset 0 0 0 2px rgba(234,246,251,.45); }
+/* Header */
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: rgba(195,225,244,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding-block: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; font-size: 1.05rem; }
+.brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.brand .mark { width: 40px; height: 40px; border-radius: 8px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .9rem; }
+nav { display: flex; flex-wrap: wrap; gap: 2px; }
+nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: .95rem; padding: 8px 12px; border-radius: 8px; }
+nav a:hover { color: var(--text); background: var(--panel-2); }
 
-/* ---------- Ticker ---------- */
-.ticker { background: var(--sun); color: var(--ink); overflow: hidden; transform: rotate(-1.5deg); margin-top: -28px; position: relative; z-index: 2; border-block: 4px solid var(--ink); }
-.ticker-track { display: flex; width: max-content; animation: slide 28s linear infinite; }
-.ticker-track span { font-family: var(--font-display); font-size: clamp(1.1rem, 2.6vw, 1.6rem); padding: 12px 0; white-space: nowrap; }
-.ticker-track span::after { content: "●"; color: var(--coral); margin: 0 22px; font-size: .8em; vertical-align: middle; }
-@keyframes slide { to { transform: translateX(-50%); } }
+/* Hero */
+.hero { padding-block: 88px 72px; border-bottom: 1px solid var(--line); background: radial-gradient(80% 120% at 100% 0%, rgba(20,120,194,.18), transparent 60%); }
+.hero .wrap { display: grid; gap: 22px; }
+.eyebrow { color: var(--blue); font-weight: 700; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; }
+.hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); max-width: 16ch; }
+.hero p { font-size: 1.15rem; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; font: 700 1rem var(--font); padding: 12px 20px; border-radius: 8px; text-decoration: none; border: 1px solid transparent; cursor: pointer; }
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: var(--blue-hover); }
+.btn-outline { border-color: var(--line); color: var(--text); background: transparent; }
+.btn-outline:hover { background: var(--panel-2); }
 
-/* ---------- Sections ---------- */
-section { padding-block: 96px; }
-.sec-head { display: grid; gap: 14px; margin-bottom: 44px; }
-.sec-head h2 { font-size: clamp(2.2rem, 6vw, 3.8rem); }
-.sec-head p { color: var(--mist); font-size: 1.1rem; }
+/* Sections */
+section.block { padding-block: 72px; border-bottom: 1px solid var(--line); }
+.sec-head { display: grid; gap: 10px; margin-bottom: 32px; }
+.sec-head h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); }
+.sec-head p { color: var(--muted); }
 
-/* About tiles */
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; }
-.tile { border-radius: 30px; padding: 28px; display: grid; gap: 14px; align-content: start; color: var(--ink); transition: transform .2s ease; }
-.tile:hover { transform: rotate(-1deg) translateY(-4px); }
-.tile svg { width: 92px; height: 92px; }
-.tile h3 { font-size: 1.6rem; }
-.tile p { font-weight: 600; opacity: .85; }
-.t1 { background: var(--lagoon); }
-.t2 { background: var(--sun); }
-.t3 { background: var(--grape); color: #fff; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 2px 8px rgba(12,42,67,.06); padding: 22px; display: grid; gap: 8px; align-content: start; }
+.card h3 { font-size: 1.1rem; }
+.card p { color: var(--muted); }
 
-/* Academy */
-.academy { padding-block: 0 96px; }
-.academy-card { background: #4ad10b; color: var(--ink); border-radius: 36px; padding: clamp(28px, 6vw, 56px); display: grid; grid-template-columns: 1.3fr 1fr; gap: 36px; align-items: center; box-shadow: 0 10px 0 #2b7a06; }
-.academy-copy { display: grid; gap: 16px; min-width: 0; }
-.academy-copy h2 { font-size: clamp(2.2rem, 6.5vw, 4rem); }
-.academy-copy p { font-size: 1.1rem; font-weight: 600; }
-.academy-copy .small { font-size: .95rem; opacity: .75; }
-.btn-ink-green { background: var(--ink); color: #b6ff8a; box-shadow: 0 6px 0 #000; justify-self: start; }
-.map-stack { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.map-stack span { font-family: var(--font-display); font-size: 1.05rem; background: #fff; padding: 10px 18px; border-radius: 999px; border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink); }
-.map-stack span:nth-child(2n) { transform: rotate(3deg); background: var(--sun); }
-.map-stack span:nth-child(3n) { transform: rotate(-4deg); background: #4a6cf7; color: #fff; }
-.map-stack span:last-child { background: var(--ink); color: #b6ff8a; }
-@media (max-width: 720px) { .academy-card { grid-template-columns: 1fr; } }
-
-/* Tournament banner */
-.tourney { background: var(--coral); position: relative; overflow: hidden; }
-.tourney::before, .tourney::after { content: ""; position: absolute; border-radius: 999px; background: rgba(255,255,255,.12); }
-.tourney::before { width: 420px; height: 240px; right: -120px; top: -90px; transform: rotate(-20deg); }
-.tourney::after { width: 260px; height: 150px; left: -80px; bottom: -60px; transform: rotate(15deg); }
-.tourney .wrap { position: relative; display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
-.tourney .kicker { color: var(--ink); }
-.tourney h2 { font-size: clamp(2.4rem, 7vw, 4.6rem); color: #fff; text-shadow: 0 5px 0 #a5281a; }
-.tourney p { font-size: 1.15rem; font-weight: 600; color: #2b0a05; }
-.tourney-copy { display: grid; gap: 20px; min-width: 0; }
-.btn-ink { background: var(--ink); color: var(--sun); box-shadow: 0 6px 0 #000; justify-self: start; }
-.trophy { width: 100%; max-width: 340px; justify-self: center; filter: drop-shadow(0 14px 0 rgba(120,20,10,.45)); animation: bob 4s ease-in-out infinite; }
-@keyframes bob { 50% { transform: translateY(-10px) rotate(2deg); } }
-@media (max-width: 720px) { .tourney .wrap { grid-template-columns: 1fr; } .trophy { max-width: 220px; order: -1; } }
-
-/* Gallery */
-.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-.shot { margin: 0; border-radius: 24px; overflow: hidden; background: var(--sea-2); }
-.shot img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; max-width: 100%; }
-.shot figcaption { padding: 12px 16px; font-weight: 700; color: var(--mist); font-size: .95rem; }
+.feature { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: clamp(22px, 4vw, 36px); display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+.feature .text { display: grid; gap: 10px; min-width: 0; }
+.feature h2 { font-size: clamp(1.5rem, 3.6vw, 2rem); }
+.feature p { color: var(--muted); }
+.feature.academy { border-left: 4px solid var(--green); }
+.feature.academy .eyebrow { color: var(--green); }
+.btn-green { background: var(--green); color: #0b1a02; }
+.btn-green:hover { filter: brightness(.92); }
+.note { font-size: .92rem; }
+@media (max-width: 640px) { .feature { grid-template-columns: 1fr; } .feature .btn { justify-self: start; } }
 
 /* Join */
-.join { background: var(--sea-2); }
-.join-card { background: linear-gradient(135deg, var(--sea-3), var(--sea-2)); border: 2px solid rgba(46,224,196,.35); border-radius: 36px; padding: clamp(28px, 6vw, 60px); display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; align-items: center; }
-.join-card h2 { font-size: clamp(2.4rem, 7vw, 4.2rem); }
-.join-card h2 span { color: var(--lagoon); }
-.join-copy { display: grid; gap: 16px; min-width: 0; }
-.join-copy p { color: var(--mist); font-size: 1.1rem; }
-.handle { display: grid; gap: 12px; background: var(--sea); border-radius: 24px; padding: 24px; min-width: 0; }
-.handle .kicker { color: var(--lagoon); }
-.handle .name { font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 2.1rem); overflow-wrap: anywhere; user-select: all; }
-.copy { justify-self: start; font: 900 .95rem var(--font-body); padding: 10px 18px; border-radius: 999px; border: 0; background: var(--lagoon); color: var(--ink); cursor: pointer; }
-@media (max-width: 720px) { .join-card { grid-template-columns: 1fr; } }
+.join-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; max-width: 520px; }
+.join-row .label { color: var(--muted); font-weight: 600; font-size: .9rem; }
+.join-row .name { font-weight: 800; font-size: 1.15rem; flex: 1; min-width: 0; overflow-wrap: anywhere; user-select: all; }
+.copy { font: 700 .9rem var(--font); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); cursor: pointer; }
+.copy:hover { border-color: var(--blue); }
 
-footer { padding-block: 32px; }
-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: .92rem; color: var(--mist); }
-
-@media (prefers-reduced-motion: reduce) {
-  .ticker-track, .trophy { animation: none; }
-  .tile, .btn { transition: none; }
-}
+footer .wrap { padding-block: 28px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .9rem; }
 </style>
 </head>
 <body style="margin:0">
 
-<header class="hero" id="top">
-  <canvas id="sea" aria-hidden="true"></canvas>
+<header>
   <div class="wrap">
-    <div class="topbar">
-      <a class="logo" href="#top"><img src="logo.png" alt="" onerror="this.replaceWith(document.createElement('i'))">OCEANIA LOLBEANS</a>
-      <nav aria-label="Sections">
-        <a href="#about">About</a>
-        <a href="#academy">Academy</a>
-        <a href="#tournaments">Tournaments</a>
-        <a href="#gallery" id="nav-gallery">Gallery</a>
-        <a href="#join">Join</a>
-      </nav>
-    </div>
-    <div class="hero-title">
-      <h1>Oceania <span class="line2">LOLBeans</span><span class="sticker">Official</span></h1>
-      <p class="hero-copy">The home of LOLBeans for Australia, New Zealand and the Pacific. Find lobbies on your time zone, team up with locals and compete against the best in the region.</p>
-      <div class="flags" aria-label="Regions"><span>AUSTRALIA</span><span>NEW ZEALAND</span><span>PACIFIC</span></div>
-      <div class="cta-row">
-        <a class="btn btn-sun" href="#join">Join the Discord</a>
-        <a class="btn btn-ghost" href="#tournaments">Tournaments</a>
-      </div>
-    </div>
+    <a class="brand" href="#top"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
+    <nav aria-label="Main">
+      <a href="#top">Home</a>
+      <a href="#about">About</a>
+      <a href="#academy">Academy</a>
+      <a href="#tournaments">Tournaments</a>
+      <a href="#join">Join</a>
+    </nav>
   </div>
 </header>
 
-<div class="ticker" aria-hidden="true">
-  <div class="ticker-track">
-    <span>LOBBIES ON YOUR TIME ZONE</span><span>LOLBEANS ACADEMY</span><span>TOURNAMENTS</span><span>AUSTRALIA</span><span>NEW ZEALAND</span><span>PACIFIC</span>
-    <span>LOBBIES ON YOUR TIME ZONE</span><span>LOLBEANS ACADEMY</span><span>TOURNAMENTS</span><span>AUSTRALIA</span><span>NEW ZEALAND</span><span>PACIFIC</span>
-  </div>
-</div>
-
-<main>
-  <section id="about">
+<main id="top">
+  <section class="hero">
     <div class="wrap">
-      <div class="sec-head">
-        <div class="kicker" style="color:var(--lagoon)">The community</div>
-        <h2>One server for every Oceania bean</h2>
-        <p>Oceania LOLBeans is the regional Discord server for players on Australian and New Zealand time, owned and moderated by phoenix001699 (ninja) and a team of community mods.</p>
-      </div>
-      <div class="tiles">
-        <article class="tile t1">
-          <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="52" r="38" fill="#fff" stroke="#1c0f00" stroke-width="6"/><path d="M50 52 L50 28 M50 52 L66 62" stroke="#1c0f00" stroke-width="7" stroke-linecap="round" fill="none"/><circle cx="50" cy="52" r="5" fill="#ff5d4a"/><rect x="40" y="4" width="20" height="10" rx="5" fill="#1c0f00"/></svg>
-          <h3>Play on our time zone</h3>
-          <p>Lobbies and teammates in AEST and NZST hours, so you're not waiting up for overseas players.</p>
-        </article>
-        <article class="tile t2">
-          <svg viewBox="0 0 100 100" aria-hidden="true"><rect x="10" y="30" width="36" height="22" rx="11" fill="#ff5d4a" stroke="#1c0f00" stroke-width="5" transform="rotate(-18 28 41)"/><rect x="50" y="50" width="38" height="22" rx="11" fill="#8f6bff" stroke="#1c0f00" stroke-width="5" transform="rotate(14 69 61)"/><rect x="34" y="66" width="30" height="18" rx="9" fill="#2ee0c4" stroke="#1c0f00" stroke-width="5" transform="rotate(-6 49 75)"/><path d="M58 8 l4 10 l10 1 l-8 7 l3 10 l-9 -6 l-9 6 l3 -10 l-8 -7 l10 -1z" fill="#fff" stroke="#1c0f00" stroke-width="4" stroke-linejoin="round"/></svg>
-          <h3>Compete with locals</h3>
-          <p>The server runs its own competitive events against the best players in the region.</p>
-        </article>
-        <article class="tile t3">
-          <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8 L84 20 V48 C84 70 68 86 50 94 C32 86 16 70 16 48 V20 Z" fill="#fff" stroke="#1c0f00" stroke-width="6" stroke-linejoin="round"/><path d="M34 52 L46 64 L68 40" fill="none" stroke="#2ee0c4" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <h3>Moderated and friendly</h3>
-          <p>A mod team keeps every channel welcoming for new players and regulars alike.</p>
-        </article>
+      <div class="eyebrow">Australia · New Zealand · Pacific</div>
+      <h1>Welcome to Oceania LOLBeans Official</h1>
+      <p>The home of the academy and competitive LOLBeans in Oceania. Find lobbies on your time zone, learn every map and compete against the best players in the region.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#join">Join the Discord</a>
+        <a class="btn btn-outline" href="academy.html">Go to the Academy</a>
       </div>
     </div>
   </section>
 
-  <section class="academy" id="academy">
+  <section class="block" id="about">
     <div class="wrap">
-      <div class="academy-card">
-        <div class="academy-copy">
-          <div class="kicker">Oceania LOLBeans Academy</div>
+      <div class="sec-head">
+        <h2>About us</h2>
+        <p>Oceania LOLBeans is the regional Discord server for players on Australian and New Zealand time. It is owned and moderated by phoenix001699 (ninja) with a team of community mods.</p>
+      </div>
+      <div class="cards">
+        <div class="card"><h3>Play on our time zone</h3><p>Lobbies and teammates in AEST and NZST hours, without waiting up for overseas players.</p></div>
+        <div class="card"><h3>Learn from the Academy</h3><p>Video tutorials for each map, matched to your personal best.</p></div>
+        <div class="card"><h3>Compete with locals</h3><p>The server runs its own tournaments for players across the region.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="academy">
+    <div class="wrap">
+      <div class="feature academy">
+        <div class="text">
+          <div class="eyebrow">Oceania LOLBeans Academy</div>
           <h2>Get faster on every map</h2>
-          <p>Map-by-map video tutorials. Enter your PB on a map and the Academy sends you straight to the lesson that matches your level.</p>
-          <p class="small">Members only. Get the password from the Discord server.</p>
-          <a class="btn btn-ink-green" href="academy.html">Enter the Academy →</a>
+          <p>Enter your PB on a map and the Academy takes you to the tutorial for your level.</p>
+          <p class="note">Members only. Get the password from the Discord server.</p>
         </div>
-        <div class="map-stack" aria-hidden="true">
-          <span>Beacon Bay</span><span>Boulder Hill</span><span>Lava Lake</span><span>Dash Cup</span><span>Splash Dash</span><span>+21 more</span>
-        </div>
+        <a class="btn btn-green" href="academy.html">Enter the Academy</a>
       </div>
     </div>
   </section>
 
-  <section class="tourney" id="tournaments">
+  <section class="block" id="tournaments">
     <div class="wrap">
-      <div class="tourney-copy">
-        <div class="kicker">Tournaments</div>
-        <h2>Think you're the best bean in Oceania?</h2>
-        <p>Interested in joining the tournament? Sign-ups, schedules and brackets for the Oceania Championships are all on the tournament website.</p>
-        <a class="btn btn-ink" href="https://goat-ninja-au.github.io/Oceania-championships-2026/" target="_blank" rel="noopener">Go to tournament site →</a>
+      <div class="feature">
+        <div class="text">
+          <div class="eyebrow">Tournaments</div>
+          <h2>Interested in joining the tournament?</h2>
+          <p>Sign-ups, schedules and brackets for the Oceania Championships are on the tournament website.</p>
+        </div>
+        <a class="btn btn-primary" href="https://goat-ninja-au.github.io/Oceania-championships-2026/" target="_blank" rel="noopener">Tournament website</a>
       </div>
-      <svg class="trophy" viewBox="0 0 200 220" aria-hidden="true">
-        <path d="M52 30 H18 C18 72 36 92 62 96" fill="none" stroke="#1c0f00" stroke-width="12" stroke-linecap="round"/>
-        <path d="M148 30 H182 C182 72 164 92 138 96" fill="none" stroke="#1c0f00" stroke-width="12" stroke-linecap="round"/>
-        <path d="M48 18 H152 V70 C152 104 128 126 100 126 C72 126 48 104 48 70 Z" fill="#ffc93c" stroke="#1c0f00" stroke-width="8" stroke-linejoin="round"/>
-        <path d="M68 34 V70 C68 86 76 98 86 104" fill="none" stroke="#fff3c4" stroke-width="10" stroke-linecap="round"/>
-        <rect x="88" y="124" width="24" height="34" fill="#ffc93c" stroke="#1c0f00" stroke-width="8"/>
-        <rect x="56" y="156" width="88" height="22" rx="6" fill="#ffc93c" stroke="#1c0f00" stroke-width="8"/>
-        <rect x="44" y="176" width="112" height="30" rx="8" fill="#1c0f00"/>
-        <rect x="70" y="186" width="60" height="10" rx="5" fill="#ffc93c"/>
-        <rect x="80" y="52" width="40" height="24" rx="12" fill="#ff5d4a" stroke="#1c0f00" stroke-width="6" transform="rotate(-14 100 64)"/>
-      </svg>
     </div>
   </section>
 
-  <section id="gallery" hidden>
+  <section class="block" id="join">
     <div class="wrap">
       <div class="sec-head">
-        <div class="kicker" style="color:var(--sun)">Gallery</div>
-        <h2>From the server</h2>
-        <p>Big wins, close finishes and community moments.</p>
+        <h2>Join the server</h2>
+        <p>Message the owner on Discord for an invite or with any questions.</p>
       </div>
-      <div class="gallery-grid" id="gallery-grid"></div>
-    </div>
-  </section>
-
-  <section class="join" id="join">
-    <div class="wrap">
-      <div class="join-card">
-        <div class="join-copy">
-          <div class="kicker" style="color:var(--sun)">Get in</div>
-          <h2>Jump into the <span>server</span></h2>
-          <p>Message the owner on Discord for an invite, or with any questions about the community.</p>
-        </div>
-        <div class="handle">
-          <span class="kicker">Discord</span>
-          <span class="name">phoenix001699</span>
-          <button class="copy" type="button" id="copy-discord" data-copy="phoenix001699">Copy username</button>
-        </div>
+      <div class="join-row">
+        <span class="label">Discord</span>
+        <span class="name">phoenix001699</span>
+        <button class="copy" type="button" id="copy-discord" data-copy="phoenix001699">Copy</button>
       </div>
     </div>
   </section>
@@ -271,126 +171,23 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 <footer>
   <div class="wrap">
-    <span>Oceania LOLBeans Official · Run by the community</span>
+    <span>© Oceania LOLBeans Official</span>
     <span>A fan community, not affiliated with the LOLBeans developers.</span>
   </div>
 </footer>
 
 <script>
-// ===== GALLERY =====
-// To add pictures: upload them into an "images" folder in your repo,
-// then add one line per picture below, like:
-//   { src: "images/final-win.png", caption: "Grand final winning moment" },
-// The Gallery section stays hidden until this list has at least one picture.
-var SHOTS = [
-];
-
-(function () {
-  var grid = document.getElementById("gallery-grid");
-  if (!SHOTS.length) { document.getElementById("nav-gallery").hidden = true; return; }
-  SHOTS.forEach(function (s) {
-    var fig = document.createElement("figure"); fig.className = "shot";
-    var img = document.createElement("img"); img.src = s.src; img.alt = s.caption || ""; img.loading = "lazy";
-    fig.appendChild(img);
-    if (s.caption) { var cap = document.createElement("figcaption"); cap.textContent = s.caption; fig.appendChild(cap); }
-    grid.appendChild(fig);
-  });
-  document.getElementById("gallery").hidden = false;
-})();
-
-// ===== COPY BUTTON =====
 document.querySelectorAll(".copy").forEach(function (btn) {
   btn.addEventListener("click", function () {
     var text = btn.dataset.copy, orig = btn.textContent;
-    var done = function () { btn.textContent = "Copied!"; setTimeout(function () { btn.textContent = orig; }, 1500); };
+    var done = function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = orig; }, 1500); };
     var fallback = function () {
       var r = document.createRange(); r.selectNodeContents(btn.previousElementSibling);
       var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-      btn.textContent = "Selected, press copy";
-      setTimeout(function () { btn.textContent = orig; }, 2000);
     };
     try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
   });
 });
-
-// ===== HERO: jelly beans bobbing on the waves =====
-(function () {
-  var c = document.getElementById("sea"), ctx = c.getContext("2d");
-  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var colors = ["#ffc93c", "#ff5d4a", "#2ee0c4", "#8f6bff", "#ff8fc7", "#7ad7ff"];
-  var beans = [], W, H, dpr, t = 0;
-  function pill(x, y, w, h) {
-    var r = h / 2;
-    ctx.beginPath();
-    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);
-    ctx.arc(x + w - r, y + r, r, -Math.PI / 2, Math.PI / 2);
-    ctx.lineTo(x + r, y + h);
-    ctx.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5);
-    ctx.closePath();
-  }
-  function setup() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = c.offsetWidth; H = c.offsetHeight;
-    c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var n = Math.max(7, Math.round(W / 120));
-    beans = [];
-    for (var i = 0; i < n; i++) {
-      beans.push({
-        x: (i + 0.5) * (W / n) + (Math.random() - 0.5) * 40,
-        floating: i % 3 === 1,
-        y: H * (0.08 + Math.random() * 0.4),
-        size: 18 + Math.random() * 18,
-        color: colors[i % colors.length],
-        phase: Math.random() * Math.PI * 2,
-        spin: (Math.random() - 0.5) * 0.6
-      });
-    }
-  }
-  function waveY(x, k) { return H - 70 - k * 26 + Math.sin(x / 110 + t * 1.4 + k * 1.7) * 9 + Math.sin(x / 47 + t * 2 + k) * 4; }
-  function bean(b, x, y, rot) {
-    var w = b.size * 1.7, h = b.size;
-    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
-    ctx.fillStyle = "rgba(0,0,0,.25)"; pill(-w / 2 + 3, -h / 2 + 5, w, h); ctx.fill();
-    ctx.fillStyle = b.color; pill(-w / 2, -h / 2, w, h); ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,.55)";
-    ctx.beginPath(); ctx.ellipse(-w * 0.18, -h * 0.2, w * 0.2, h * 0.12, -0.15, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
-  }
-  function frame() {
-    ctx.clearRect(0, 0, W, H);
-    for (var s = 0; s < 40; s++) {
-      ctx.globalAlpha = 0.25 + 0.25 * Math.sin(t * 2 + s);
-      ctx.fillStyle = "#eaf6fb";
-      ctx.fillRect((s * 137.5) % W, (s * 89.3) % (H * 0.55), 2, 2);
-    }
-    ctx.globalAlpha = 1;
-    beans.forEach(function (b) {
-      if (b.floating) bean(b, b.x, b.y + Math.sin(t + b.phase) * 12, Math.sin(t * 0.7 + b.phase) * 0.4 + b.spin);
-    });
-    var fills = ["rgba(15,61,88,.9)", "rgba(10,44,66,.95)", "#061c2b"];
-    for (var k = 2; k >= 0; k--) {
-      ctx.beginPath(); ctx.moveTo(0, H);
-      for (var x = 0; x <= W + 10; x += 10) ctx.lineTo(x, waveY(x, k));
-      ctx.lineTo(W, H); ctx.closePath();
-      ctx.fillStyle = fills[2 - k]; ctx.fill();
-      ctx.strokeStyle = k === 0 ? "rgba(46,224,196,.5)" : "rgba(122,215,255,.25)"; ctx.lineWidth = 2;
-      ctx.beginPath();
-      for (var x2 = 0; x2 <= W + 10; x2 += 10) { var yy = waveY(x2, k); if (x2 === 0) ctx.moveTo(x2, yy); else ctx.lineTo(x2, yy); }
-      ctx.stroke();
-      if (k === 1) {
-        beans.forEach(function (b) {
-          if (b.floating) return;
-          var y = waveY(b.x, 1) - b.size * 0.25;
-          var slope = (waveY(b.x + 6, 1) - waveY(b.x - 6, 1)) / 12;
-          bean(b, b.x, y, Math.atan(slope) + b.spin * 0.3);
-        });
-      }
-    }
-    if (!still) { t += 0.016; requestAnimationFrame(frame); }
-  }
-  setup(); frame();
-  addEventListener("resize", function () { setup(); if (still) frame(); });
-})();
 </script>
 
 </body>
