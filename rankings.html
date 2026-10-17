@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oceania Rankings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: same light-blue shell as the homepage. Hero, tab bar, then a tool area (controls + cards/table) in a 1240px column. Times use a mono face so digits line up. */
+:root {
+  --bg: #c3e1f4;
+  --panel: #ffffff;
+  --panel-2: #acd3ec;
+  --line: #98c5e2;
+  --soft: #eef7fd;
+  --text: #0c2a43;
+  --muted: #3a5a73;
+  --blue: #1478c2;
+  --blue-hover: #0f62a0;
+  --navy: #0c2a43;
+  --green: #3fb80a;
+  --gold: #e0a400;
+  --silver: #8a9aa8;
+  --bronze: #c27a3a;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.5; margin: 0; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; line-height: 1.15; text-wrap: balance; font-weight: 800; }
+p { margin: 0; }
+a { color: inherit; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Header (same as homepage) */
+header.site { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(195,225,244,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header.site .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding-block: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; font-size: 1.05rem; }
+.brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.brand .mark { width: 40px; height: 40px; border-radius: 8px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .9rem; }
+nav.main { display: flex; flex-wrap: wrap; gap: 2px; }
+nav.main a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: .95rem; padding: 8px 12px; border-radius: 8px; }
+nav.main a:hover { color: var(--text); background: var(--panel-2); }
+nav.main a[aria-current] { color: var(--text); background: var(--panel); }
+
+/* Hero */
+.hero { padding-block: 48px 28px; }
+.hero .wrap { display: grid; gap: 12px; }
+.eyebrow { color: var(--blue); font-weight: 700; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase; }
+.hero h1 { font-size: clamp(2rem, 5.5vw, 3.2rem); }
+.hero p { color: var(--muted); font-size: 1.08rem; max-width: 60ch; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; display: grid; gap: 2px; }
+.stat span { font-size: .78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.stat b { font-family: var(--mono); font-size: 1.15rem; }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--line); overflow-x: auto; }
+.tabs button { background: none; border: 0; padding: 12px 16px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; }
+.tabs button:hover { color: var(--text); }
+.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--blue); }
+.panel { padding-block: 22px 64px; }
+
+/* Controls */
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 18px; }
+.controls input[type="search"], .controls select { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; min-width: 0; }
+.controls input[type="search"] { flex: 1 1 220px; max-width: 340px; }
+.seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 3px; }
+.seg button { border: 0; background: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+.toggle { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 8px 12px; font-weight: 700; cursor: pointer; }
+.toggle[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+.legend { display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; color: var(--muted); font-weight: 600; }
+.legend .bar { display: inline-flex; border-radius: 4px; overflow: hidden; }
+.legend .bar i { width: 14px; height: 8px; }
+.count { font-size: .85rem; color: var(--muted); font-family: var(--mono); margin-left: auto; }
+
+/* Record cards */
+.records { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 12px; margin-bottom: 16px; }
+.rec { background: var(--panel); border: 2px solid var(--green); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+.rec.oc { border-color: var(--blue); }
+.rec-head { display: flex; align-items: center; gap: 10px; }
+.rec-head .tag { font-weight: 800; font-size: .75rem; padding: 3px 8px; border-radius: 6px; background: var(--green); color: #fff; }
+.rec.oc .rec-head .tag { background: var(--blue); }
+.rec-head h3 { font-size: 1rem; }
+.rec-head .total { margin-left: auto; font-family: var(--mono); font-weight: 700; font-size: 1.15rem; }
+
+/* Player cards */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 12px; }
+.pcard { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 12px; align-content: start; min-width: 0; position: relative; }
+.pcard.r1 { border-left: 5px solid var(--gold); }
+.pcard.r2 { border-left: 5px solid var(--silver); }
+.pcard.r3 { border-left: 5px solid var(--bronze); }
+.phead { display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 10px; }
+.place { font-family: var(--mono); font-weight: 700; font-size: 1.4rem; min-width: 1.6ch; text-align: center; color: var(--muted); }
+.r1 .place { color: var(--gold); } .r2 .place { color: var(--silver); } .r3 .place { color: var(--bronze); }
+.avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; font-size: .95rem; }
+.who { min-width: 0; display: grid; gap: 2px; }
+.who .name { font-weight: 800; font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who .sub { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .78rem; color: var(--muted); }
+.chip { font-weight: 800; font-size: .7rem; padding: 2px 6px; border-radius: 5px; background: var(--soft); border: 1px solid var(--line); color: var(--text); }
+.chip.or { background: var(--blue); border-color: var(--blue); color: #fff; }
+.chip.wr { background: var(--green); border-color: var(--green); color: #fff; }
+.ptotal { text-align: right; display: grid; gap: 1px; }
+.ptotal b { font-family: var(--mono); font-size: 1.1rem; }
+.ptotal span { font-family: var(--mono); font-size: .75rem; color: var(--muted); }
+
+.times { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 4px; }
+.tc { border-radius: 6px; padding: 4px 6px; display: grid; min-width: 0; color: #13261a; }
+.tc small { font-size: .66rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .8; }
+.tc b { font-family: var(--mono); font-size: .82rem; }
+.tc.none { background: var(--soft); color: var(--muted); }
+.tc.or { box-shadow: inset 0 0 0 2px var(--blue); }
+.tc.wr { box-shadow: inset 0 0 0 2px var(--green); }
+.rec .tc { background: var(--soft); }
+.more { justify-self: start; background: none; border: 0; color: var(--blue); font-weight: 700; cursor: pointer; padding: 0; font-size: .85rem; }
+
+/* Table */
+.table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; font-size: .82rem; width: max-content; min-width: 100%; }
+th, td { padding: 6px 8px; border-bottom: 1px solid #e1eef7; text-align: right; white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--navy); color: #fff; font-weight: 700; cursor: pointer; z-index: 2; }
+th.sorted::after { content: " ▲"; font-size: .7em; }
+th.sorted.desc::after { content: " ▼"; }
+td { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+td.nm, th.nm { text-align: left; font-family: var(--font); position: sticky; left: 0; z-index: 1; }
+td.nm { background: var(--panel); font-weight: 700; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+th.nm { z-index: 3; }
+td.pl, th.pl { text-align: center; }
+tr.recrow td { background: var(--soft); font-weight: 700; }
+tr.recrow td.nm { background: var(--soft); }
+
+/* By map */
+.maplist { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.mrow { display: grid; grid-template-columns: 56px minmax(0, 1fr) 90px 96px 96px; gap: 10px; align-items: center; padding: 9px 14px; border-bottom: 1px solid #e1eef7; }
+.mrow:last-child { border-bottom: 0; }
+.mrow.head { background: var(--navy); color: #fff; font-weight: 700; font-size: .8rem; }
+.mrow .t, .mrow .g { font-family: var(--mono); text-align: right; }
+.mrow .g { color: var(--muted); font-size: .85rem; }
+.mrow .nm { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mrow .rk { font-family: var(--mono); font-weight: 700; text-align: center; }
+.warn { color: #b3261e; font-size: .75rem; font-weight: 700; margin-left: 6px; }
+@media (max-width: 560px) { .mrow { grid-template-columns: 40px minmax(0, 1fr) 76px 76px; } .mrow .hide-sm { display: none; } }
+
+/* Compare */
+.cmp-pick { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 16px; }
+.cmp-pick select { width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-weight: 700; }
+.vs { font-weight: 800; color: var(--muted); }
+.cmp-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.cmp-sum .side { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 4px; }
+.cmp-sum .side.win { border: 2px solid var(--green); }
+.cmp-sum .big { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; }
+.cmp-sum .small { color: var(--muted); font-size: .85rem; }
+.crow { display: grid; grid-template-columns: 1fr minmax(90px, 140px) 1fr; gap: 8px; align-items: center; padding: 7px 14px; border-bottom: 1px solid #e1eef7; font-family: var(--mono); }
+.crow:last-child { border-bottom: 0; }
+.crow .a { text-align: right; } .crow .b { text-align: left; }
+.crow .m { text-align: center; font-family: var(--font); font-weight: 700; font-size: .82rem; color: var(--muted); }
+.crow .win { color: #1d7a00; font-weight: 700; }
+.crow .win::after { content: " ✓"; }
+.crow .b.win::after { content: ""; } .crow .b.win::before { content: "✓ "; }
+
+/* About */
+.about { display: grid; gap: 14px; max-width: 760px; }
+.about .box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: grid; gap: 8px; }
+.about ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.about h3 { font-size: 1.05rem; }
+.btn { display: inline-flex; align-items: center; font-weight: 700; padding: 10px 16px; border-radius: 8px; text-decoration: none; background: var(--blue); color: #fff; justify-self: start; }
+.btn:hover { background: var(--blue-hover); }
+.btn.ghost { background: var(--panel); color: var(--text); border: 1px solid var(--line); }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 6px; margin-bottom: 16px; }
+.status.err { border-color: #e4707a; }
+.empty { color: var(--muted); padding: 24px; text-align: center; }
+
+footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
+    <nav class="main" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="rankings.html" aria-current="page">Rankings</a>
+      <a href="academy.html">Academy</a>
+      <a href="index.html#tournaments">Tournaments</a>
+      <a href="index.html#join">Join</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Oceania Rankings</div>
+      <h1>Oceania LOLBeans Rankings</h1>
+      <p>Total-time ranking across all 27 LOLBeans maps for players in Australia and New Zealand. The lowest combined time ranks highest.</p>
+      <div class="stats" id="stats">
+        <div class="stat"><span>Players</span><b id="st-players">–</b></div>
+        <div class="stat"><span>Oceania record total</span><b id="st-or">–</b></div>
+        <div class="stat"><span>World record total</span><b id="st-wr">–</b></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="tabs" role="tablist" aria-label="Rankings views">
+      <button role="tab" id="tab-overall" aria-selected="true" data-tab="overall">Overall</button>
+      <button role="tab" id="tab-map" aria-selected="false" data-tab="map">By map</button>
+      <button role="tab" id="tab-compare" aria-selected="false" data-tab="compare">Compare players</button>
+      <button role="tab" id="tab-about" aria-selected="false" data-tab="about">About</button>
+    </div>
+
+    <div id="status" class="status"><b>Loading rankings…</b><span>Reading the latest times from the Oceania rankings spreadsheet.</span></div>
+
+    <!-- OVERALL -->
+    <section class="panel" id="p-overall" role="tabpanel" aria-labelledby="tab-overall">
+      <div class="controls">
+        <input type="search" id="q" placeholder="Search players" aria-label="Search players">
+        <select id="country" aria-label="Country">
+          <option value="">All countries</option>
+          <option value="AUS">Australia</option>
+          <option value="NZ">New Zealand</option>
+        </select>
+        <div class="seg" role="group" aria-label="View">
+          <button type="button" id="v-cards" aria-pressed="true">Cards</button>
+          <button type="button" id="v-table" aria-pressed="false">Table</button>
+        </div>
+        <button type="button" class="toggle" id="all-times" aria-pressed="false">Show every map time</button>
+        <span class="legend" id="legend"><span id="lg-a">Fast</span><span class="bar" id="lg-bar"></span><span id="lg-b">Slow</span></span>
+        <span class="count" id="count"></span>
+      </div>
+      <div class="records" id="records"></div>
+      <div id="overall-body"></div>
+    </section>
+
+    <!-- BY MAP -->
+    <section class="panel" id="p-map" role="tabpanel" aria-labelledby="tab-map" hidden>
+      <div class="controls">
+        <select id="map-pick" aria-label="Map"></select>
+        <input type="search" id="mq" placeholder="Search players" aria-label="Search players on this map">
+        <span class="count" id="map-count"></span>
+      </div>
+      <div class="records" id="map-recs"></div>
+      <div class="maplist" id="map-list"></div>
+    </section>
+
+    <!-- COMPARE -->
+    <section class="panel" id="p-compare" role="tabpanel" aria-labelledby="tab-compare" hidden>
+      <div class="cmp-pick">
+        <select id="cmp-a" aria-label="First player"></select>
+        <span class="vs">vs</span>
+        <select id="cmp-b" aria-label="Second player"></select>
+      </div>
+      <div class="cmp-sum" id="cmp-sum"></div>
+      <div class="maplist" id="cmp-list"></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="panel" id="p-about" role="tabpanel" aria-labelledby="tab-about" hidden>
+      <div class="about">
+        <div class="box">
+          <h3>About the rankings</h3>
+          <p>This page shows the Oceania LOLBeans rankings straight from the community spreadsheet. Players are ranked by their total time across all 27 maps. You can browse every map time, see the fastest players on each map and compare two players side by side.</p>
+        </div>
+        <div class="box">
+          <h3>Get ranked</h3>
+          <p>To join the rankings, fill out the registration form. If you already have a time on the sheet and set a new PB, put your old and new time in the comment section of the spreadsheet.</p>
+          <div class="links">
+            <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSetxzjFJqwo8pSUdBE4dmVAc5z0OZNikdj7WvN0tAhXYIVIuQ/viewform" target="_blank" rel="noopener">Register for the rankings</a>
+            <a class="btn ghost" href="https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/edit" target="_blank" rel="noopener">Open the spreadsheet</a>
+          </div>
+        </div>
+        <div class="box">
+          <h3>Oceania records</h3>
+          <p>New Oceania records must be confirmed before they count. If you think you've broken one, message phoenix001699 on Discord with video proof of your run.</p>
+        </div>
+        <div class="box">
+          <h3>How to read this page</h3>
+          <ul>
+            <li>Overall rank is decided by the total time of all maps.</li>
+            <li>A blue <b>OR</b> badge means the player holds that map's Oceania record. A green <b>WR</b> badge means they hold the world record.</li>
+            <li>Card view colours each time by its rank on that map, from fastest (green) to slowest (red).</li>
+            <li>Table view colours each time by how far it is from the Oceania record. Click a map name at the top of a column to sort by it, and click again to reverse.</li>
+            <li>If a player has no time on a map, it counts as 60 seconds in their total and shows as a dash.</li>
+            <li>On the By map tab, a time faster than the world record is marked ⚠ Unverified.</li>
+          </ul>
+          <p>Times are read from the spreadsheet each time the page loads, so changes in the sheet show up here after a refresh.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Oceania LOLBeans Official</span>
+    <span>A fan community, not affiliated with the LOLBeans developers.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // ===== SETTINGS =====
+  var SHEET_ID = "1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo";
+  var SHEET_GID = "0";
+  var CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&gid=" + SHEET_GID;
+  var MISSING = 60; // a time of 60 in the sheet means "no time entered"
+
+  // Column order in the sheet: Country, Place, Name, then 27 maps, then Total Score
+  var MAPS = ["Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup", "Lava Lake",
+    "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze", "Mill Valley", "Monster Manor",
+    "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light", "Rickety Run", "Risky Cliffs", "Shark Park",
+    "Silly Slide", "Spiky Slopes", "Splash Dash", "Tricky Traps", "Tumble Town", "UFO Attack"];
+  var FIRST_MAP_COL = 3, TOTAL_COL = 3 + MAPS.length;
+
+  var HEAT = ["#34C77B", "#8FDB9A", "#C9E9A2", "#F3E59B", "#F8CB8C", "#F2A39B", "#E4707A"];
+  var HEAT_CUT = [0.05, 0.2, 0.4, 0.6, 0.8, 0.95];
+  var AVATAR = ["#1478c2", "#3fb80a", "#8f6bff", "#e0a400", "#e4707a", "#0f9aa8", "#c27a3a", "#5b6cff"];
+  var EPS = 0.0005;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var fmt = function (n) { return n == null ? "–" : n.toFixed(3); };
+  var plus = function (n) { return (n >= 0 ? "+" : "−") + Math.abs(n).toFixed(3); };
+
+  var S = { tab: "overall", view: "cards", all: false, q: "", country: "", sort: { col: "place", dir: 1 }, map: 0, mq: "" };
+  var WR = null, OR = null, players = [], sortedTimes = [], orTotal = 0, wrTotal = 0;
+
+  // ---------- CSV ----------
+  function parseCSV(s) {
+    var rows = [], row = [], f = "", q = false;
+    for (var i = 0; i < s.length; i++) {
+      var c = s[i];
+      if (q) { if (c === '"') { if (s[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+      else if (c === '"') q = true;
+      else if (c === ",") { row.push(f); f = ""; }
+      else if (c === "\n") { row.push(f); rows.push(row); row = []; f = ""; }
+      else if (c !== "\r") f += c;
+    }
+    if (f || row.length) { row.push(f); rows.push(row); }
+    return rows;
+  }
+  function num(v) { var n = parseFloat(String(v).trim()); return isNaN(n) ? null : n; }
+  function times(r) {
+    return MAPS.map(function (_, i) { var n = num(r[FIRST_MAP_COL + i]); return (n == null || n >= MISSING - EPS) ? null : n; });
+  }
+  function country(v) {
+    var s = String(v || "").trim().toLowerCase();
+    if (s.indexOf("aus") === 0) return "AUS";
+    if (s.indexOf("nz") === 0 || s.indexOf("new zealand") === 0) return "NZ";
+    return "";
+  }
+
+  function load(rows) {
+    players = [];
+    var started = false;
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i], name = String(r[2] || "").trim();
+      if (/world record times/i.test(name)) { WR = { name: "World record", t: times(r), total: num(r[TOTAL_COL]) }; continue; }
+      if (/oceania record times/i.test(name)) { OR = { name: "Oceania record", t: times(r), total: num(r[TOTAL_COL]) }; continue; }
+      var place = String(r[1] || "").trim();
+      if (/^\d+$/.test(place) && name) {
+        started = true;
+        players.push({ place: +place, name: name, country: country(r[0]), t: times(r), total: num(r[TOTAL_COL]) });
+      } else if (started && !name) {
+        break; // the main ranking ends at the first empty row
+      }
+    }
+    players.forEach(function (p) {
+      if (p.total == null) p.total = p.t.reduce(function (a, v) { return a + (v == null ? MISSING : v); }, 0);
+      p.ors = OR ? MAPS.map(function (_, m) { return p.t[m] != null && OR.t[m] != null && Math.abs(p.t[m] - OR.t[m]) < EPS; }) : [];
+      p.wrs = WR ? MAPS.map(function (_, m) { return p.t[m] != null && WR.t[m] != null && Math.abs(p.t[m] - WR.t[m]) < EPS; }) : [];
+    });
+    sortedTimes = MAPS.map(function (_, m) {
+      return players.map(function (p) { return p.t[m]; }).filter(function (v) { return v != null; }).sort(function (a, b) { return a - b; });
+    });
+    orTotal = OR && OR.total != null ? OR.total : 0;
+    wrTotal = WR && WR.total != null ? WR.total : 0;
+
+    $("st-players").textContent = players.length;
+    $("st-or").textContent = OR ? fmt(OR.total) : "–";
+    $("st-wr").textContent = WR ? fmt(WR.total) : "–";
+    fillPickers();
+    render();
+  }
+
+  // ---------- helpers ----------
+  function mapRank(m, t) {
+    var a = sortedTimes[m], lo = 0, hi = a.length;
+    while (lo < hi) { var mid = (lo + hi) >> 1; if (a[mid] < t - 1e-9) lo = mid + 1; else hi = mid; }
+    return lo + 1;
+  }
+  function heatRank(m, t) {
+    var n = sortedTimes[m].length; if (n < 2) return HEAT[0];
+    var p = (mapRank(m, t) - 1) / (n - 1), i = 0;
+    while (i < HEAT_CUT.length && p > HEAT_CUT[i]) i++;
+    return HEAT[i];
+  }
+  function heatGap(m, t) {
+    var ref = OR && OR.t[m] ? OR.t[m] : (WR && WR.t[m]); if (!ref) return "#E9ECF1";
+    var g = Math.max(0, t / ref - 1), steps = [0.002, 0.01, 0.025, 0.05, 0.1, 0.2], i = 0;
+    while (i < steps.length && g > steps[i]) i++;
+    return HEAT[i];
+  }
+  function avatarColor(name) { var h = 0; for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0; return AVATAR[h % AVATAR.length]; }
+  function initial(name) { var ch = Array.from(name.trim())[0] || "?"; return esc(ch.toUpperCase()); }
+  function flag(c) { return c === "AUS" ? "Australia" : c === "NZ" ? "New Zealand" : ""; }
+  function visible() {
+    var q = S.q.trim().toLowerCase();
+    return players.filter(function (p) {
+      if (S.country && p.country !== S.country) return false;
+      if (q && p.name.toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+  }
+
+  // ---------- OVERALL ----------
+  function tile(m, v, color, extra) {
+    if (v == null) return '<span class="tc none" title="' + esc(MAPS[m]) + ': no time"><small>' + esc(MAPS[m]) + "</small><b>–</b></span>";
+    return '<span class="tc' + (extra || "") + '" title="' + esc(MAPS[m]) + '"' + (color ? ' style="background:' + color + '"' : "") + "><small>" + esc(MAPS[m]) + "</small><b>" + fmt(v) + "</b></span>";
+  }
+  function recordCards(el) {
+    el.innerHTML = [WR && ["World record", "WR", "", WR], OR && ["Oceania record", "OR", " oc", OR]].filter(Boolean).map(function (x) {
+      var r = x[3];
+      return '<div class="rec' + x[2] + '"><div class="rec-head"><span class="tag">' + x[1] + "</span><h3>" + x[0] + ' times</h3><span class="total">' + fmt(r.total) + '</span></div><div class="times">' +
+        MAPS.map(function (_, m) { return tile(m, r.t[m], null, ""); }).join("") + "</div></div>";
+    }).join("");
+  }
+  function cardHTML(p) {
+    var orN = p.ors.filter(Boolean).length, wrN = p.wrs.filter(Boolean).length;
+    var maps = MAPS.map(function (_, i) { return i; });
+    if (!S.all) maps = maps.slice(0, 8);
+    var rc = p.place <= 3 ? " r" + p.place : "";
+    return '<article class="pcard' + rc + '">' +
+      '<div class="phead"><span class="place">' + p.place + '</span>' +
+      '<span class="avatar" style="background:' + avatarColor(p.name) + '" aria-hidden="true">' + initial(p.name) + "</span>" +
+      '<div class="who"><span class="name" title="' + esc(p.name) + '">' + esc(p.name) + '</span><span class="sub">' +
+      (p.country ? '<span class="chip">' + p.country + "</span>" : "") +
+      (wrN ? '<span class="chip wr">WR ×' + wrN + "</span>" : "") +
+      (orN ? '<span class="chip or">OR ×' + orN + "</span>" : "") + "</span></div>" +
+      '<div class="ptotal"><b>' + fmt(p.total) + "</b>" + (orTotal ? "<span>" + plus(p.total - orTotal) + " vs OR</span>" : "") + "</div></div>" +
+      '<div class="times">' + maps.map(function (m) {
+        var v = p.t[m]; return tile(m, v, v == null ? null : heatRank(m, v), p.wrs[m] ? " wr" : p.ors[m] ? " or" : "");
+      }).join("") + "</div>" +
+      (S.all ? "" : '<button type="button" class="more" data-more>Show all 27 maps</button>') +
+      "</article>";
+  }
+  function tableHTML(list) {
+    var col = S.sort.col, dir = S.sort.dir;
+    var sorted = list.slice().sort(function (a, b) {
+      var va, vb;
+      if (col === "place") { va = a.place; vb = b.place; }
+      else if (col === "total") { va = a.total; vb = b.total; }
+      else if (col === "name") { return dir * a.name.localeCompare(b.name); }
+      else { va = a.t[col]; vb = b.t[col]; if (va == null && vb == null) return 0; if (va == null) return 1; if (vb == null) return -1; }
+      return dir * (va - vb);
+    });
+    function th(key, label, cls) {
+      var on = String(col) === String(key);
+      return '<th data-sort="' + key + '" class="' + (cls || "") + (on ? " sorted" + (dir < 0 ? " desc" : "") : "") + '" title="Sort by ' + esc(label) + '">' + esc(label) + "</th>";
+    }
+    var head = "<tr>" + th("place", "#", "pl") + th("name", "Player", "nm") + "<th>Country</th>" + th("total", "Total") +
+      MAPS.map(function (m, i) { return th(i, m); }).join("") + "</tr>";
+    function rec(r, label) {
+      if (!r) return "";
+      return '<tr class="recrow"><td class="pl"></td><td class="nm">' + label + "</td><td></td><td>" + fmt(r.total) + "</td>" + r.t.map(function (v) { return "<td>" + fmt(v) + "</td>"; }).join("") + "</tr>";
+    }
+    var body = sorted.map(function (p) {
+      return '<tr><td class="pl">' + p.place + '</td><td class="nm" title="' + esc(p.name) + '">' + esc(p.name) + "</td><td>" + (p.country || "") + "</td><td><b>" + fmt(p.total) + "</b></td>" +
+        p.t.map(function (v, m) { return v == null ? "<td>–</td>" : '<td style="background:' + heatGap(m, v) + '">' + fmt(v) + "</td>"; }).join("") + "</tr>";
+    }).join("");
+    return '<div class="table-wrap"><table><thead>' + head + "</thead><tbody>" + rec(WR, "World record") + rec(OR, "Oceania record") + body + "</tbody></table></div>";
+  }
+  function renderOverall() {
+    var list = visible();
+    $("count").textContent = list.length + " of " + players.length + " players";
+    $("lg-a").textContent = S.view === "table" ? "Near OR" : "Fast";
+    $("lg-b").textContent = S.view === "table" ? "Far" : "Slow";
+    $("all-times").hidden = S.view === "table";
+    $("records").hidden = S.view === "table";
+    if (S.view === "cards") recordCards($("records"));
+    if (!list.length) { $("overall-body").innerHTML = '<p class="empty">No players match your search.</p>'; return; }
+    $("overall-body").innerHTML = S.view === "cards" ? '<div class="grid">' + list.map(cardHTML).join("") + "</div>" : tableHTML(list);
+  }
+
+  // ---------- BY MAP ----------
+  function renderMap() {
+    var m = S.map, q = S.mq.trim().toLowerCase();
+    var rows = players.filter(function (p) { return p.t[m] != null; })
+      .sort(function (a, b) { return a.t[m] - b.t[m]; });
+    var orT = OR && OR.t[m], wrT = WR && WR.t[m];
+    $("map-recs").innerHTML =
+      (WR ? '<div class="rec"><div class="rec-head"><span class="tag">WR</span><h3>World record · ' + esc(MAPS[m]) + '</h3><span class="total">' + fmt(wrT) + "</span></div></div>" : "") +
+      (OR ? '<div class="rec oc"><div class="rec-head"><span class="tag">OR</span><h3>Oceania record · ' + esc(MAPS[m]) + '</h3><span class="total">' + fmt(orT) + "</span></div></div>" : "");
+    var shown = rows.filter(function (p) { return !q || p.name.toLowerCase().indexOf(q) >= 0; });
+    $("map-count").textContent = rows.length + " players with a time";
+    var head = '<div class="mrow head"><span>Rank</span><span>Player</span><span style="text-align:right">Time</span><span style="text-align:right">vs OR</span><span class="hide-sm" style="text-align:right">vs WR</span></div>';
+    $("map-list").innerHTML = head + (shown.length ? shown.map(function (p) {
+      var v = p.t[m], fake = wrT && v < wrT - EPS;
+      return '<div class="mrow"><span class="rk">' + mapRank(m, v) + '</span><span class="nm" title="' + esc(p.name) + '">' + esc(p.name) +
+        (p.wrs[m] ? ' <span class="chip wr">WR</span>' : p.ors[m] ? ' <span class="chip or">OR</span>' : "") +
+        (fake ? '<span class="warn">⚠ Unverified</span>' : "") + "</span>" +
+        '<span class="t" style="background:' + heatRank(m, v) + ';border-radius:6px;padding:2px 6px">' + fmt(v) + "</span>" +
+        '<span class="g">' + (orT ? plus(v - orT) : "–") + "</span>" +
+        '<span class="g hide-sm">' + (wrT ? plus(v - wrT) : "–") + "</span></div>";
+    }).join("") : '<p class="empty">No players match your search.</p>');
+  }
+
+  // ---------- COMPARE ----------
+  function renderCompare() {
+    var a = players[+$("cmp-a").value], b = players[+$("cmp-b").value];
+    if (!a || !b) { $("cmp-sum").innerHTML = ""; $("cmp-list").innerHTML = ""; return; }
+    var wa = 0, wb = 0;
+    var rows = MAPS.map(function (name, m) {
+      var x = a.t[m], y = b.t[m], ca = "a", cb = "b";
+      if (x != null && (y == null || x < y - EPS)) { ca += " win"; wa++; }
+      else if (y != null && (x == null || y < x - EPS)) { cb += " win"; wb++; }
+      return '<div class="crow"><span class="' + ca + '">' + fmt(x) + '</span><span class="m">' + esc(name) + '</span><span class="' + cb + '">' + fmt(y) + "</span></div>";
+    }).join("");
+    function side(p, w, other) {
+      var better = p.total < other.total - EPS;
+      return '<div class="side' + (better ? " win" : "") + '"><span class="small">#' + p.place + (p.country ? " · " + p.country : "") + "</span><b>" + esc(p.name) + '</b><span class="big">' + fmt(p.total) + '</span><span class="small">Faster on ' + w + " of 27 maps</span></div>";
+    }
+    $("cmp-sum").innerHTML = side(a, wa, b) + side(b, wb, a);
+    $("cmp-list").innerHTML = '<div class="crow" style="background:var(--navy);color:#fff;font-family:var(--font);font-weight:700"><span class="a">' + esc(a.name) + '</span><span class="m" style="color:#fff">Map</span><span class="b">' + esc(b.name) + "</span></div>" + rows;
+  }
+
+  function fillPickers() {
+    $("map-pick").innerHTML = MAPS.map(function (m, i) { return '<option value="' + i + '">' + esc(m) + "</option>"; }).join("");
+    var opts = players.map(function (p, i) { return '<option value="' + i + '">#' + p.place + " " + esc(p.name) + "</option>"; }).join("");
+    $("cmp-a").innerHTML = opts; $("cmp-b").innerHTML = opts;
+    if (players.length > 1) $("cmp-b").value = "1";
+  }
+
+  function render() {
+    if (S.tab === "overall") renderOverall();
+    else if (S.tab === "map") renderMap();
+    else if (S.tab === "compare") renderCompare();
+  }
+
+  // ---------- events ----------
+  $("lg-bar").innerHTML = HEAT.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("");
+  document.querySelectorAll(".tabs button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      S.tab = b.dataset.tab;
+      document.querySelectorAll(".tabs button").forEach(function (x) { x.setAttribute("aria-selected", String(x === b)); });
+      ["overall", "map", "compare", "about"].forEach(function (t) { $("p-" + t).hidden = t !== S.tab; });
+      try { history.replaceState(null, "", "#" + S.tab); } catch (e) {}
+      render();
+    });
+  });
+  $("q").addEventListener("input", function (e) { S.q = e.target.value; renderOverall(); });
+  $("country").addEventListener("change", function (e) { S.country = e.target.value; renderOverall(); });
+  $("v-cards").addEventListener("click", function () { S.view = "cards"; $("v-cards").setAttribute("aria-pressed", "true"); $("v-table").setAttribute("aria-pressed", "false"); renderOverall(); });
+  $("v-table").addEventListener("click", function () { S.view = "table"; $("v-table").setAttribute("aria-pressed", "true"); $("v-cards").setAttribute("aria-pressed", "false"); renderOverall(); });
+  $("all-times").addEventListener("click", function () { S.all = !S.all; this.setAttribute("aria-pressed", String(S.all)); renderOverall(); });
+  $("overall-body").addEventListener("click", function (e) {
+    if (e.target.closest("[data-more]")) { S.all = true; $("all-times").setAttribute("aria-pressed", "true"); renderOverall(); return; }
+    var th = e.target.closest("th[data-sort]");
+    if (th) {
+      var k = th.dataset.sort; k = /^\d+$/.test(k) ? +k : k;
+      if (String(S.sort.col) === String(k)) S.sort.dir *= -1; else S.sort = { col: k, dir: 1 };
+      renderOverall();
+    }
+  });
+  $("map-pick").addEventListener("change", function (e) { S.map = +e.target.value; renderMap(); });
+  $("mq").addEventListener("input", function (e) { S.mq = e.target.value; renderMap(); });
+  $("cmp-a").addEventListener("change", renderCompare);
+  $("cmp-b").addEventListener("change", renderCompare);
+
+  var startTab = (location.hash || "").slice(1);
+  if (["map", "compare", "about"].indexOf(startTab) >= 0) { var tb = document.querySelector('.tabs button[data-tab="' + startTab + '"]'); if (tb) setTimeout(function () { tb.click(); }, 0); }
+
+  // ---------- load ----------
+  fetch(CSV_URL).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+    .then(function (text) {
+      load(parseCSV(text));
+      $("status").hidden = true;
+    })
+    .catch(function () {
+      // Sample of the real sheet so the page still shows something if the sheet can't be reached
+      var sample = /github\.io$/.test(location.hostname) ? [] : (window.RANKINGS_SAMPLE || []);
+      if (sample.length) {
+        load(sample);
+        $("status").className = "status";
+        $("status").innerHTML = "<b>Showing a small sample</b><span>The live spreadsheet couldn't be reached from here, so this is the top 5 only. On the real site, every player loads from the sheet.</span>";
+      } else {
+        $("status").className = "status err";
+        $("status").innerHTML = '<b>The rankings couldn\'t load</b><span>Check your connection and refresh, or <a href="https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/edit" target="_blank" rel="noopener">open the spreadsheet</a> directly.</span>';
+      }
+    });
+})();
+</script>
+
+</body>
+</html>
