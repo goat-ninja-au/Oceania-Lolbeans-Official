@@ -172,6 +172,12 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .lightbox img { max-width: 100%; max-height: 100%; border-radius: 8px; }
 .conv-top .tool { width: 36px; height: 36px; }
 
+.msg .meta .edited { font-size: .72rem; color: var(--muted); }
+.callrow { align-self: center; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; background: var(--soft); border: 1px solid var(--row); border-radius: 999px; padding: 5px 14px; font-size: .86rem; }
+.callrow.missed b { color: var(--red); }
+.callrow time { color: var(--muted); font-size: .78rem; }
+.callrow .linkbtn { font-size: .82rem; }
+
 /* ---------- calls ---------- */
 .call { position: fixed; inset: 0; z-index: 80; background: #071420; color: #fff; display: grid; grid-template-rows: minmax(0, 1fr) auto; }
 .call .stage { position: relative; display: grid; place-items: center; overflow: hidden; min-height: 0; }
@@ -434,6 +440,7 @@ async function loadRankings() {
 
 // ======================= STATE =======================
 const S = { uid: null, me: null, admin: false, users: {}, status: {}, friends: [], chats: {}, reads: {}, blocked: {}, view: "main", unsubMsgs: null, reports: [], list: [], lastSend: 0, replyTo: null, pendingImg: null, typers: {}, typeSeen: {}, typingUnsub: null, adminView: false, stick: true };
+S.known = {};
 const IMG = new Map();                            // image id -> picture
 const isOnline = u => !!(u && S.status[u.uid] && S.status[u.uid].state === "online");
 const lastOnline = u => (u && S.status[u.uid] && S.status[u.uid].last) || (u && u.lastSeen && u.lastSeen.toMillis && u.lastSeen.toMillis()) || 0;
@@ -478,7 +485,7 @@ function renderLists() {
   $("req-list").innerHTML = inc.map(f => { const u = S.users[f.from] || { name: "…", uid: f.from }; return '<div class="req">' + avatar(u) + '<span><b data-user="' + f.from + '" style="cursor:pointer">' + esc(u.name) + '</b></span><div class="acts"><button class="btn small primary" type="button" data-accept="' + f.id + '">Accept</button><button class="btn small" type="button" data-decline="' + f.id + '">Decline</button></div></div>'; }).join("");
   $("sent-list").innerHTML = out.map(f => { const u = S.users[f.to] || { name: "…", uid: f.to }; return '<div class="req">' + avatar(u) + '<span><b>' + esc(u.name) + '</b><small class="muted"> Waiting…</small></span><div class="acts"><button class="btn small" type="button" data-decline="' + f.id + '">Cancel</button></div></div>'; }).join("");
   // online + offline
-  const people = Object.keys(S.status).map(uid => S.users[uid]).filter(Boolean);
+  const people = Array.from(new Set(Object.keys(S.status).concat(Object.keys(S.known)))).map(uid => S.users[uid]).filter(Boolean);
   if (S.me && !people.includes(S.me)) people.push(S.me);
   const on = people.filter(isOnline).sort((a, b) => a.name.localeCompare(b.name));
   const off = people.filter(u => !isOnline(u)).sort((a, b) => lastOnline(b) - lastOnline(a)).slice(0, OFFLINE_SHOWN);
@@ -509,19 +516,29 @@ function renderMsgs(list) {
     const d = m.at || new Date(), day = dayLabel(d);
     if (day !== last) { html += '<span class="day">' + esc(day) + "</span>"; last = day; }
     const u = S.users[m.uid] || { name: m.name || "?", uid: m.uid }, mine = m.uid === S.uid;
+    if (m.call) { html += callRow(m, u, mine, d); continue; }
     const groups = {};
     Object.entries(m.rx || {}).forEach(([who, e]) => { if (typeof e === "string") (groups[e] = groups[e] || []).push(who); });
     const rx = Object.keys(groups).length ? '<div class="rxs">' + Object.entries(groups).map(([e, who]) => '<button type="button" class="rx' + (who.includes(S.uid) ? " me" : "") + '" data-react="' + esc(m.id) + '" data-e="' + esc(e) + '" title="' + esc(who.map(w => (S.users[w] || {}).name || "someone").join(", ")) + '">' + esc(e) + " " + who.length + "</button>").join("") + "</div>" : "";
     const rp = m.rp && m.rp.id ? '<div class="replyq" data-jump="' + esc(m.rp.id) + '">↪ <b>' + esc(m.rp.n) + "</b> " + esc(m.rp.t || "📷 Image") + "</div>" : "";
     const img = m.img ? '<img class="img" alt="Image from ' + esc(u.name || m.name) + '" data-imgid="' + esc(m.img) + '"' + (IMG.has(m.img) ? ' src="' + IMG.get(m.img) + '"' : "") + ">" : "";
     const canDel = mine || (S.admin && S.view === "main");
-    const acts = S.adminView ? "<span></span>" : '<div class="acts2"><button type="button" title="React" aria-label="React" data-rxpick="' + esc(m.id) + '">😊</button><button type="button" title="Reply" aria-label="Reply" data-reply="' + esc(m.id) + '">↩</button>' + (canDel ? '<button type="button" title="Delete" aria-label="Delete" data-delmsg="' + esc(m.id) + '">🗑</button>' : "") + "</div>";
-    html += '<div class="msg' + (mine ? " mine" : "") + '" id="m-' + esc(m.id) + '"><span data-user="' + esc(m.uid) + '">' + avatar(u) + '</span><div class="bub">' + rp + '<div class="meta"><b data-user="' + esc(m.uid) + '">' + esc(u.name || m.name) + "</b>" + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + "<time>" + timeLabel(d) + "</time></div>" + (m.text ? '<div class="text">' + esc(m.text) + "</div>" : "") + img + rx + "</div>" + acts + "</div>";
+    const acts = S.adminView ? "<span></span>" : '<div class="acts2"><button type="button" title="React" aria-label="React" data-rxpick="' + esc(m.id) + '">😊</button><button type="button" title="Reply" aria-label="Reply" data-reply="' + esc(m.id) + '">↩</button>' + (mine && m.text ? '<button type="button" title="Edit" aria-label="Edit" data-edit="' + esc(m.id) + '">✏️</button>' : "") + (canDel ? '<button type="button" title="Delete" aria-label="Delete" data-delmsg="' + esc(m.id) + '">🗑</button>' : "") + "</div>";
+    html += '<div class="msg' + (mine ? " mine" : "") + '" id="m-' + esc(m.id) + '"><span data-user="' + esc(m.uid) + '">' + avatar(u) + '</span><div class="bub">' + rp + '<div class="meta"><b data-user="' + esc(m.uid) + '">' + esc(u.name || m.name) + "</b>" + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + "<time>" + timeLabel(d) + "</time>" + (m.edited ? '<span class="edited">(edited)</span>' : "") + "</div>" + (m.text ? '<div class="text">' + esc(m.text) + "</div>" : "") + img + rx + "</div>" + acts + "</div>";
   }
   const stick = S.stick || renderMsgs.first;
   box.innerHTML = html;
   loadImages();
   if (stick) { box.scrollTop = box.scrollHeight; renderMsgs.first = false; }
+}
+function callRow(m, u, mine, d) {
+  const kind = m.video ? "video call" : "voice call", n = esc(u.name || "?");
+  let txt, cls = "";
+  if (m.call === "missed") { txt = mine ? "<b>No answer</b> · " + kind + " to " + esc((S.users[otherInView()] || {}).name || "them") : "<b>Missed " + kind + "</b> from " + n; cls = mine ? "" : " missed"; }
+  else if (m.call === "declined") txt = mine ? esc((S.users[otherInView()] || {}).name || "They") + " <b>declined</b> your " + kind : "<b>You declined</b> a " + kind + " from " + n;
+  else txt = "<b>" + (m.video ? "Video call" : "Voice call") + "</b> · " + mmss((m.dur || 0) * 1000);
+  const back = !S.adminView && S.view !== "main" && m.call !== "ended" ? '<button class="linkbtn" type="button" data-call="' + (m.video ? "video" : "audio") + '">Call back</button>' : "";
+  return '<div class="callrow' + cls + '" id="m-' + esc(m.id) + '">📞 <span>' + txt + "</span><time>" + timeLabel(d) + "</time>" + back + "</div>";
 }
 function loadImages() {
   document.querySelectorAll("#msgs img[data-imgid]:not([src])").forEach(el => {
@@ -610,6 +627,8 @@ function enterApp(user) {
   show("appwrap");
   F.updateDoc(F.doc(db, "users", S.uid), { lastSeen: F.serverTimestamp() }).catch(() => {});
   presence();
+  const loadPeople = () => F.getDocs(F.query(F.collection(db, "users"), F.orderBy("lastSeen", "desc"), F.limit(80))).then(q => { q.docs.forEach(d => { S.known[d.id] = 1; if (d.id !== S.uid) S.users[d.id] = { uid: d.id, ...d.data() }; }); drawAll(); }).catch(() => {});
+  loadPeople(); const pl = setInterval(loadPeople, 300000); unsubs.push(() => clearInterval(pl));
   unsubs.push(F.onSnapshot(F.doc(db, "users", S.uid), s => { if (s.exists()) { S.me = { uid: S.uid, ...s.data() }; S.users[S.uid] = S.me; renderMe(); drawAll(); } }));
   unsubs.push(F.onSnapshot(F.query(F.collection(db, "friends"), F.where("users", "array-contains", S.uid)), s => { S.friends = s.docs.map(d => ({ id: d.id, ...d.data() })); S.friends.forEach(f => f.users.forEach(watchUser)); renderLists(); syncComposer(); }));
   unsubs.push(F.onSnapshot(F.query(F.collection(db, "chats"), F.where("users", "array-contains", S.uid)), s => { S.chats = {}; s.docs.forEach(d => { S.chats[d.id] = d.data(); }); renderLists(); }));
@@ -634,7 +653,7 @@ function openView(id, keep) {
   renderLists(); syncComposer(); watchTyping();
   const ref = id === "main" ? F.query(F.collection(db, "messages"), F.orderBy("createdAt", "desc"), F.limit(80)) : F.query(F.collection(db, "chats", id, "msgs"), F.orderBy("at", "desc"), F.limit(100));
   S.unsubMsgs = F.onSnapshot(ref, s => {
-    const list = s.docs.map(d => { const x = d.data(); const uid = id === "main" ? x.uid : x.from; watchUser(uid); const t = x.createdAt || x.at; return { id: d.id, uid, name: x.name, text: x.text || "", img: x.img || "", rx: x.rx || null, rp: x.rp || null, at: t ? t.toDate() : null }; }).reverse();
+    const list = s.docs.map(d => { const x = d.data(); const uid = id === "main" ? x.uid : x.from; watchUser(uid); const t = x.createdAt || x.at; return { id: d.id, uid, name: x.name, text: x.text || "", img: x.img || "", rx: x.rx || null, rp: x.rp || null, call: x.call || "", edited: !!x.edited, video: !!x.video, dur: x.dur || 0, at: t ? t.toDate() : null }; }).reverse();
     renderMsgs(list);
     if (id !== "main" && !S.adminView) F.setDoc(F.doc(db, "users", S.uid, "reads", id), { at: F.serverTimestamp() }).catch(() => {});
   }, () => { $("msgs").innerHTML = '<p class="empty" style="margin:auto">This conversation isn\'t available.</p>'; });
@@ -732,20 +751,46 @@ async function react(id, e) {
 function setReply(id) {
   const m = S.list.find(x => x.id === id); if (!m) return;
   const n = (S.users[m.uid] || {}).name || m.name || "?";
+  if (S.editing) clearReply();
   S.replyTo = { id: m.id, n: String(n).slice(0, 20), t: (m.text || "").slice(0, 80) };
   $("reply-to").innerHTML = "Replying to <b>" + esc(n) + "</b>" + (m.text ? " · " + esc(m.text.slice(0, 60)) : " · 📷 Image");
   $("replybar").hidden = false; $("c-text").focus();
 }
-function clearReply() { S.replyTo = null; $("replybar").hidden = true; }
+function clearReply() {
+  S.replyTo = null; $("replybar").hidden = true;
+  if (S.editing) { S.editing = null; $("c-text").value = ""; $("c-count").textContent = "0 / 300"; $("img-btn").disabled = false; $("c-send").textContent = "Send"; }
+}
+function setEdit(id) {
+  const m = S.list.find(x => x.id === id); if (!m || m.uid !== S.uid || !m.text) return;
+  clearReply(); clearImg();
+  S.editing = id; $("c-text").value = m.text; $("c-count").textContent = m.text.length + " / 300";
+  $("reply-to").innerHTML = "✏️ <b>Editing your message</b> · Esc to cancel";
+  $("replybar").hidden = false; $("img-btn").disabled = true; $("c-send").textContent = "Save";
+  $("c-text").focus(); $("c-text").setSelectionRange(m.text.length, m.text.length);
+}
 $("reply-x").addEventListener("click", clearReply);
 
 // ---------- sending ----------
 $("c-text").addEventListener("input", () => { $("c-count").textContent = $("c-text").value.length + " / 300"; sendTyping(); });
+$("c-text").addEventListener("keydown", e => {
+  if (e.key === "ArrowUp" && !$("c-text").value && !S.editing) { const m = S.list.slice().reverse().find(x => x.uid === S.uid && x.text && !x.call); if (m) { e.preventDefault(); setEdit(m.id); } }
+});
 $("c-text").addEventListener("blur", () => { if (!$("c-text").value) stopTyping(); });
 $("c-form").addEventListener("submit", async e => {
   e.preventDefault();
+  if (!db && S.editing) { const m = S.list.find(x => x.id === S.editing); m.text = clean($("c-text").value); m.edited = true; clearReply(); renderMsgs(S.list); return; }
   if (!db) { toast("Sending works on the live website."); return; }
   const text = clean($("c-text").value).slice(0, 300), img = S.pendingImg, where = S.view;
+  if (S.editing) {
+    const m = S.list.find(x => x.id === S.editing);
+    if (!m) { clearReply(); return; }
+    if (!text && !m.img) { toast("A message can't be empty. Delete it instead."); return; }
+    if (LINK.test(text)) { toast("Links aren't allowed."); return; }
+    if (text === m.text) { clearReply(); return; }
+    const ref = where === "main" ? F.doc(db, "messages", m.id) : F.doc(db, "chats", where, "msgs", m.id);
+    try { await F.updateDoc(ref, { text, edited: true }); clearReply(); } catch (err) { toast("Couldn't save the edit."); }
+    return;
+  }
   if (!text && !img) return;
   if (LINK.test(text)) { toast("Links aren't allowed."); return; }
   const gap = S.lastSend + MIN_GAP - Date.now(); if (gap > 0) await sleep(gap);
@@ -910,12 +955,12 @@ async function startCall(other, video) {
   try {
     const offer = await C.pc.createOffer(); await C.pc.setLocalDescription(offer);
     await F.setDoc(C.ref, { from: S.uid, to: other, video: C.video, state: "ringing", offer: { type: offer.type, sdp: offer.sdp }, at: F.serverTimestamp() });
-  } catch (e) { toast("Couldn't call. You may have been blocked."); endCall(false); return; }
+  } catch (e) { toast("Couldn't call. You may have been blocked."); C.logged = true; endCall(false); return; }
   C.ready = true; C.outQ.splice(0).forEach(sendCand);
   C.unsubs.push(F.onSnapshot(C.ref, async s => {
     const d = s.data(); if (!d || !C.pc) return;
-    if (d.answer && !C.pc.currentRemoteDescription) { try { await C.pc.setRemoteDescription(d.answer); flushIn(); setCallStatus("Connecting…"); stopRing(); } catch (e) {} }
-    if (d.state === "declined") { toast(callName() + " can't talk right now."); endCall(false); }
+    if (d.answer && !C.pc.currentRemoteDescription) { C.logged = true; try { await C.pc.setRemoteDescription(d.answer); flushIn(); setCallStatus("Connecting…"); stopRing(); } catch (e) {} }
+    if (d.state === "declined") { toast(callName() + " can't talk right now."); C.logged = true; logCall("declined", C.other, C.video, 0); endCall(false); }
     else if (d.state === "ended") endCall(false);
   }, () => {}));
   C.ringTimer = setTimeout(() => { if (C.pc && !C.pc.currentRemoteDescription) { toast("No answer."); F.updateDoc(C.ref, { state: "missed" }).catch(() => {}); endCall(false); } }, 40000);
@@ -954,7 +999,27 @@ async function accept(video) {
   } catch (e) { toast("The call ended."); endCall(false); return; }
   C.unsubs.push(F.onSnapshot(C.ref, s => { const x = s.data(); if (!x || x.state === "ended") endCall(false); }, () => {}));
 }
+function logCall(kind, other, video, ms) {
+  if (!db || !other) return;
+  const pair = pairId(S.uid, other), f = S.friends.find(x => x.id === pair && x.status === "accepted"); if (!f) return;
+  const dur = Math.min(86400, Math.round((ms || 0) / 1000));
+  const last = kind === "missed" ? "📞 Missed call" : kind === "declined" ? "📞 Call declined" : "📞 Call · " + mmss(dur * 1000);
+  const go = () => {
+    const b = F.writeBatch(db);
+    b.set(F.doc(db, "limits", S.uid), { last: F.serverTimestamp() });
+    b.set(F.doc(F.collection(db, "chats", pair, "msgs")), { from: S.uid, text: "", call: kind, video: !!video, dur, at: F.serverTimestamp() });
+    b.set(F.doc(db, "chats", pair), { users: f.users, lastAt: F.serverTimestamp(), lastFrom: S.uid, lastText: last });
+    return b.commit();
+  };
+  const wait = Math.max(0, S.lastSend + MIN_GAP - Date.now());
+  setTimeout(() => go().then(() => { S.lastSend = Date.now(); }).catch(() => setTimeout(() => go().catch(() => {}), 1500)), wait);
+}
 function endCall(notify) {
+  if (C.role === "caller" && C.other) {
+    if (C.startedAt) logCall("ended", C.other, C.video, Date.now() - C.startedAt);
+    else if (!C.logged) logCall("missed", C.other, C.video, 0);
+  }
+  C.logged = false;
   if (C.incoming) { if (notify && db) F.updateDoc(F.doc(db, "calls", C.incoming.id), { state: "declined" }).catch(() => {}); C.incoming = null; }
   if (notify && C.ref) F.updateDoc(C.ref, { state: "ended" }).catch(() => {});
   clearTimeout(C.ringTimer); clearInterval(C.timer); stopRing();
@@ -997,6 +1062,7 @@ document.addEventListener("click", async e => {
   }
   const re = t.closest("[data-rxe]"); if (re) { $("rx-pop").hidden = true; react(S.rxFor, re.dataset.rxe); return; }
   const rx = t.closest("[data-react]"); if (rx) { react(rx.dataset.react, rx.dataset.e); return; }
+  const ed = t.closest("[data-edit]"); if (ed) { setEdit(ed.dataset.edit); return; }
   const rpl = t.closest("[data-reply]"); if (rpl) { setReply(rpl.dataset.reply); return; }
   const jm = t.closest("[data-jump]"); if (jm) { const el = $("m-" + jm.dataset.jump); if (el) { el.scrollIntoView({ block: "center", behavior: "smooth" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1400); } else toast("That message is too old to show."); return; }
   const im = t.closest("#msgs img[data-imgid]"); if (im && im.src) { $("lb-img").src = im.src; $("lightbox").hidden = false; return; }
@@ -1043,7 +1109,7 @@ document.addEventListener("click", async e => {
     try { await b.commit(); $("modal").hidden = true; toast("Saved"); } catch (err) { $("l-msg").innerHTML = '<span class="err">That rankings name is already linked to another account.</span>'; }
   }
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape") { $("modal").hidden = true; $("lightbox").hidden = true; $("emoji-pop").hidden = true; $("rx-pop").hidden = true; if (S.replyTo) clearReply(); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("modal").hidden = true; $("lightbox").hidden = true; $("emoji-pop").hidden = true; $("rx-pop").hidden = true; if (S.replyTo || S.editing) clearReply(); } });
 
 // ======================= PREVIEW (no connection) =======================
 function demo() {
@@ -1069,6 +1135,12 @@ function demo() {
   renderLists();
   renderMsgs(list);
   S.typers = { o: { name: "Ottal", at: now } }; S.typeSeen = { o: now + 60000 * 60 }; drawTyping();
+  if (location.hash === "#dm") { S.view = "j_me"; renderLists(); renderMsgs([
+    { id: "p", uid: "j", text: "u on?", at: new Date(now - 3600000) },
+    { id: "q", uid: "me", call: "missed", video: false, at: new Date(now - 3500000) },
+    { id: "r", uid: "j", call: "missed", video: true, at: new Date(now - 1800000) },
+    { id: "s", uid: "me", call: "ended", video: false, dur: 754, at: new Date(now - 600000) },
+    { id: "t", uid: "j", text: "gg that was close", at: new Date(now - 50000) }]); }
   if (location.hash === "#call") { C.other = "j"; drawCall("incoming", "Incoming video call"); }
   if (location.hash === "#incall") { C.other = "j"; C.video = true; C.startedAt = now - 83000; drawCall("in", "1:23"); $("call-time").textContent = "1:23"; $("call-time").hidden = false; }
 }
