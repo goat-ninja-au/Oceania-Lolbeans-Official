@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oceania Community</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap">
+<style>
+/* Layout: site header, then the community app. Signed out: a sign-in card. Signed in: three columns
+   (friends & chats | conversation | who's online). On phones the three panels become tabs. */
+:root {
+  --bg: #c3e1f4; --panel: #ffffff; --panel-2: #acd3ec; --soft: #eef7fd; --line: #98c5e2; --row: #e3eff7;
+  --text: #0c2a43; --muted: #3a5a73; --blue: #1478c2; --blue-hover: #0f62a0; --navy: #0c2a43; --mine: #dbeefb;
+  --green: #22a447; --red: #d9505c;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+:root[data-mode="dark"] {
+  --bg: #0d1a26; --panel: #142636; --panel-2: #1c3346; --soft: #10202e; --line: #27445c; --row: #1c3346;
+  --text: #e6f1f9; --muted: #9cb6c9; --blue: #4aa8f0; --blue-hover: #6bb9f5; --navy: #071420; --mine: #17324a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; line-height: 1.15; font-weight: 800; }
+p { margin: 0; }
+a { color: inherit; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+
+header.site { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header.site .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-block: 10px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; font-size: 1.05rem; margin-right: auto; }
+.brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.brand .mark { width: 40px; height: 40px; border-radius: 8px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .9rem; }
+nav.main { display: flex; flex-wrap: wrap; gap: 2px; }
+nav.main a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: .95rem; padding: 8px 12px; border-radius: 8px; }
+nav.main a:hover { color: var(--text); background: var(--panel-2); }
+.mode { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); font-size: 1.05rem; }
+
+.intro { padding-block: 26px 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px; }
+.eyebrow { color: var(--blue); font-weight: 800; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; }
+.intro h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); font-weight: 900; }
+.intro p { color: var(--muted); }
+.testnote { background: var(--panel); border: 1px solid #d99a00; border-radius: 12px; padding: 10px 14px; font-size: .88rem; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); text-decoration: none; }
+.btn:hover { border-color: var(--blue); }
+.btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.btn.primary:hover { background: var(--blue-hover); }
+.btn.small { padding: 6px 11px; font-size: .84rem; border-radius: 8px; }
+.btn.danger { color: var(--red); }
+.btn:disabled { opacity: .5; cursor: default; }
+.field { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; }
+.muted { color: var(--muted); }
+.err { color: #c0352b; font-weight: 700; }
+
+/* ---------- sign-in / setup cards ---------- */
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(18px, 4vw, 28px); }
+.gate { max-width: 460px; margin: 10px auto 60px; display: grid; gap: 14px; }
+.gate h2 { font-size: 1.4rem; }
+.google { background: #fff; color: #1f1f1f; border: 1px solid #dadce0; width: 100%; padding: 11px; }
+.google svg { width: 18px; height: 18px; }
+.or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .82rem; }
+.or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.gate form { display: grid; gap: 10px; }
+.gate label { display: grid; gap: 4px; font-size: .85rem; font-weight: 700; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--blue); font-weight: 700; }
+.linkbtn:hover { text-decoration: underline; }
+.small-print { font-size: .8rem; color: var(--muted); }
+
+/* ---------- app ---------- */
+.mtabs { display: none; gap: 6px; margin-bottom: 10px; }
+.mtabs button { flex: 1; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 8px; font-weight: 700; color: var(--muted); position: relative; }
+.mtabs button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.app { display: grid; grid-template-columns: 270px minmax(0, 1fr) 240px; gap: 14px; height: min(76vh, 720px); min-height: 480px; margin-bottom: 40px; }
+.pane { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+.pane h3 { font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 14px 14px 6px; }
+.scroll { overflow-y: auto; min-height: 0; flex: 1; padding-bottom: 8px; }
+.me { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 10px; align-items: center; padding: 14px; border-bottom: 1px solid var(--row); background: var(--soft); }
+.me b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.me small { display: block; font-size: .8rem; }
+.me-actions { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+.av { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: .9rem; position: relative; flex: none; background-size: cover; background-position: center; }
+.av.lg { width: 46px; height: 46px; font-size: 1.1rem; }
+.av.xl { width: 72px; height: 72px; font-size: 1.6rem; }
+.av .on { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: var(--green); border: 2px solid var(--panel); }
+.item { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 14px; width: 100%; text-align: left; border: 0; background: none; }
+.item:hover { background: var(--soft); }
+.item[aria-current="true"] { background: var(--mine); }
+.item b { display: block; font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item small { display: block; font-size: .78rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.badge { background: var(--red); color: #fff; border-radius: 999px; font-size: .72rem; font-weight: 800; padding: 1px 7px; min-width: 20px; text-align: center; }
+.hash { width: 36px; height: 36px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 900; }
+.req { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 14px; }
+.req .acts { grid-column: 2; display: flex; gap: 6px; }
+.empty { color: var(--muted); font-size: .85rem; padding: 6px 14px; }
+
+.conv-top { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--row); background: var(--soft); }
+.conv-top .ttl { flex: 1; min-width: 0; }
+.conv-top b { display: block; } .conv-top small { color: var(--muted); font-size: .8rem; }
+.msgs { overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; overscroll-behavior: contain; }
+.msg { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: start; }
+.msg .av { width: 34px; height: 34px; cursor: pointer; }
+.msg .meta { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.msg .meta b { font-size: .92rem; cursor: pointer; } .msg .meta b:hover { text-decoration: underline; }
+.msg .meta .pl { font-size: .72rem; font-weight: 800; color: var(--blue); }
+.msg .meta time { font-size: .74rem; color: var(--muted); }
+.msg .text { overflow-wrap: anywhere; white-space: pre-wrap; }
+.msg.mine .bub { background: var(--mine); border-radius: 10px; padding: 6px 10px; margin: -6px -10px; }
+.msg .del { opacity: .55; background: none; border: 0; padding: 2px 4px; font-size: .9rem; }
+.msg .del:hover { opacity: 1; }
+.day { align-self: center; font-size: .74rem; font-weight: 700; color: var(--muted); background: var(--soft); border-radius: 999px; padding: 3px 10px; }
+.composer { border-top: 1px solid var(--row); padding: 10px 12px; display: grid; gap: 6px; }
+.composer form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.send { background: var(--blue); color: #fff; border: 0; border-radius: 10px; padding: 0 18px; font-weight: 800; }
+.send:disabled { opacity: .5; }
+.hint { font-size: .78rem; color: var(--muted); display: flex; justify-content: space-between; gap: 10px; }
+
+/* profile pop-up */
+.modal { position: fixed; inset: 0; z-index: 50; background: rgba(7,17,28,.55); display: grid; place-items: center; padding: 16px; }
+.modal .card { width: min(380px, 100%); display: grid; gap: 12px; text-align: center; justify-items: center; position: relative; }
+.modal .x { position: absolute; right: 10px; top: 8px; background: none; border: 0; font-size: 1.3rem; color: var(--muted); }
+.modal .acts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.modal textarea { width: 100%; min-height: 80px; resize: vertical; }
+.status-pill { font-size: .78rem; font-weight: 700; color: var(--muted); }
+.status-pill.on { color: var(--green); }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 10px; font-weight: 600; z-index: 60; }
+
+@media (max-width: 980px) {
+  .mtabs { display: flex; }
+  .app { grid-template-columns: 1fr; height: auto; min-height: 0; }
+  .app > .pane { display: none; height: 72vh; }
+  .app[data-tab="side"] > .side, .app[data-tab="conv"] > .conv, .app[data-tab="online"] > .online { display: flex; }
+}
+.menu-btn { display: none; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); font-size: 1.2rem; }
+@media (max-width: 760px) {
+  .menu-btn { display: inline-grid; place-items: center; }
+  .brand { flex: 1 1 0; min-width: 0; font-size: .95rem; line-height: 1.2; gap: 10px; }
+  header.site .wrap { gap: 8px; }
+  nav.main { display: none; order: 9; width: 100%; flex-direction: column; padding-bottom: 6px; }
+  header.site.open nav.main { display: flex; }
+  nav.main a { padding: 11px 12px; border-bottom: 1px solid var(--row); border-radius: 0; }
+}
+footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
+    <nav class="main" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="rankings.html" id="nav-rankings">Rankings</a>
+      <a href="rankings.html?s=records" id="nav-records">Records</a>
+      <a href="rankings.html?s=fame" id="nav-halloffame">Hall of Fame</a>
+      <a href="news.html">News</a>
+      <a href="academy.html">Academy</a>
+      <a href="index.html#tournaments">Tournaments</a>
+      <a href="join.html">Join</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+    <button class="menu-btn" type="button" id="menu" aria-label="Menu" aria-expanded="false">☰</button>
+    <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="intro">
+    <div><div class="eyebrow">Oceania LOLBeans</div><h1>Community</h1><p>Chat with the Oceania community, see who's online and message your friends.</p></div>
+    <div class="testnote"><b>Test version.</b> Not linked in the menu yet.</div>
+  </div>
+
+  <div id="loading" class="card gate"><p class="muted">Connecting…</p></div>
+
+  <!-- Signed out -->
+  <section id="gate" class="card gate" hidden>
+    <h2>Sign in to join the chat</h2>
+    <p class="muted">Use your Google account, or sign up with an email and password.</p>
+    <button class="btn google" type="button" id="g-btn"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.9 6.2C12.5 13.5 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.3 5.7c4.3-3.9 7-9.8 7-17.1z"/><path fill="#FBBC05" d="M10.6 28.6A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-7.9-6.2A24 24 0 0 0 0 24c0 3.9.9 7.5 2.7 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.3-5.7c-2 1.4-4.7 2.3-8.6 2.3-6.2 0-11.5-4-13.4-9.6l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>Continue with Google</button>
+    <div class="or">or</div>
+    <form id="e-form">
+      <label>Email<input class="field" type="email" id="e-email" autocomplete="email" required></label>
+      <label>Password<input class="field" type="password" id="e-pass" autocomplete="current-password" minlength="6" required></label>
+      <button class="btn primary" type="submit" id="e-submit">Sign in</button>
+    </form>
+    <p class="small-print"><span id="e-switch-text">New here?</span> <button class="linkbtn" type="button" id="e-switch">Create an account</button> · <button class="linkbtn" type="button" id="e-forgot">Forgot password</button></p>
+    <p id="gate-msg" class="small-print"></p>
+    <p class="small-print">Be kind. Bullying, spam or anything inappropriate gets you banned from the site.</p>
+  </section>
+
+  <!-- Email not verified yet -->
+  <section id="verify" class="card gate" hidden>
+    <h2>Check your email</h2>
+    <p>We sent a link to <b id="v-email"></b>. Open it to confirm your account, then come back here.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" id="v-done">I've confirmed it</button><button class="btn" type="button" id="v-resend">Send again</button><button class="btn" type="button" data-signout>Sign out</button></div>
+    <p id="v-msg" class="small-print"></p>
+  </section>
+
+  <!-- First time: pick a username -->
+  <section id="setup" class="card gate" hidden>
+    <h2>Set up your profile</h2>
+    <form id="s-form">
+      <label>Username<input class="field" id="s-name" maxlength="20" placeholder="3 to 20 characters" required></label>
+      <label>Are you on the Oceania rankings? (optional)<input class="field" id="s-player" list="rank-names" placeholder="Start typing your rankings name"></label>
+      <datalist id="rank-names"></datalist>
+      <p class="small-print">Linking shows "See ranking" on your profile. Each ranked name can only be linked to one account. Your username can't be changed later.</p>
+      <button class="btn primary" type="submit" id="s-save">Save and join</button>
+    </form>
+    <p id="s-msg" class="small-print"></p>
+    <button class="linkbtn small-print" type="button" data-signout>Sign out</button>
+  </section>
+
+  <!-- Banned -->
+  <section id="banned" class="card gate" hidden>
+    <h2>You can't use the community</h2>
+    <p class="muted">This account has been banned. If you think this is a mistake, message the server owner on Discord.</p>
+    <button class="btn" type="button" data-signout>Sign out</button>
+  </section>
+
+  <!-- The app -->
+  <section id="appwrap" hidden>
+    <div class="mtabs" role="group" aria-label="Show">
+      <button type="button" data-mtab="side" aria-pressed="false">Friends <span class="badge" id="mt-badge" hidden></span></button>
+      <button type="button" data-mtab="conv" aria-pressed="true">Chat</button>
+      <button type="button" data-mtab="online" aria-pressed="false">Online <span id="mt-online"></span></button>
+    </div>
+    <div class="app" id="app" data-tab="conv">
+      <aside class="pane side">
+        <div class="me" id="me"></div>
+        <div class="scroll">
+          <h3>Chats</h3>
+          <button class="item" type="button" data-open="main" id="open-main"><span class="hash">#</span><span><b>Main chat</b><small>Everyone</small></span><span></span></button>
+          <div id="dm-list"></div>
+          <div id="req-wrap"><h3>Friend requests</h3><div id="req-list"></div></div>
+          <div id="sent-wrap"><h3>Sent requests</h3><div id="sent-list"></div></div>
+          <div id="admin-wrap" hidden><h3>Reports (admin)</h3><div id="report-list"></div></div>
+        </div>
+      </aside>
+      <section class="pane conv">
+        <div class="conv-top" id="conv-top"></div>
+        <div class="msgs" id="msgs" aria-live="polite"></div>
+        <div class="composer">
+          <form id="c-form"><input class="field" id="c-text" maxlength="300" placeholder="Message" autocomplete="off"><button class="send" type="submit" id="c-send">Send</button></form>
+          <div class="hint"><span id="c-hint">No links. Be nice.</span><span id="c-count">0 / 300</span></div>
+        </div>
+      </section>
+      <aside class="pane online">
+        <h3>Online now · <span id="on-count">0</span></h3>
+        <div class="scroll" id="online-list"></div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden><div class="card" id="modal-card"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<footer>
+  <div class="wrap">
+    <span>© Oceania LOLBeans Official</span>
+    <span>A fan community, not affiliated with the LOLBeans developers.</span>
+  </div>
+</footer>
+
+<script type="module">
+// ======================= SETTINGS =======================
+const FIREBASE = {
+  apiKey: "AIzaSyBNKv8QM7kR4Y_yA0djMPo87y7fqw2jseA",
+  authDomain: "oceania-lolbeans.firebaseapp.com",
+  projectId: "oceania-lolbeans",
+  appId: "1:186827295273:web:530769127fde65c829ea38"
+};
+const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
+const ADMINS = ["shinobilolbean@gmail.com"];     // these Google/email accounts get the mod tools
+const ONLINE_MINUTES = 5;                         // "online" = active in the last 5 minutes
+const HEARTBEAT = 120;                            // seconds between "I'm here" pings
+const COOLDOWN = 5;                               // seconds between messages
+const RANKINGS_CSV = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
+const PHOTOS_CSV = "https://docs.google.com/spreadsheets/d/12D4wvMVKNqAoot5Ytk2ttgE-CZPNSUCPfktiAiGIE6w/gviz/tq?tqx=out:csv&sheet=Photos";
+const BAD = ["fuck", "shit", "bitch", "cunt", "dick", "pussy", "nigger", "nigga", "faggot", "fag", "retard", "slut", "whore", "porn", "sex"];
+
+// ======================= HELPERS =======================
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const COLORS = ["#1478c2", "#2f9e08", "#7a5cf0", "#d99a00", "#d9505c", "#0f9aa8", "#c27a3a", "#4b5bdc", "#b0479a"];
+const color = n => { let h = 0; for (const ch of String(n)) h = (h * 31 + ch.codePointAt(0)) >>> 0; return COLORS[h % COLORS.length]; };
+const LINK = /(https?:\/\/|www\.|discord\.gg|[a-z0-9-]+\.(com|net|org|gg|io|xyz|ly|me|co)(\/|$|\s))/i;
+const badRe = BAD.map(w => new RegExp("(?<![a-z])" + w.split("").join("[\\W_]*"), "gi"));
+const clean = s => { let t = String(s).replace(/\s+/g, " ").trim(); badRe.forEach(r => { t = t.replace(r, m => "*".repeat(m.length)); }); return t; };
+const isBad = s => badRe.some(r => { r.lastIndex = 0; return r.test(s); });
+const pairId = (a, b) => [a, b].sort().join("_");
+const timeLabel = d => d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+function dayLabel(d) {
+  const t = new Date(), y = new Date(); y.setDate(t.getDate() - 1);
+  if (d.toDateString() === t.toDateString()) return "Today";
+  if (d.toDateString() === y.toDateString()) return "Yesterday";
+  return d.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" });
+}
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+function toast(t) { const el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 2600); }
+function show(id) { ["loading", "gate", "verify", "setup", "banned", "appwrap"].forEach(x => { $(x).hidden = x !== id; }); }
+function parseCSV(s) {
+  const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < s.length; i++) { const c = s[i];
+    if (q) { if (c === '"') { if (s[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true; else if (c === ",") { row.push(f); f = ""; } else if (c === "\n") { row.push(f); rows.push(row); row = []; f = ""; } else if (c !== "\r") f += c; }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  return rows;
+}
+
+$("menu").addEventListener("click", () => { const o = document.querySelector("header.site").classList.toggle("open"); $("menu").setAttribute("aria-expanded", String(o)); $("menu").textContent = o ? "✕" : "☰"; });
+// Dark mode (shared with the site)
+function setMode(dark) {
+  document.documentElement.setAttribute("data-mode", dark ? "dark" : "light");
+  $("mode").textContent = dark ? "☀" : "☾"; $("mode").setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+  store("olb-mode", dark ? "dark" : "light");
+}
+$("mode").addEventListener("click", () => setMode(document.documentElement.getAttribute("data-mode") !== "dark"));
+if (store("olb-mode") === "dark") setMode(true);
+
+// ======================= RANKINGS (names + approved photos) =======================
+let RANK = [], RANKSET = {}, PHOTOS = {};
+async function loadRankings() {
+  try {
+    const rows = parseCSV(await (await fetch(RANKINGS_CSV)).text());
+    let started = false;
+    for (const r of rows) { const place = String(r[1] || "").trim(), name = String(r[2] || "").trim();
+      if (/^\d+$/.test(place) && name && !/record times/i.test(name)) { started = true; RANK.push({ name, place: +place }); RANKSET[name.toLowerCase()] = { name, place: +place }; }
+      else if (started && !name) break; }
+    $("rank-names").innerHTML = RANK.map(p => '<option value="' + esc(p.name) + '">').join("");
+  } catch (e) {}
+  try {
+    const rows = parseCSV(await (await fetch(PHOTOS_CSV)).text());
+    rows.slice(1).forEach(r => { if (!/^true$/i.test(String(r[4] || "").trim())) return; let nm = String(r[2] || "").trim(); if (!nm || nm[0] === "(") nm = String(r[1] || "").trim(); if (/^https:\/\//.test(r[3] || "")) PHOTOS[nm.toLowerCase()] = String(r[3]).trim(); });
+  } catch (e) {}
+}
+
+// ======================= STATE =======================
+const S = { uid: null, me: null, admin: false, users: {}, online: [], friends: [], chats: {}, reads: {}, blocked: {}, view: "main", unsubMsgs: null, cooldownUntil: 0, reports: [] };
+const isOnline = u => u && u.lastSeen && Date.now() - u.lastSeen.toMillis() < ONLINE_MINUTES * 60000;
+function photoOf(u) { if (!u) return ""; const p = u.playerLower && PHOTOS[u.playerLower]; return p || u.photo || ""; }
+function avatar(u, cls) {
+  const name = u ? u.name : "?", ph = photoOf(u);
+  return '<span class="av ' + (cls || "") + '" style="background-color:' + color(name) + (ph ? ";background-image:url('" + esc(ph) + "')" : "") + '">' + (ph ? "" : esc((Array.from(name)[0] || "?").toUpperCase())) + (isOnline(u) ? '<i class="on" title="Online"></i>' : "") + "</span>";
+}
+function friendOf(uid) { return S.friends.find(f => f.users.includes(uid)); }
+
+// ======================= RENDER =======================
+function renderMe() {
+  const u = S.me; if (!u) return;
+  $("me").innerHTML = avatar(u, "lg") + '<div><b>' + esc(u.name) + "</b>" + (u.player ? '<small><a href="rankings.html?player=' + encodeURIComponent(u.player) + '">' + esc(u.player) + " · See ranking ›</a></small>" : '<small class="muted">Not linked to the rankings</small>') + "</div>" +
+    '<div class="me-actions"><button class="btn small" type="button" id="edit-link">' + (u.player ? "Change ranking link" : "Link my ranking") + '</button><button class="btn small" type="button" data-signout>Sign out</button></div>';
+}
+function renderLists() {
+  const me = S.uid;
+  // DMs (accepted friends)
+  const acc = S.friends.filter(f => f.status === "accepted").map(f => ({ f, other: f.users.find(x => x !== me) }));
+  acc.sort((a, b) => ((S.chats[b.f.id] && S.chats[b.f.id].lastAt && S.chats[b.f.id].lastAt.toMillis()) || 0) - ((S.chats[a.f.id] && S.chats[a.f.id].lastAt && S.chats[a.f.id].lastAt.toMillis()) || 0));
+  let unreadTotal = 0;
+  $("dm-list").innerHTML = acc.length ? acc.map(({ f, other }) => {
+    const u = S.users[other] || { name: "…" }, c = S.chats[f.id], r = S.reads[f.id];
+    const unread = c && c.lastAt && c.lastFrom !== me && (!r || !r.at || r.at.toMillis() < c.lastAt.toMillis());
+    if (unread) unreadTotal++;
+    return '<button class="item" type="button" data-open="' + f.id + '"' + (S.view === f.id ? ' aria-current="true"' : "") + ">" + avatar(u) + "<span><b>" + esc(u.name) + "</b><small>" + (c && c.lastText ? esc((c.lastFrom === me ? "You: " : "") + c.lastText) : "Say hi 👋") + "</small></span>" + (unread ? '<span class="badge">new</span>' : "<span></span>") + "</button>";
+  }).join("") : '<p class="empty">No friends yet. Tap someone in Online or the chat to add them.</p>';
+  $("open-main").setAttribute("aria-current", String(S.view === "main"));
+  $("mt-badge").hidden = !unreadTotal; $("mt-badge").textContent = unreadTotal;
+  // requests
+  const inc = S.friends.filter(f => f.status === "pending" && f.to === me), out = S.friends.filter(f => f.status === "pending" && f.from === me);
+  $("req-wrap").hidden = !inc.length; $("sent-wrap").hidden = !out.length;
+  $("req-list").innerHTML = inc.map(f => { const u = S.users[f.from] || { name: "…" }; return '<div class="req">' + avatar(u) + '<span><b data-user="' + f.from + '" style="cursor:pointer">' + esc(u.name) + '</b></span><div class="acts"><button class="btn small primary" type="button" data-accept="' + f.id + '">Accept</button><button class="btn small" type="button" data-decline="' + f.id + '">Decline</button></div></div>'; }).join("");
+  $("sent-list").innerHTML = out.map(f => { const u = S.users[f.to] || { name: "…" }; return '<div class="req">' + avatar(u) + '<span><b>' + esc(u.name) + '</b><small class="muted"> Waiting…</small></span><div class="acts"><button class="btn small" type="button" data-decline="' + f.id + '">Cancel</button></div></div>'; }).join("");
+  // online
+  const on = S.online.filter(isOnline).sort((a, b) => a.name.localeCompare(b.name));
+  $("on-count").textContent = on.length; $("mt-online").textContent = "(" + on.length + ")";
+  $("online-list").innerHTML = on.length ? on.map(u => '<button class="item" type="button" data-user="' + u.uid + '">' + avatar(u) + "<span><b>" + esc(u.name) + (u.uid === me ? ' <span class="muted" style="font-weight:500">(you)</span>' : "") + "</b><small>" + (u.player ? esc(u.player) + (RANKSET[u.playerLower] ? " · #" + RANKSET[u.playerLower].place : "") : "&nbsp;") + "</small></span><span></span></button>").join("") : '<p class="empty">Nobody else is online right now.</p>';
+  // admin reports
+  $("admin-wrap").hidden = !S.admin;
+  if (S.admin) $("report-list").innerHTML = S.reports.length ? S.reports.map(r => { const a = S.users[r.by] || { name: "…" }, b = S.users[r.against] || { name: "…" }; return '<div class="req">' + avatar(b) + '<span><b>' + esc(b.name) + '</b><small class="muted"> reported by ' + esc(a.name) + "</small><br><small>" + esc(r.reason || "") + '</small></span><div class="acts"><button class="btn small" type="button" data-viewreport="' + r.id + '">View chat</button><button class="btn small danger" type="button" data-ban="' + r.against + '">Ban</button><button class="btn small" type="button" data-closereport="' + r.id + '">Dismiss</button></div></div>'; }).join("") : '<p class="empty">No reports.</p>';
+  renderConvTop();
+}
+function renderConvTop() {
+  if (S.view === "main") { $("conv-top").innerHTML = '<span class="hash">#</span><div class="ttl"><b>Main chat</b><small>Everyone in the Oceania community</small></div>'; return; }
+  const f = S.friends.find(x => x.id === S.view), other = S.view.split("_").find(x => x !== S.uid), u = S.users[other] || { name: "…" };
+  $("conv-top").innerHTML = avatar(u) + '<div class="ttl"><b>' + esc(u.name) + "</b><small>" + (isOnline(u) ? '<span class="status-pill on">● Online</span>' : "Offline") + (S.adminView ? " · viewing a reported chat" : "") + '</small></div><button class="btn small" type="button" data-user="' + other + '">Profile</button>';
+}
+function renderMsgs(list) {
+  const box = $("msgs"), near = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  if (!list.length) { box.innerHTML = '<p class="empty" style="margin:auto">' + (S.view === "main" ? "No messages yet. Say hi!" : "No messages yet. Say hi 👋") + "</p>"; return; }
+  let html = "", last = "";
+  for (const m of list) {
+    const d = m.at || new Date(), day = dayLabel(d);
+    if (day !== last) { html += '<span class="day">' + esc(day) + "</span>"; last = day; }
+    const u = S.users[m.uid] || { name: m.name || "?", uid: m.uid };
+    if (S.blocked[m.uid] && S.view === "main") continue;
+    html += '<div class="msg' + (m.uid === S.uid ? " mine" : "") + '"><span data-user="' + esc(m.uid) + '">' + avatar(u) + '</span><div class="bub"><div class="meta"><b data-user="' + esc(m.uid) + '">' + esc(u.name || m.name) + "</b>" + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + "<time>" + timeLabel(d) + '</time></div><div class="text">' + esc(m.text) + "</div></div>" +
+      (S.admin && S.view === "main" ? '<button class="del" type="button" title="Delete message" data-delmsg="' + m.id + '">🗑</button>' : "<span></span>") + "</div>";
+  }
+  box.innerHTML = html;
+  if (near || renderMsgs.first) { box.scrollTop = box.scrollHeight; renderMsgs.first = false; }
+}
+function profileCard(uid) {
+  const u = S.users[uid]; if (!u) return;
+  const me = uid === S.uid, f = friendOf(uid), blocked = !!S.blocked[uid];
+  let acts = "";
+  if (!me) {
+    if (blocked) acts += '<button class="btn small" type="button" data-unblock="' + uid + '">Unblock</button>';
+    else if (!f) acts += '<button class="btn small primary" type="button" data-addfriend="' + uid + '">Add friend</button>';
+    else if (f.status === "pending" && f.to === S.uid) acts += '<button class="btn small primary" type="button" data-accept="' + f.id + '">Accept friend request</button>';
+    else if (f.status === "pending") acts += '<button class="btn small" type="button" disabled>Request sent</button>';
+    else acts += '<button class="btn small primary" type="button" data-open="' + f.id + '">Message</button><button class="btn small" type="button" data-unfriend="' + f.id + '">Unfriend</button>';
+    if (!blocked) acts += '<button class="btn small" type="button" data-block="' + uid + '">Block</button>';
+    acts += '<button class="btn small danger" type="button" data-report="' + uid + '">Report</button>';
+    if (S.admin) acts += '<button class="btn small danger" type="button" data-ban="' + uid + '">Ban</button>';
+  }
+  $("modal-card").innerHTML = '<button class="x" type="button" data-close aria-label="Close">×</button>' + avatar(u, "xl") + "<div><h2 style=\"font-size:1.3rem\">" + esc(u.name) + '</h2><span class="status-pill' + (isOnline(u) ? " on" : "") + '">' + (isOnline(u) ? "● Online" : "Offline") + "</span></div>" +
+    (u.player ? '<p><b>' + esc(u.player) + "</b>" + (RANKSET[u.playerLower] ? " · Oceania #" + RANKSET[u.playerLower].place : "") + '<br><a class="btn small" href="rankings.html?player=' + encodeURIComponent(u.player) + '">See ranking ›</a></p>' : '<p class="muted">Not linked to the rankings</p>') +
+    '<div class="acts">' + acts + "</div>";
+  $("modal").hidden = false;
+}
+
+// ======================= FIREBASE =======================
+let fb, db, auth, F;
+async function start() {
+  try {
+    const [app, a, fs] = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js"), import(SDK + "firebase-firestore.js")]);
+    fb = { app, a, fs }; F = fs;
+  } catch (e) { return demo(); }
+  const app = fb.app.initializeApp(FIREBASE);
+  auth = fb.a.getAuth(app); db = F.getFirestore(app);
+  loadRankings();
+  try { await fb.a.getRedirectResult(auth); } catch (e) {}
+  fb.a.onAuthStateChanged(auth, async user => {
+    stopAll();
+    if (!user || user.isAnonymous) { show("gate"); return; }
+    S.uid = user.uid; S.admin = ADMINS.includes(String(user.email || "").toLowerCase()) && (user.emailVerified || user.providerData.some(p => p.providerId === "google.com"));
+    const google = user.providerData.some(p => p.providerId === "google.com");
+    if (!google && !user.emailVerified) { $("v-email").textContent = user.email; show("verify"); return; }
+    try { if ((await F.getDoc(F.doc(db, "banned", user.uid))).exists()) { show("banned"); return; } } catch (e) {}
+    const snap = await F.getDoc(F.doc(db, "users", user.uid)).catch(() => null);
+    if (!snap || !snap.exists()) { $("s-name").value = (user.displayName || "").replace(/[^A-Za-z0-9_ .()-]/g, "").slice(0, 20); show("setup"); return; }
+    enterApp(user);
+  });
+}
+const unsubs = []; let beat = null;
+function stopAll() { unsubs.splice(0).forEach(u => { try { u(); } catch (e) {} }); if (S.unsubMsgs) { S.unsubMsgs(); S.unsubMsgs = null; } clearInterval(beat); }
+function watchUser(uid) {
+  if (S.users[uid] || watchUser.w[uid]) return; watchUser.w[uid] = 1;
+  F.getDoc(F.doc(db, "users", uid)).then(s => { if (s.exists()) { S.users[uid] = { uid, ...s.data() }; renderLists(); if (S.view === "main") openView("main", true); } }).catch(() => {});
+}
+watchUser.w = {};
+function enterApp(user) {
+  show("appwrap");
+  const ping = () => F.updateDoc(F.doc(db, "users", S.uid), { lastSeen: F.serverTimestamp() }).catch(() => {});
+  ping(); beat = setInterval(ping, HEARTBEAT * 1000);
+  unsubs.push(F.onSnapshot(F.doc(db, "users", S.uid), s => { if (s.exists()) { S.me = { uid: S.uid, ...s.data() }; S.users[S.uid] = S.me; renderMe(); } }));
+  const since = () => F.Timestamp.fromMillis(Date.now() - ONLINE_MINUTES * 60000);
+  const watchOnline = () => F.onSnapshot(F.query(F.collection(db, "users"), F.where("lastSeen", ">", since())), s => { S.online = s.docs.map(d => ({ uid: d.id, ...d.data() })); S.online.forEach(u => { S.users[u.uid] = u; }); renderLists(); });
+  let onUnsub = watchOnline(); unsubs.push(() => onUnsub());
+  const refresh = setInterval(() => { onUnsub(); onUnsub = watchOnline(); }, 60000); unsubs.push(() => clearInterval(refresh));
+  unsubs.push(F.onSnapshot(F.query(F.collection(db, "friends"), F.where("users", "array-contains", S.uid)), s => { S.friends = s.docs.map(d => ({ id: d.id, ...d.data() })); S.friends.forEach(f => f.users.forEach(watchUser)); renderLists(); }));
+  unsubs.push(F.onSnapshot(F.query(F.collection(db, "chats"), F.where("users", "array-contains", S.uid)), s => { S.chats = {}; s.docs.forEach(d => { S.chats[d.id] = d.data(); }); renderLists(); }));
+  unsubs.push(F.onSnapshot(F.collection(db, "users", S.uid, "reads"), s => { S.reads = {}; s.docs.forEach(d => { S.reads[d.id] = d.data(); }); renderLists(); }));
+  unsubs.push(F.onSnapshot(F.collection(db, "users", S.uid, "blocked"), s => { S.blocked = {}; s.docs.forEach(d => { S.blocked[d.id] = true; }); renderLists(); }));
+  if (S.admin) unsubs.push(F.onSnapshot(F.collection(db, "reports"), s => { S.reports = s.docs.map(d => ({ id: d.id, ...d.data() })); S.reports.forEach(r => { watchUser(r.by); watchUser(r.against); }); renderLists(); }, () => {}));
+  openView("main");
+}
+function openView(id, keep) {
+  if (!keep) S.adminView = false;
+  if (S.unsubMsgs) { S.unsubMsgs(); S.unsubMsgs = null; }
+  S.view = id; renderMsgs.first = true; $("msgs").innerHTML = '<p class="empty" style="margin:auto">Loading…</p>';
+  renderLists();
+  const ref = id === "main" ? F.query(F.collection(db, "messages"), F.orderBy("createdAt", "desc"), F.limit(80)) : F.query(F.collection(db, "chats", id, "msgs"), F.orderBy("at", "desc"), F.limit(100));
+  S.unsubMsgs = F.onSnapshot(ref, s => {
+    const list = s.docs.map(d => { const x = d.data(); const uid = id === "main" ? x.uid : x.from; watchUser(uid); return { id: d.id, uid, name: x.name, text: x.text, at: (x.createdAt || x.at) ? (x.createdAt || x.at).toDate() : null }; }).reverse();
+    renderMsgs(list);
+    if (id !== "main" && !S.adminView) F.setDoc(F.doc(db, "users", S.uid, "reads", id), { at: F.serverTimestamp() }).catch(() => {});
+  }, () => { $("msgs").innerHTML = '<p class="empty" style="margin:auto">This conversation isn\'t available.</p>'; });
+  const isFriendChat = id === "main" || (S.friends.find(f => f.id === id && f.status === "accepted"));
+  $("c-text").disabled = $("c-send").disabled = !isFriendChat || S.adminView;
+  $("c-text").placeholder = id === "main" ? "Message the main chat" : "Message";
+  if (window.matchMedia("(max-width: 980px)").matches) setTab("conv");
+}
+function setTab(t) { $("app").dataset.tab = t; document.querySelectorAll("[data-mtab]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mtab === t))); }
+
+// ---------- sending ----------
+$("c-text").addEventListener("input", () => { $("c-count").textContent = $("c-text").value.length + " / 300"; });
+$("c-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!db) { toast("Sending works on the live website."); return; }
+  const text = clean($("c-text").value).slice(0, 300);
+  if (!text) return;
+  if (LINK.test(text)) { toast("Links aren't allowed."); return; }
+  const wait = Math.ceil((S.cooldownUntil - Date.now()) / 1000);
+  if (wait > 0) { toast("Slow down. Try again in " + wait + "s."); return; }
+  $("c-send").disabled = true;
+  const b = F.writeBatch(db);
+  b.set(F.doc(db, "limits", S.uid), { last: F.serverTimestamp() });
+  if (S.view === "main") b.set(F.doc(F.collection(db, "messages")), { name: S.me.name, text, uid: S.uid, createdAt: F.serverTimestamp() });
+  else {
+    const f = S.friends.find(x => x.id === S.view);
+    b.set(F.doc(F.collection(db, "chats", S.view, "msgs")), { from: S.uid, text, at: F.serverTimestamp() });
+    b.set(F.doc(db, "chats", S.view), { users: f.users, lastAt: F.serverTimestamp(), lastFrom: S.uid, lastText: text.slice(0, 60) });
+  }
+  try { await b.commit(); $("c-text").value = ""; $("c-count").textContent = "0 / 300"; S.cooldownUntil = Date.now() + COOLDOWN * 1000; }
+  catch (err) { toast(S.view === "main" ? "Not sent. Wait a few seconds and try again." : "Not sent. You may have been blocked, or you're going too fast."); }
+  finally { $("c-send").disabled = false; $("c-text").focus(); }
+});
+
+// ---------- sign in ----------
+let creating = false;
+$("e-switch").addEventListener("click", () => { creating = !creating; $("e-submit").textContent = creating ? "Create account" : "Sign in"; $("e-switch-text").textContent = creating ? "Already have an account?" : "New here?"; $("e-switch").textContent = creating ? "Sign in" : "Create an account"; $("e-pass").autocomplete = creating ? "new-password" : "current-password"; });
+$("g-btn").addEventListener("click", async () => {
+  if (!auth) { toast("Sign-in works on the live website."); return; }
+  const p = new fb.a.GoogleAuthProvider();
+  try { await fb.a.signInWithPopup(auth, p); }
+  catch (e) { if (/popup/.test(e.code || "")) fb.a.signInWithRedirect(auth, p); else $("gate-msg").innerHTML = '<span class="err">Google sign-in didn\'t work. Try again.</span>'; }
+});
+$("e-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!auth) { toast("Sign-in works on the live website."); return; }
+  const em = $("e-email").value.trim(), pw = $("e-pass").value;
+  $("gate-msg").textContent = "";
+  try {
+    if (creating) { const c = await fb.a.createUserWithEmailAndPassword(auth, em, pw); await fb.a.sendEmailVerification(c.user); }
+    else await fb.a.signInWithEmailAndPassword(auth, em, pw);
+  } catch (err) {
+    const c = err.code || "";
+    $("gate-msg").innerHTML = '<span class="err">' + (c.includes("email-already") ? "That email already has an account. Sign in instead." : c.includes("weak-password") ? "Use at least 6 characters for your password." : c.includes("invalid") || c.includes("wrong") || c.includes("not-found") ? "Wrong email or password." : "That didn't work. Try again.") + "</span>";
+  }
+});
+$("e-forgot").addEventListener("click", async () => {
+  const em = $("e-email").value.trim(); if (!em) { $("gate-msg").innerHTML = '<span class="err">Type your email first.</span>'; return; }
+  if (!auth) return; try { await fb.a.sendPasswordResetEmail(auth, em); } catch (e) {}
+  $("gate-msg").textContent = "If that email has an account, a reset link is on its way.";
+});
+$("v-resend").addEventListener("click", async () => { try { await fb.a.sendEmailVerification(auth.currentUser); $("v-msg").textContent = "Sent. Check your inbox and spam folder."; } catch (e) { $("v-msg").textContent = "Wait a minute before sending again."; } });
+$("v-done").addEventListener("click", async () => { await auth.currentUser.reload(); await auth.currentUser.getIdToken(true); if (auth.currentUser.emailVerified) location.reload(); else $("v-msg").textContent = "Not confirmed yet. Open the link in the email first."; });
+
+// ---------- profile setup ----------
+$("s-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = $("s-name").value.trim().replace(/\s+/g, " "), pl = $("s-player").value.trim();
+  if (!/^[A-Za-z0-9_ .()\-]{3,20}$/.test(name)) { $("s-msg").innerHTML = '<span class="err">Use 3 to 20 letters, numbers, spaces or _ . ( ) -</span>'; return; }
+  if (isBad(name)) { $("s-msg").innerHTML = '<span class="err">Pick a different username.</span>'; return; }
+  const player = pl ? (RANKSET[pl.toLowerCase()] || {}).name : "";
+  if (pl && !player) { $("s-msg").innerHTML = '<span class="err">That name isn\'t on the rankings. Pick it from the list, or leave it empty.</span>'; return; }
+  $("s-save").disabled = true;
+  const b = F.writeBatch(db), u = auth.currentUser;
+  b.set(F.doc(db, "usernames", name.toLowerCase()), { uid: u.uid });
+  if (player) b.set(F.doc(db, "playerClaims", player.toLowerCase()), { uid: u.uid });
+  b.set(F.doc(db, "users", u.uid), { name, nameLower: name.toLowerCase(), photo: u.photoURL || "", player: player || "", playerLower: (player || "").toLowerCase(), createdAt: F.serverTimestamp(), lastSeen: F.serverTimestamp() });
+  try { await b.commit(); enterApp(u); }
+  catch (err) {
+    const taken = await F.getDoc(F.doc(db, "usernames", name.toLowerCase())).then(s => s.exists()).catch(() => false);
+    const claimed = player ? await F.getDoc(F.doc(db, "playerClaims", player.toLowerCase())).then(s => s.exists()).catch(() => false) : false;
+    $("s-msg").innerHTML = '<span class="err">' + (taken ? "That username is taken." : claimed ? "That rankings name is already linked to another account. Message the server owner if it's yours." : "Couldn't save. Try again.") + "</span>";
+  } finally { $("s-save").disabled = false; }
+});
+
+// ---------- clicks ----------
+document.addEventListener("click", async e => {
+  const t = e.target;
+  if (t.closest("[data-signout]")) { if (auth) fb.a.signOut(auth); return; }
+  if (t.closest("[data-close]") || t === $("modal")) { $("modal").hidden = true; return; }
+  const mt = t.closest("[data-mtab]"); if (mt) { setTab(mt.dataset.mtab); return; }
+  const op = t.closest("[data-open]"); if (op) { $("modal").hidden = true; openView(op.dataset.open); return; }
+  const us = t.closest("[data-user]"); if (us) { profileCard(us.dataset.user); return; }
+  if (!db) { if (t.closest("button[data-addfriend],button[data-accept],button[data-block],button[data-report]")) toast("Works on the live website."); return; }
+  const me = S.uid;
+  const add = t.closest("[data-addfriend]"); if (add) { const o = add.dataset.addfriend, id = pairId(me, o); try { await F.setDoc(F.doc(db, "friends", id), { users: [me, o].sort(), from: me, to: o, status: "pending", createdAt: F.serverTimestamp() }); toast("Friend request sent"); } catch (err) { toast("Couldn't send a request to this person."); } $("modal").hidden = true; return; }
+  const acc = t.closest("[data-accept]"); if (acc) { try { await F.updateDoc(F.doc(db, "friends", acc.dataset.accept), { status: "accepted" }); toast("You're now friends"); } catch (err) { toast("Couldn't accept."); } $("modal").hidden = true; return; }
+  const dec = t.closest("[data-decline]"); if (dec) { await F.deleteDoc(F.doc(db, "friends", dec.dataset.decline)).catch(() => {}); return; }
+  const unf = t.closest("[data-unfriend]"); if (unf) { if (!confirm("Unfriend? You won't be able to message each other until you're friends again.")) return; await F.deleteDoc(F.doc(db, "friends", unf.dataset.unfriend)).catch(() => {}); $("modal").hidden = true; if (S.view === unf.dataset.unfriend) openView("main"); return; }
+  const blk = t.closest("[data-block]"); if (blk) { const o = blk.dataset.block; if (!confirm("Block this person? They won't be able to message you or send you friend requests, and you won't see their messages in the main chat.")) return; await F.setDoc(F.doc(db, "users", me, "blocked", o), { at: F.serverTimestamp() }).catch(() => {}); const f = friendOf(o); if (f) await F.deleteDoc(F.doc(db, "friends", f.id)).catch(() => {}); $("modal").hidden = true; if (S.view.includes(o)) openView("main"); toast("Blocked"); return; }
+  const ub = t.closest("[data-unblock]"); if (ub) { await F.deleteDoc(F.doc(db, "users", me, "blocked", ub.dataset.unblock)).catch(() => {}); $("modal").hidden = true; toast("Unblocked"); return; }
+  const rep = t.closest("[data-report]"); if (rep) {
+    const o = rep.dataset.report;
+    $("modal-card").innerHTML = '<button class="x" type="button" data-close aria-label="Close">×</button><h2 style="font-size:1.2rem">Report ' + esc((S.users[o] || {}).name || "") + '</h2><p class="muted" style="font-size:.88rem">Tell the mods what happened. If you have a private chat with this person, the site owner will be able to read it to check.</p><textarea class="field" id="rep-text" maxlength="300" placeholder="What happened?"></textarea><div class="acts"><button class="btn small danger" type="button" data-sendreport="' + o + '">Send report</button><button class="btn small" type="button" data-close>Cancel</button></div>';
+    return;
+  }
+  const sr = t.closest("[data-sendreport]"); if (sr) { const o = sr.dataset.sendreport; try { await F.setDoc(F.doc(db, "reports", pairId(me, o)), { by: me, against: o, reason: clean($("rep-text").value).slice(0, 300), at: F.serverTimestamp() }); toast("Report sent to the mods"); } catch (err) { toast("Couldn't send the report."); } $("modal").hidden = true; return; }
+  const ban = t.closest("[data-ban]"); if (ban) { if (!confirm("Ban this account from the community?")) return; try { await F.setDoc(F.doc(db, "banned", ban.dataset.ban), { at: F.serverTimestamp(), by: me }); toast("Banned"); } catch (err) { toast("Couldn't ban."); } $("modal").hidden = true; return; }
+  const vr = t.closest("[data-viewreport]"); if (vr) { S.adminView = true; openView(vr.dataset.viewreport, true); return; }
+  const cr = t.closest("[data-closereport]"); if (cr) { await F.deleteDoc(F.doc(db, "reports", cr.dataset.closereport)).catch(() => {}); return; }
+  const dm = t.closest("[data-delmsg]"); if (dm) { if (!confirm("Delete this message?")) return; await F.deleteDoc(F.doc(db, "messages", dm.dataset.delmsg)).catch(() => toast("Couldn't delete.")); return; }
+  if (t.closest("#edit-link")) {
+    const cur = S.me.player || "";
+    $("modal-card").innerHTML = '<button class="x" type="button" data-close aria-label="Close">×</button><h2 style="font-size:1.2rem">Link your ranking</h2><input class="field" id="l-player" list="rank-names" placeholder="Your rankings name" value="' + esc(cur) + '"><p class="small-print">Leave empty to unlink.</p><div class="acts"><button class="btn small primary" type="button" id="l-save">Save</button></div><p id="l-msg" class="small-print"></p>';
+    $("modal").hidden = false; return;
+  }
+  if (t.closest("#l-save")) {
+    const v = $("l-player").value.trim(), player = v ? (RANKSET[v.toLowerCase()] || {}).name : "";
+    if (v && !player) { $("l-msg").innerHTML = '<span class="err">Pick a name from the rankings list.</span>'; return; }
+    const b = F.writeBatch(db), old = S.me.playerLower;
+    if (old && old !== (player || "").toLowerCase()) b.delete(F.doc(db, "playerClaims", old));
+    if (player && player.toLowerCase() !== old) b.set(F.doc(db, "playerClaims", player.toLowerCase()), { uid: me });
+    b.update(F.doc(db, "users", me), { player: player || "", playerLower: (player || "").toLowerCase() });
+    try { await b.commit(); $("modal").hidden = true; toast("Saved"); } catch (err) { $("l-msg").innerHTML = '<span class="err">That rankings name is already linked to another account.</span>'; }
+  }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("modal").hidden = true; });
+
+// ======================= PREVIEW (no connection) =======================
+function demo() {
+  const now = Date.now(), ts = ms => ({ toMillis: () => ms, toDate: () => new Date(ms) });
+  S.uid = "me";
+  const mk = (uid, name, player, ago) => ({ uid, name, nameLower: name.toLowerCase(), player, playerLower: player.toLowerCase(), photo: "", lastSeen: ts(now - ago) });
+  [mk("me", "Ninja", "Goat(Ninja)", 0), mk("j", "Josh", "Joshy", 30000), mk("o", "Ottal", "Ottal", 60000), mk("s", "sandy", "Sandweech", 90000), mk("k", "kiwi_bean", "", 120000), mk("x", "Jaffa", "Jaffacoolige", 3600000)].forEach(u => { S.users[u.uid] = u; });
+  RANKSET = { "goat(ninja)": { name: "Goat(Ninja)", place: 3 }, joshy: { name: "Joshy", place: 1 }, ottal: { name: "Ottal", place: 2 }, sandweech: { name: "Sandweech", place: 4 }, jaffacoolige: { name: "Jaffacoolige", place: 5 } };
+  S.me = S.users.me; S.admin = true;
+  S.online = Object.values(S.users);
+  S.friends = [{ id: "j_me", users: ["j", "me"], from: "me", to: "j", status: "accepted" }, { id: "me_o", users: ["me", "o"], from: "me", to: "o", status: "accepted" }, { id: "k_me", users: ["k", "me"], from: "k", to: "me", status: "pending" }];
+  S.chats = { j_me: { lastAt: ts(now - 50000), lastFrom: "j", lastText: "gg that was close" }, me_o: { lastAt: ts(now - 900000), lastFrom: "me", lastText: "rematch tmr?" } };
+  S.reports = [];
+  show("appwrap"); renderMe(); renderLists();
+  renderMsgs([
+    { uid: "j", text: "anyone up for lobbies?", at: new Date(now - 600000) },
+    { uid: "o", text: "yep give me 5", at: new Date(now - 420000) },
+    { uid: "me", text: "new rankings page is up, check your profile", at: new Date(now - 120000) }
+  ]);
+}
+start();
+</script>
+</body>
+</html>
