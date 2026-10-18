@@ -321,6 +321,124 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   .stat b { font-size: 1.5rem; }
 }
 @media (prefers-reduced-motion: reduce) { .mcard { transition: none; } }
+/* ===== ITF-style player profile ===== */
+#v-profile { --ip-ink: #0b1622; }
+.ip-hero { position: relative; width: 100vw; margin-left: calc(50% - 50vw); margin-top: 14px; color: #fff; background: #07111c; overflow: hidden; }
+.ip-hero::before { content: ""; position: absolute; inset: 0; background:
+  linear-gradient(115deg, transparent 0 46%, #0f63c9 46% 53%, transparent 53% 57%, #1478e6 57% 66%, transparent 66% 70%, #0a4fa6 70% 79%, transparent 79% 82%, #1b7cf0 82% 100%); opacity: .95; }
+.ip-hero > * { position: relative; }
+.ip-in { max-width: 1080px; margin: 0 auto; padding: 22px max(16px, env(safe-area-inset-left, 0px)) 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: end; }
+.ip-share { display: flex; align-items: center; gap: 10px; font-size: .85rem; grid-column: 1 / -1; }
+.ip-share .box { display: flex; gap: 4px; background: #fff; border-radius: 8px; padding: 5px; }
+.ip-share button { width: 30px; height: 30px; border: 0; border-radius: 6px; background: #fff; color: #0b1622; display: grid; place-items: center; cursor: pointer; }
+.ip-share button:hover { background: #e8eef5; }
+.ip-id { display: flex; align-items: flex-end; gap: 22px; min-width: 0; }
+.ip-photo { width: 150px; height: 170px; background: #d9dee5; display: grid; place-items: end center; overflow: hidden; flex: none; position: relative; }
+.ip-photo svg { width: 118px; height: 140px; fill: #b9c0c9; }
+.ip-photo b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 4rem; font-weight: 900; color: rgba(255,255,255,.95); }
+.ip-photo { border-radius: 4px; box-shadow: 0 10px 28px rgba(0,0,0,.35); }
+.ip-badge { position: absolute; left: 8px; top: 8px; background: rgba(7,17,28,.75); color: #fff; font-style: normal; font-weight: 800; font-size: .8rem; padding: 3px 8px; border-radius: 999px; }
+.ip-hero .ip-strip .row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.ip-strip .it { align-items: flex-end; }
+.ip-strip .it span { display: grid; gap: 1px; } .ip-strip .it small { opacity: .7; font-size: .72rem; }
+.ip-strip .it b { font-size: 1.6rem; line-height: 1; font-variant-numeric: tabular-nums; } .ip-strip .it b.num { font-size: 1.15rem; font-family: var(--mono); }
+.ip-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 26px; align-items: start; }
+.ip-main { display: grid; gap: 14px; min-width: 0; }
+.ip-side { display: grid; gap: 14px; }
+.ip-side .ip-gauge-side { width: auto; margin: 0; justify-self: stretch; border: 1px solid var(--line); box-shadow: none; padding: 14px 18px 10px; }
+.ip-side .ip-gauge-side svg { max-width: 260px; margin: 0 auto; }
+:root[data-mode="dark"] .ip-gauge-side { border-color: transparent; }
+.ip-side .ip-ye th, .ip-side .ip-ye td { padding-inline: 2px; }
+@media (max-width: 900px) { .ip-grid { grid-template-columns: 1fr; } .ip-side { order: -1; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); align-items: stretch; } .ip-side .ip-gauge-side svg { max-width: 220px; } .ip-hero .ip-strip .row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .ip-hero .ip-strip .row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ip-name { display: grid; gap: 4px; padding-bottom: 6px; min-width: 0; }
+.ip-name small { font-size: .9rem; opacity: .85; }
+.ip-name h1 { font-size: clamp(1.8rem, 5vw, 2.7rem); font-weight: 900; line-height: 1.05; overflow-wrap: anywhere; }
+.ip-nat { display: flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.ip-nat .fl { font-size: 1.4rem; line-height: 1; }
+.ip-h2h { justify-self: start; margin-top: 8px; background: #7ee03a; color: #0b1622; border: 0; border-radius: 999px; padding: 7px 16px; font: inherit; font-weight: 800; font-size: .82rem; cursor: pointer; }
+.ip-h2h:hover { background: #95ef55; }
+.ip-gauge { background: #fff; color: #0b1622; border-radius: 16px; padding: 12px 14px 8px; width: 210px; margin-bottom: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.ip-gauge .tg { display: flex; justify-content: center; gap: 14px; font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.ip-gauge .tg button { border: 0; background: none; font: inherit; color: #8a96a3; padding: 2px 0; cursor: pointer; border-bottom: 2px solid transparent; }
+.ip-gauge .tg button[aria-pressed="true"] { color: #d63a4a; border-bottom-color: #d63a4a; }
+.ip-gauge svg { display: block; width: 100%; height: auto; }
+.ip-gauge .big { font-size: 34px; font-weight: 900; fill: #0b1622; font-family: var(--font); }
+.ip-gauge .lbl { font-size: 9px; font-weight: 700; fill: #6b7785; font-family: var(--font); letter-spacing: .04em; }
+.ip-gauge .tick { font-size: 8px; font-weight: 700; fill: #0b1622; font-family: var(--font); }
+.ip-strip { background: rgba(3,9,16,.82); }
+.ip-strip .row { max-width: 1080px; margin: 0 auto; padding: 14px max(16px, env(safe-area-inset-left, 0px)) 16px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 26px; }
+.ip-strip .it { display: flex; justify-content: space-between; gap: 10px; font-size: .82rem; border-bottom: 1px solid rgba(255,255,255,.45); padding-bottom: 6px; }
+.ip-strip .it b { font-weight: 800; }
+.ip-tabs { background: #e4e9ef; border-radius: 0 0 14px 14px; margin-top: 12px; border-radius: 12px; }
+:root[data-mode="dark"] .ip-tabs { background: #0f1d2a; }
+.ip-tabs .row { padding: 10px 10px 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; overflow-x: auto; }
+.ip-tabs button { display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 0; background: #f2f4f7; color: #8a96a3; padding: 13px 12px; font: inherit; font-size: .8rem; font-weight: 700; text-align: left; white-space: nowrap; cursor: pointer; }
+:root[data-mode="dark"] .ip-tabs button { background: #162a3b; color: #8aa3b7; }
+.ip-tabs button[aria-selected="true"] { background: var(--panel); color: var(--text); }
+:root[data-mode="dark"] .ip-tabs button { background: #12212e; color: #7f97ab; }
+:root[data-mode="dark"] .ip-tabs button[aria-selected="true"] { background: #23435f; color: #fff; box-shadow: inset 0 -3px 0 var(--blue); }
+.ip-tabs svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; flex: none; }
+.ip-body { padding: 26px 0 10px; display: grid; gap: 16px; }
+.ip-body > h2 { font-size: clamp(1.3rem, 3vw, 1.65rem); font-weight: 900; }
+.ip-sec h3 { font-size: 1.02rem; font-weight: 800; margin: 10px 0 12px; }
+.ip-rk { display: flex; justify-content: space-between; align-items: center; gap: 14px; border-bottom: 1px solid var(--blue); padding: 4px 0 8px; margin-bottom: 10px; }
+.ip-rk span { color: var(--blue); font-weight: 800; font-size: .95rem; }
+.ip-rk b { color: var(--blue); font-size: clamp(2rem, 6vw, 2.6rem); font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+.ip-ye { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.ip-ye th { text-align: left; font-weight: 800; padding: 8px 0; border-bottom: 1px solid var(--muted); }
+.ip-ye td { padding: 8px 0; color: var(--muted); font-weight: 700; border-bottom: 1px solid var(--row); }
+.ip-more { display: block; margin: 6px auto 0; background: none; border: 0; color: var(--text); cursor: pointer; padding: 4px 10px; }
+.ip-more svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; transition: transform .2s; }
+.ip-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+.ip-wl { padding: 12px 0 14px; border-bottom: 1px solid var(--line); }
+.ip-wl .top { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; font-size: .92rem; margin-bottom: 8px; }
+.ip-wl .top b { font-weight: 800; } .ip-wl .top span { text-align: center; }
+.ip-bar { height: 14px; border-radius: 999px; background: #ef3340; overflow: hidden; }
+.ip-bar i { display: block; height: 100%; background: #1a66ff; border-radius: 999px 0 0 999px; width: 0; transition: width 1s cubic-bezier(.2,.8,.2,1); }
+.ip-wl .bot { display: flex; justify-content: space-between; font-size: .88rem; margin-top: 8px; }
+.ip-body > .back { justify-self: start; }
+@media (max-width: 560px) { .bt-map { grid-template-columns: 64px minmax(0, 1fr); } .bt-map .pic { width: 64px; height: 44px; } }
+.avatar, .t5 .av { position: relative; overflow: hidden; }
+.t5 .av { overflow: visible; }
+.avatar img, .t5 .av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.t5 .av i { z-index: 1; }
+.avatar.has-photo { background: rgba(255,255,255,.12) !important; width: 150px; height: 170px; border-radius: 14px; border: 3px solid rgba(255,255,255,.4); box-shadow: 0 10px 26px rgba(0,0,0,.3); font-size: 0; }
+.avatar.has-photo img { border-radius: 11px; }
+.prof-band:has(.has-photo) { align-items: flex-end; }
+.prof-band:has(.has-photo) .prof-id h1 { font-size: clamp(2rem, 5vw, 3rem); }
+@media (max-width: 600px) { .avatar.has-photo { width: 116px; height: 132px; } }
+.addpic { justify-self: start; margin-top: 6px; font-size: .82rem; font-weight: 700; color: #fff; opacity: .85; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,.5); }
+.addpic:hover { opacity: 1; }
+.ip-link { background: none; border: 0; color: var(--blue); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; padding: 0; }
+.ip-link:hover { text-decoration: underline; }
+.bt-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.gsel2 { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.gsel2 button { border: 0; background: none; color: var(--muted); font: inherit; font-weight: 700; font-size: .85rem; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+.gsel2 button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+.rtable.bt td.win { color: #1a66ff; font-weight: 800; } .rtable.bt td.loss { color: #ef3340; font-weight: 800; }
+.ip-bar.mini { height: 8px; min-width: 120px; }
+.bt-maps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 10px; }
+.bt-map { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+.bt-map .pic { width: 92px; height: 60px; border-radius: 8px; overflow: hidden; background: var(--soft); }
+.bt-map .pic img, .bt-map .pic .mfall { width: 100%; height: 100%; object-fit: cover; }
+.bt-info { display: grid; gap: 5px; min-width: 0; }
+.bt-h { display: flex; justify-content: space-between; gap: 8px; } .bt-h .num { font-family: var(--mono); font-weight: 700; }
+.bt-who { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; font-size: .82rem; }
+.chip { border: 1px solid var(--line); background: var(--soft); color: var(--text); border-radius: 999px; padding: 2px 9px; font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer; }
+.chip i { font-style: normal; font-family: var(--mono); color: #ef3340; margin-left: 3px; }
+.chip:hover { border-color: var(--blue); }
+.crown { font-weight: 800; color: var(--gold); font-size: .85rem; }
+.bt-info small { font-size: .78rem; }
+.ip-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .ip-in { grid-template-columns: 1fr; }
+  .ip-gauge { justify-self: center; margin-bottom: 14px; }
+  .ip-photo { width: 104px; height: 120px; } .ip-photo svg { width: 82px; height: 98px; } .ip-photo b { font-size: 2.4rem; }
+  .ip-tabs .row { grid-template-columns: repeat(5, minmax(130px, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) { .ip-bar i { transition: none; } }
+
 </style>
 
 <header class="site">
@@ -475,6 +593,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   var ONE_URL = DATA + "&sheet=" + encodeURIComponent("Number one log");
   var REC_URL = DATA + "&sheet=" + encodeURIComponent("Record log");
   var ALIAS_URL = DATA + "&sheet=" + encodeURIComponent("Name changes"); // Old name | New name
+  var PHOTO_URL = DATA + "&sheet=" + encodeURIComponent("Photos");       // Date | Name entered | Ranked name | Image link | Approved
+  var PHOTO_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScgIzG9jsceIb0dIM6hSrHkDDn4NJuqvs79XnXwMrmHRejbhg/viewform";                                                      // Google Form link for sending a profile picture
   var MISSING = 60;            // a time of 60 in the sheet means "no time entered"
 
   // Map order = column order in the sheet (after Country, Place, Name)
@@ -538,10 +658,27 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   function header(rows, first, second) { return rows && rows[0] && String(rows[0][0]).trim().toLowerCase() === first && String(rows[0][1] || "").trim().toLowerCase() === second; }
   // Players who changed name: old name -> current name, so their history stays together
   var ALIAS = {};
+  var PHOTOS = {};
+  function loadPhotos(rows) {
+    PHOTOS = {};
+    if (!rows || !rows[0] || !/date/i.test(rows[0][0]) || !/image/i.test(rows[0][3] || "")) return;
+    rows.slice(1).forEach(function (r) {
+      if (!/^true$/i.test(String(r[4] || "").trim())) return;
+      var link = String(r[3] || "").trim(); if (!/^https:\/\//.test(link)) return;
+      var nm = String(r[2] || "").trim(); if (!nm || nm.charAt(0) === "(") nm = String(r[1] || "").trim();
+      if (nm) PHOTOS[canon(nm).toLowerCase()] = link;
+    });
+  }
+  function photoOf(name) { return PHOTOS[String(name).toLowerCase()] || ""; }
+  function avatarInner(p) {
+    var ph = photoOf(p.name);
+    return ph ? '<img src="' + esc(ph) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' + initial(p.name) : initial(p.name);
+  }
   function canon(n) { n = String(n || "").trim(); return ALIAS[n.toLowerCase()] || n; }
   function loadHistory(ex) {
     hist = {}; weeks = []; ones = []; recLog = []; ALIAS = {};
     if (header(ex.alias, "old name", "new name")) ex.alias.slice(1).forEach(function (r) { var o = String(r[0] || "").trim(), nw = String(r[1] || "").trim(); if (o && nw) ALIAS[o.toLowerCase()] = nw; });
+    loadPhotos(ex.photo);
     if (header(ex.hist, "week", "name")) ex.hist.slice(1).forEach(function (r) {
       var w = String(r[0]).trim(), n = canon(r[1]).toLowerCase(), k = parseInt(r[2], 10);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(w) || !n || isNaN(k)) return;
@@ -622,11 +759,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (P.get("map") != null) { var mi = MAPS.indexOf(P.get("map")); if (mi >= 0) S.map = mi; }
     if (byName[P.get("a")]) S.a = P.get("a");
     if (byName[P.get("b")]) S.b = P.get("b");
-    if (byName[P.get("player")]) { S.player = P.get("player"); if (P.get("tab")) S.ptab = P.get("tab"); if (byName[P.get("vs")]) S.vs = P.get("vs"); }
+    if (byName[P.get("player")]) { S.player = P.get("player"); if (P.get("tab")) S.ptab = P.get("tab"); if (byName[P.get("vs")]) S.vs = P.get("vs"); if (P.get("g")) S.bg = P.get("g"); if (P.get("view")) S.bview = P.get("view"); }
   }
   function urlFor() {
     var P = new URLSearchParams();
-    if (S.player) { P.set("player", S.player); if (S.ptab !== "overview") P.set("tab", S.ptab); if (S.ptab === "h2h" && S.vs) P.set("vs", S.vs); }
+    if (S.player) { P.set("player", S.player); if (S.ptab !== "overview") P.set("tab", S.ptab); if (S.ptab === "h2h" && S.vs) P.set("vs", S.vs); if (S.ptab === "matchups") { P.set("g", S.bg || "all"); if (S.bview === "map") P.set("view", "map"); } }
     else {
       if (S.sec !== "list") P.set("s", S.sec);
       if (S.sec === "maps" && S.map != null) P.set("map", MAPS[S.map]);
@@ -661,7 +798,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var list = players.filter(function (p) { return (!S.country || p.country === S.country) && (!q || p.name.toLowerCase().indexOf(q) >= 0); });
     $("count").textContent = list.length === players.length ? players.length + " players" : list.length + " of " + players.length;
     $("top5").innerHTML = players.slice(0, 5).map(function (p) {
-      return '<button type="button" class="t5" data-player="' + esc(p.name) + '"><span class="av" style="background:' + color(p.name) + '">' + initial(p.name) + "<i>" + p.place + '</i></span><span style="min-width:0"><b>' + esc(p.name) + "</b><small>" + flag(p.country) + " " + (p.country || "OCE") + "</small><em>View profile ›</em></span></button>";
+      return '<button type="button" class="t5" data-player="' + esc(p.name) + '"><span class="av" style="background:' + color(p.name) + '">' + avatarInner(p) + "<i>" + p.place + '</i></span><span style="min-width:0"><b>' + esc(p.name) + "</b><small>" + flag(p.country) + " " + (p.country || "OCE") + "</small><em>View profile ›</em></span></button>";
     }).join("");
     var d = new Date();
     $("updated").textContent = "Last updated: " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear() + (prevWeek ? " · Movement compared with the ranking of " + niceDate(prevWeek) : " · Weekly movement starts on 26 October");
@@ -735,44 +872,175 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   }
 
   // ======================= PROFILE =======================
+  var ICON = {
+    overview: '<svg viewBox="0 0 24 24"><path d="M4 16a8 8 0 0 1 16 0"/><path d="M12 16l4-5"/><path d="M3 19h18"/></svg>',
+    times: '<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>',
+    records: '<svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 6h3a3 3 0 0 1-3 4M7 6H4a3 3 0 0 0 3 4"/></svg>',
+    h2h: '<svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2 20a6 6 0 0 1 12 0M10 20a6 6 0 0 1 12 0"/></svg>',
+    target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>'
+  };
   var PTABS = [["overview", "Overview"], ["times", "Map Times"], ["records", "Records"], ["h2h", "Head to Head"], ["target", "Target Times"]];
+  var SILHOUETTE = '<svg viewBox="0 0 100 120" aria-hidden="true"><circle cx="50" cy="38" r="22"/><path d="M8 120c0-26 19-44 42-44s42 18 42 44z"/></svg>';
+  // Count-up for big numbers: <b data-count="12" data-dec="0">
+  function countUp(root) {
+    var els = (root || document).querySelectorAll("[data-count]");
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    els.forEach(function (el) {
+      var to = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), from = parseFloat(el.dataset.from || 0);
+      if (reduce || isNaN(to)) { el.textContent = isNaN(to) ? el.dataset.count : to.toFixed(dec); return; }
+      var t0 = null, dur = +(el.dataset.dur || 1100);
+      function step(ts) {
+        if (!t0) t0 = ts;
+        var k = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = (from + (to - from) * e).toFixed(dec);
+        if (k < 1) requestAnimationFrame(step);
+      }
+      el.textContent = from.toFixed(dec);
+      requestAnimationFrame(step);
+    });
+  }
+  // Ring gauge (like the ITF rating dial): shows ranking or total time
+  function gaugeSVG(p, mode) {
+    var n = players.length || 1, frac, big, dec = 0, lbl, lo, hi;
+    if (mode === "time") {
+      var best = OR && OR.total ? OR.total : players[0].total, worst = Math.max.apply(null, players.map(function (o) { return o.total; }));
+      frac = worst === best ? 1 : (worst - p.total) / (worst - best); big = p.total; dec = 1; lbl = "TOTAL TIME"; lo = Math.round(worst); hi = (OR && OR.total ? "OR " : "") + Math.round(best);
+    } else {
+      frac = n === 1 ? 1 : (n - p.place) / (n - 1); big = p.place; lbl = "OCEANIA RANK"; lo = n; hi = 1;
+    }
+    frac = Math.max(0.02, Math.min(1, frac));
+    var R = 62, cx = 90, cy = 84, a0 = 135, sweep = 270;
+    function pt(a) { var r = (a - 90) * Math.PI / 180; return [cx + R * Math.cos(r), cy + R * Math.sin(r)]; }
+    function arc(a1, a2) { var p1 = pt(a1), p2 = pt(a2), large = a2 - a1 > 180 ? 1 : 0; return "M" + p1[0].toFixed(1) + " " + p1[1].toFixed(1) + " A" + R + " " + R + " 0 " + large + " 1 " + p2[0].toFixed(1) + " " + p2[1].toFixed(1); }
+    var start = a0 + 90, end = start + sweep, len = Math.PI * R * sweep / 180;
+    var e1 = pt(start), e2 = pt(end);
+    return '<svg viewBox="0 0 180 160" role="img" aria-label="' + lbl + " " + (mode === "time" ? fmt(p.total) : p.place) + '">' +
+      '<defs><linearGradient id="ipg" x1="0" x2="1" y1="1" y2="0"><stop offset="0" stop-color="#1a66ff"/><stop offset=".55" stop-color="#7a4bd6"/><stop offset="1" stop-color="#ef3340"/></linearGradient></defs>' +
+      '<path d="' + arc(start, end) + '" fill="none" stroke="#e9edf2" stroke-width="14" stroke-linecap="round"/>' +
+      '<path class="ip-arc" d="' + arc(start, end) + '" fill="none" stroke="url(#ipg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="' + len.toFixed(1) + '" stroke-dashoffset="' + len.toFixed(1) + '" data-to="' + (len * (1 - frac)).toFixed(1) + '"/>' +
+      '<text class="big" x="90" y="' + (mode === "time" ? 88 : 92) + '" text-anchor="middle"' + (mode === "time" ? ' style="font-size:24px"' : "") + '><tspan data-count="' + big + '" data-dec="' + dec + '">' + (mode === "time" ? big.toFixed(1) : big) + "</tspan></text>" +
+      '<text class="lbl" x="90" y="108" text-anchor="middle">' + lbl + "</text>" +
+      '<text class="tick" x="' + (e1[0] - 2).toFixed(0) + '" y="' + (e1[1] + 16).toFixed(0) + '" text-anchor="middle">' + lo + "</text>" +
+      '<text class="tick" x="' + (e2[0] + 2).toFixed(0) + '" y="' + (e2[1] + 16).toFixed(0) + '" text-anchor="middle">' + hi + "</text></svg>";
+  }
+  function animateGauge() {
+    var a = document.querySelector(".ip-arc"); if (!a) return;
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { a.style.strokeDashoffset = a.dataset.to; return; }
+    a.style.transition = "none"; a.getBoundingClientRect();
+    a.style.transition = "stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1)";
+    requestAnimationFrame(function () { a.style.strokeDashoffset = a.dataset.to; });
+  }
+  // Map-by-map win/loss against a group of players
+  function mapRecord(p, group) {
+    var w = 0, l = 0;
+    group.forEach(function (o) {
+      if (o === p) return;
+      for (var m = 0; m < MAPS.length; m++) {
+        var a = p.t[m], b = o.t[m];
+        if (a == null && b == null) continue;
+        if (b == null || (a != null && a < b - EPS)) w++; else if (a == null || b < a - EPS) l++;
+      }
+    });
+    return { w: w, l: l };
+  }
+  function yearEnd(p) {
+    var k = p.name.toLowerCase(), byYear = {};
+    weeks.forEach(function (w) { if (hist[w][k] != null) byYear[w.slice(0, 4)] = hist[w][k]; });
+    var y = String(new Date().getFullYear());
+    return Object.keys(byYear).filter(function (yr) { return yr < y; }).sort().reverse().map(function (yr) { return [yr, byYear[yr]]; });
+  }
   function renderProfile() {
     var p = byName[S.player]; if (!p) { S.player = null; route(); return; }
-    var above = players.filter(function (o) { return o.place < p.place; }).sort(function (a, b) { return b.place - a.place; })[0];
-    var leader = players[0];
+    S.gmode = S.gmode || "rank";
+    var nat = players.filter(function (o) { return o.country && o.country === p.country; });
+    var natRank = nat.indexOf(p) + 1;
+    var withT = MAPS.map(function (_, m) { return m; }).filter(function (m) { return p.t[m] != null; });
+    var today = new Date(), todayTxt = today.getDate() + " " + MONTHS[today.getMonth()] + " " + today.getFullYear();
+    var longDate = function (d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ""); return m ? (+m[3]) + " " + MONTHS[+m[2] - 1] + " " + m[1] : ""; };
     var html = '<button type="button" class="back" id="prof-back">← Oceania Rankings</button>' +
-      '<div class="prof-top"><div class="prof-band"><div class="avatar" style="background:' + color(p.name) + '" aria-hidden="true">' + initial(p.name) + '</div>' +
-      '<div class="prof-id"><h1>' + esc(p.name) + '</h1><span class="nat">' + flag(p.country) + " " + countryName(p.country) + "</span></div>" +
+      '<div class="prof-top"><div class="prof-band"><div class="avatar' + (photoOf(p.name) ? " has-photo" : "") + '" style="background:' + color(p.name) + '" aria-hidden="true">' + avatarInner(p) + '</div>' +
+      '<div class="prof-id"><h1>' + esc(p.name) + '</h1><span class="nat">' + flag(p.country) + " " + countryName(p.country) + "</span>" +
+        (PHOTO_FORM ? '<a class="addpic" href="' + PHOTO_FORM + '" target="_blank" rel="noopener">📷 ' + (photoOf(p.name) ? "Change profile picture" : "Add a profile picture") + "</a>" : "") + "</div>" +
       '<div class="prof-actions"><button class="btn" type="button" data-ptab="h2h">Head to Head</button><button class="btn" type="button" id="share">Share profile</button></div></div>' +
       '<div class="stats">' +
-        '<div class="stat"><span>Current ranking</span><b>' + p.place + "</b><small>Oceania</small></div>" +
-        '<div class="stat"><span>Career high</span><b>' + p.high + "</b><small>" + (niceDate(p.highDate) ? "Reached " + niceDate(p.highDate) : p.high < p.place ? "Best ever" : "Current") + "</small></div>" +
-        '<div class="stat"><span>Total time</span><b class="mono">' + fmt(p.total) + "</b><small>" + (OR && OR.total ? plus(p.total - OR.total) + " vs OR total" : "") + "</small></div>" +
-        '<div class="stat"><span>Oceania records</span><b>' + p.orN + "</b><small>of 27 maps</small></div>" +
-        '<div class="stat"><span>World records</span><b>' + p.wrN + "</b><small>of 27 maps</small></div>" +
+        '<div class="stat"><span>Current ranking</span><b data-count="' + p.place + '">' + p.place + "</b><small>Oceania</small></div>" +
+        '<div class="stat"><span>Career high</span><b data-count="' + p.high + '">' + p.high + "</b><small>" + (niceDate(p.highDate) ? "Reached " + niceDate(p.highDate) : p.high < p.place ? "Best ever" : "Current") + "</small></div>" +
+        '<div class="stat"><span>Total time</span><b class="mono" data-count="' + p.total + '" data-dec="3">' + fmt(p.total) + "</b><small>" + (OR && OR.total ? plus(p.total - OR.total) + " vs OR total" : "") + "</small></div>" +
+        '<div class="stat"><span>Oceania records</span><b data-count="' + p.orN + '">' + p.orN + "</b><small>of 27 maps</small></div>" +
+        (weeksAtOne(p.name) ? '<div class="stat"><span>Weeks at #1</span><b data-count="' + weeksAtOne(p.name) + '">' + weeksAtOne(p.name) + "</b><small>all time</small></div>"
+          : '<div class="stat"><span>World records</span><b data-count="' + p.wrN + '">' + p.wrN + "</b><small>of 27 maps</small></div>") +
       "</div></div>" +
-      '<div class="ptabs" role="tablist">' + PTABS.map(function (t) { return '<button role="tab" type="button" data-ptab="' + t[0] + '" aria-selected="' + (S.ptab === t[0]) + '">' + t[1] + "</button>"; }).join("") + "</div>" +
-      '<div class="pbody" id="pbody"></div>';
+      '<nav class="ip-tabs" aria-label="Profile sections"><div class="row" role="tablist">' + PTABS.map(function (t) { return '<button role="tab" type="button" data-ptab="' + t[0] + '" aria-selected="' + (S.ptab === t[0]) + '"><span>' + t[1] + "</span>" + ICON[t[0]] + "</button>"; }).join("") + "</div></nav>" +
+      '<div class="ip-body" id="pbody"></div>';
     $("v-profile").innerHTML = html;
 
     var body = "";
-    var withT = MAPS.map(function (_, m) { return m; }).filter(function (m) { return p.t[m] != null; });
+    var title = '<h2>' + esc(p.name) + " " + (PTABS.filter(function (t) { return t[0] === S.ptab; })[0] || PTABS[0])[1] + "</h2>";
     if (S.ptab === "overview") {
+      var ye = yearEnd(p);
+      var top10 = players.slice(0, 10), near = players.filter(function (o) { return Math.abs(o.place - p.place) <= 5; });
+      var wl = [["Overall", "every ranked player", mapRecord(p, players), "all"], ["Top 10", "the top 10", mapRecord(p, top10), "top10"], ["Near you", "players within 5 places", mapRecord(p, near), "near"]];
+      var above = players.filter(function (o) { return o.place < p.place; }).sort(function (a, b) { return b.place - a.place; })[0], leader = players[0];
       var best = withT.map(function (m) { return { m: m, r: mapRank(m, p.t[m]) }; }).sort(function (a, b) { return a.r - b.r || a.m - b.m; }).slice(0, 4);
       var weak = withT.filter(function (m) { return ref(m); }).map(function (m) { return { m: m, g: p.t[m] - ref(m) }; }).sort(function (a, b) { return b.g - a.g; }).slice(0, 4);
       var missing = MAPS.length - withT.length;
-      body = graphCard(p) + '<div class="two" style="margin-top:16px"><div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
-        "<div><span>Current Oceania ranking</span><b>" + ordinal(p.place) + "</b></div>" +
-        "<div><span>Career-high ranking</span><b>" + ordinal(p.high) + (niceDate(p.highDate) ? ' <span class="muted" style="font-weight:500">(' + niceDate(p.highDate) + ")</span>" : "") + "</b></div>" +
-        (above ? "<div><span>Gap to " + ordinal(above.place) + " (" + esc(above.name) + ")</span><b class=\"mono\">" + plus(p.total - above.total) + "</b></div>" : "<div><span>Gap to next place</span><b>Ranked first</b></div>") +
-        (leader && leader !== p ? "<div><span>Gap to 1st</span><b class=\"mono\">" + plus(p.total - leader.total) + "</b></div>" : "") +
-        (weeksAtOne(p.name) || (p.place === 1) ? "<div><span>Weeks at #1</span><b>" + weeksAtOne(p.name) + "</b></div>" : "") +
-        "<div><span>Maps with a time</span><b>" + withT.length + " of 27" + (missing ? ' <span class="muted" style="font-weight:500">(' + missing + " counted as 60s)</span>" : "") + "</b></div>" +
-        '</div></div><div class="card"><h3>Best maps</h3>' + best.map(function (b) {
-          return '<div class="mapline"><div class="pic">' + mapPic(b.m) + "</div><div><b>" + esc(MAPS[b.m]) + "</b><small>" + fmt(p.t[b.m]) + '</small></div><div class="r">' + ordinal(b.r) + "<small>of " + sorted[b.m].length + "</small></div></div>";
-        }).join("") + '</div><div class="card"><h3>Most room to improve</h3>' + weak.map(function (w) {
-          return '<div class="mapline"><div class="pic">' + mapPic(w.m) + "</div><div><b>" + esc(MAPS[w.m]) + "</b><small>" + fmt(p.t[w.m]) + ' · OR ' + fmt(ref(w.m)) + '</small></div><div class="r">' + plus(w.g) + "<small>behind OR</small></div></div>";
-        }).join("") + "</div></div>";
+      var main = '<div class="ip-sec"><h3>Current rankings</h3>' +
+          '<div class="ip-rk"><span>Oceania Ranking (' + todayTxt + ')</span><b data-count="' + p.place + '">' + p.place + "</b></div>" +
+          (p.country ? '<div class="ip-rk"><span>' + countryName(p.country) + " Ranking (" + todayTxt + ')</span><b data-count="' + natRank + '">' + natRank + "</b></div>" : "") +
+        '</div><div class="ip-sec"><h3>Career-high rankings</h3>' +
+          '<div class="ip-rk"><span>Oceania Ranking' + (longDate(p.highDate) ? " (" + longDate(p.highDate) + ")" : "") + '</span><b data-count="' + p.high + '">' + p.high + "</b></div>" +
+        "</div>" +
+        '<div class="ip-sec"><h3>Year-end Ranking</h3>' + (ye.length ? '<table class="ip-ye"><thead><tr><th>Year</th><th>Oceania Ranking</th></tr></thead><tbody>' +
+          ye.map(function (r, i) { return "<tr" + (i > 0 && !S.yeOpen ? " hidden" : "") + "><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
+          (ye.length > 1 ? '<button type="button" class="ip-more" id="ye-more" aria-expanded="' + !!S.yeOpen + '" aria-label="Show all years"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>' : "") : '<p class="muted">No full year ranked yet.</p>') + "</div>" +
+        graphCard(p) +
+        '<div class="ip-sec"><div class="ip-head"><h3>Map matchups</h3><span class="muted" style="font-size:.82rem">Each map is a matchup: the faster time wins</span></div>' +
+          wl.map(function (x) {
+            var tot = x[2].w + x[2].l, pc = tot ? Math.round(100 * x[2].w / tot) : 0;
+            return '<div class="ip-wl"><div class="top"><b>' + x[0] + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar" title="vs ' + x[1] + '"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + x[2].w + '">' + x[2].w + "</b></span>" +
+              '<button type="button" class="ip-link" data-battles="' + x[3] + '">See breakdown ›</button>' +
+              "<span>Losses: <b data-count=\"" + x[2].l + '">' + x[2].l + "</b></span></div></div>";
+          }).join("") + "</div>";
+      var side = 
+        '<div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
+          (above ? "<div><span>Gap to " + ordinal(above.place) + " (" + esc(above.name) + ")</span><b class=\"mono\">" + plus(p.total - above.total) + "</b></div>" : "<div><span>Gap to next place</span><b>Ranked first</b></div>") +
+          (leader && leader !== p && leader !== above ? "<div><span>Gap to 1st</span><b class=\"mono\">" + plus(p.total - leader.total) + "</b></div>" : "") +
+          "<div><span>Weeks at #1</span><b>" + weeksAtOne(p.name) + "</b></div>" +
+          "<div><span>World records</span><b>" + p.wrN + "</b></div>" +
+          "<div><span>Maps with a time</span><b>" + withT.length + " of 27" + (missing ? ' <span class="muted" style="font-weight:500">(' + missing + " at 60s)</span>" : "") + "</b></div>" +
+        '</div></div>' +
+        '<div class="ip-gauge ip-gauge-side"><div class="tg"><button type="button" data-gmode="rank" aria-pressed="' + (S.gmode === "rank") + '">Ranking</button><button type="button" data-gmode="time" aria-pressed="' + (S.gmode === "time") + '">Total time</button></div>' + gaugeSVG(p, S.gmode) + "</div>" +
+
+        "";
+      body = '<h2>' + esc(p.name) + ' Oceania Overview</h2><div class="ip-grid"><div class="ip-main">' + main + '</div><aside class="ip-side">' + side + "</aside></div>";
+    } else if (S.ptab === "matchups") {
+      var G = { all: ["Everyone", players], top10: ["Top 10", players.slice(0, 10)], near: ["Near you", players.filter(function (o) { return Math.abs(o.place - p.place) <= 5; })] };
+      var gk = G[S.bg] ? S.bg : "all", grp = G[gk][1].filter(function (o) { return o !== p; });
+      var rec = mapRecord(p, G[gk][1]), tot = rec.w + rec.l, pc = tot ? Math.round(100 * rec.w / tot) : 0;
+      var view = S.bview === "map" ? "map" : "player";
+      body = '<button type="button" class="back" data-ptab="overview">← Overview</button><h2>' + esc(p.name) + ' Map Matchups</h2>' +
+        '<p class="muted">Every map is a matchup against each player: the faster time wins. No time on a map loses to anyone who has one. Ties don\'t count.</p>' +
+        '<div class="bt-bar"><div class="gsel2" role="group" aria-label="Group">' + Object.keys(G).map(function (k) { return '<button type="button" data-bg="' + k + '" aria-pressed="' + (k === gk) + '">' + G[k][0] + "</button>"; }).join("") + "</div>" +
+        '<div class="gsel2" role="group" aria-label="View">' + [["player", "By player"], ["map", "By map"]].map(function (v) { return '<button type="button" data-bview="' + v[0] + '" aria-pressed="' + (v[0] === view) + '">' + v[1] + "</button>"; }).join("") + "</div></div>" +
+        '<div class="ip-wl" style="border:0"><div class="top"><b>vs ' + G[gk][0].toLowerCase() + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + rec.w + '">' + rec.w + '</b></span><span>Losses: <b data-count="' + rec.l + '">' + rec.l + "</b></span></div></div>";
+      if (view === "player") {
+        body += '<div class="rwrap"><table class="rtable bt"><thead><tr><th>Rank</th><th>Player</th><th>Wins</th><th>Losses</th><th class="c-maps">Record</th><th></th></tr></thead><tbody>' +
+          grp.map(function (o) {
+            var r = mapRecord(p, [o]), t2 = r.w + r.l, pp = t2 ? Math.round(100 * r.w / t2) : 0;
+            return '<tr data-vs="' + esc(o.name) + '"><td class="rk"><span>' + o.place + '</span></td><td class="pn">' + flag(o.country) + " " + esc(o.name) + '</td><td class="num win">' + r.w + '</td><td class="num loss">' + r.l + '</td><td class="c-maps"><div class="ip-bar mini"><i data-w="' + pp + '"></i></div></td><td><span class="h2hb">Head 2 Head</span></td></tr>';
+          }).join("") + "</tbody></table></div>";
+      } else {
+        body += '<div class="bt-maps">' + MAPS.map(function (name, m) {
+          var mine = p.t[m];
+          var faster = grp.filter(function (o) { return o.t[m] != null && (mine == null || o.t[m] < mine - EPS); }).sort(function (a, b) { return a.t[m] - b.t[m]; });
+          var beaten = grp.filter(function (o) { return mine != null && (o.t[m] == null || o.t[m] > mine + EPS); }).length;
+          return '<div class="bt-map"><div class="pic">' + mapPic(m) + '</div><div class="bt-info"><div class="bt-h"><b>' + esc(name) + '</b><span class="num">' + fmt(mine) + "</span></div>" +
+            (faster.length ? '<div class="bt-who"><span class="muted">Faster than you (' + faster.length + "):</span> " + faster.slice(0, 8).map(function (o) { return '<button type="button" class="chip" data-player="' + esc(o.name) + '">' + esc(o.name) + " <i>" + fmt(o.t[m]) + "</i></button>"; }).join("") + (faster.length > 8 ? '<span class="muted"> +' + (faster.length - 8) + " more</span>" : "") + "</div>"
+              : '<div class="bt-who"><span class="crown">👑 Best in this group</span></div>') +
+            '<small class="muted">You beat ' + beaten + " of " + grp.length + "</small></div></div>";
+        }).join("") + "</div>";
+      }
     } else if (S.ptab === "times") {
       body = '<div class="ttable"><div class="trow head"><span></span><span>Map</span><span style="text-align:right">Time</span><span style="text-align:right">Map rank</span><span style="text-align:right">vs OR</span></div>' +
         MAPS.map(function (name, m) {
@@ -800,8 +1068,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
             (OR && OR.t[m] ? '<button type="button" class="fill" data-fill="' + m + '" title="Use the Oceania record">OR</button>' : "<span></span>") + "</div>";
         }).join("") + "</div></div>";
     }
-    $("pbody").innerHTML = body;
+    $("pbody").innerHTML = (S.ptab === "overview" || S.ptab === "matchups" ? "" : title) + body;
     if (S.ptab === "target") updateSim();
+    countUp($("v-profile"));
+    animateGauge();
+    requestAnimationFrame(function () { document.querySelectorAll(".ip-bar i").forEach(function (i) { i.style.width = i.dataset.w + "%"; }); });
   }
   function updateSim() {
     var p = byName[S.player]; if (!p || !$("sim-sum")) return;
@@ -935,6 +1206,13 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (t.id === "maps-back") { S.map = null; renderMaps(); syncUrl(); return; }
     if (t.id === "share") { var url = location.origin + urlFor(); try { navigator.clipboard.writeText(url).then(function () { toast("Profile link copied"); }, function () { toast(url); }); } catch (er) { toast(url); } return; }
     if (t.id === "sim-reset") { S.sim = {}; renderProfile(); return; }
+    var bb = t.closest("[data-battles]"); if (bb) { S.ptab = "matchups"; S.bg = bb.dataset.battles; S.bview = "player"; renderProfile(); syncUrl(); window.scrollTo(0, 0); return; }
+    var bg = t.closest("[data-bg]"); if (bg) { S.bg = bg.dataset.bg; renderProfile(); syncUrl(); return; }
+    var bv = t.closest("[data-bview]"); if (bv) { S.bview = bv.dataset.bview; renderProfile(); syncUrl(); return; }
+    var vsr = t.closest("[data-vs]"); if (vsr) { S.vs = vsr.dataset.vs; S.ptab = "h2h"; renderProfile(); syncUrl(); window.scrollTo(0, 0); return; }
+    var gm = t.closest("[data-gmode]"); if (gm) { S.gmode = gm.dataset.gmode; var gw = document.querySelector(".ip-gauge"); var p0 = byName[S.player]; if (gw && p0) { gw.querySelector("svg").outerHTML = gaugeSVG(p0, S.gmode); gw.querySelectorAll("[data-gmode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.gmode === S.gmode)); }); countUp(gw); animateGauge(); } return; }
+    if (t.closest("#ye-more")) { S.yeOpen = !S.yeOpen; document.querySelectorAll(".ip-ye tbody tr").forEach(function (r, i) { if (i > 0) r.hidden = !S.yeOpen; }); $("ye-more").setAttribute("aria-expanded", String(!!S.yeOpen)); return; }
+    if (t.closest("[data-sharex]")) { window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(S.player + " on the Oceania LOLBeans rankings") + "&url=" + encodeURIComponent(location.origin + urlFor()), "_blank", "noopener"); return; }
     var pt = t.closest("[data-ptab]"); if (pt) { S.ptab = pt.dataset.ptab; renderProfile(); syncUrl(); if (S.ptab === "h2h" && $("p-vs")) $("p-vs").focus(); return; }
     var fill = t.closest("[data-fill]"); if (fill) { var m = +fill.dataset.fill; S.sim[m] = OR.t[m]; var inp = $("sim-" + m); inp.value = OR.t[m].toFixed(3); inp.classList.add("changed"); updateSim(); return; }
     var mc = t.closest("[data-map]"); if (mc) { S.map = +mc.dataset.map; renderMaps(); syncUrl(); window.scrollTo(0, 0); return; }
@@ -967,8 +1245,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   // ======================= LOAD =======================
   function get(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); }); }
   function opt(url) { return get(url).then(parseCSV, function () { return []; }); }
-  Promise.all([get(RANKINGS_URL), opt(CAREER_URL), opt(HIST_URL), opt(ONE_URL), opt(REC_URL), opt(ALIAS_URL)])
-    .then(function (res) { load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4], alias: res[5] }); $("status").hidden = true; })
+  Promise.all([get(RANKINGS_URL), opt(CAREER_URL), opt(HIST_URL), opt(ONE_URL), opt(REC_URL), opt(ALIAS_URL), opt(PHOTO_URL)])
+    .then(function (res) { window.__photos = res[6]; load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4], alias: res[5], photo: res[6] }); $("status").hidden = true; })
     .catch(function () {
       var sample = /github\.io$/.test(location.hostname) ? [] : (window.RANKINGS_SAMPLE || []);
       if (sample.length) {
