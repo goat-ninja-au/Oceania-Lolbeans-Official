@@ -478,10 +478,10 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   function ymd(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
   function weekOf(s) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); var d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return ymd(d); }
   function days(a, b) { var x = /^(\d{4})-(\d{2})-(\d{2})/.exec(a), y = /^(\d{4})-(\d{2})-(\d{2})/.exec(b); if (!x || !y) return 0; return Math.round((Date.UTC(+y[1], +y[2] - 1, +y[3]) - Date.UTC(+x[1], +x[2] - 1, +x[3])) / 864e5); }
-  function header(rows, first) { return rows && rows[0] && String(rows[0][0]).trim().toLowerCase() === first; }
+  function header(rows, first, second) { return rows && rows[0] && String(rows[0][0]).trim().toLowerCase() === first && String(rows[0][1] || "").trim().toLowerCase() === second; }
   function loadHistory(ex) {
     hist = {}; weeks = []; ones = []; recLog = [];
-    if (header(ex.hist, "week")) ex.hist.slice(1).forEach(function (r) {
+    if (header(ex.hist, "week", "name")) ex.hist.slice(1).forEach(function (r) {
       var w = String(r[0]).trim(), n = String(r[1] || "").trim().toLowerCase(), k = parseInt(r[2], 10);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(w) || !n || isNaN(k)) return;
       if (!hist[w]) { hist[w] = {}; weeks.push(w); }
@@ -490,8 +490,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     weeks.sort();
     var thisWeek = weekOf(ymd(new Date()));
     prevWeek = weeks.filter(function (w) { return w < thisWeek; }).pop() || null;
-    if (header(ex.one, "date")) ones = ex.one.slice(1).filter(function (r) { return /^\d{4}-/.test(r[0]) && r[1]; }).map(function (r) { return { d: String(r[0]).trim(), n: String(r[1]).trim() }; }).sort(function (a, b) { return a.d < b.d ? -1 : 1; });
-    if (header(ex.rec, "date")) recLog = ex.rec.slice(1).filter(function (r) { return /^\d{4}-/.test(r[0]) && MAPS.indexOf(String(r[1]).trim()) >= 0; }).map(function (r) { return { d: String(r[0]).trim(), m: MAPS.indexOf(String(r[1]).trim()), t: num(r[2]), h: String(r[3] || "").trim() }; }).sort(function (a, b) { return a.d < b.d ? -1 : 1; });
+    if (header(ex.one, "date", "name")) ones = ex.one.slice(1).filter(function (r) { return /^\d{4}-/.test(r[0]) && r[1]; }).map(function (r) { return { d: String(r[0]).trim(), n: String(r[1]).trim() }; }).sort(function (a, b) { return a.d < b.d ? -1 : 1; });
+    if (header(ex.rec, "date", "map")) recLog = ex.rec.slice(1).filter(function (r) { return /^\d{4}-/.test(r[0]) && MAPS.indexOf(String(r[1]).trim()) >= 0; }).map(function (r) { return { d: String(r[0]).trim(), m: MAPS.indexOf(String(r[1]).trim()), t: num(r[2]), h: String(r[3] || "").trim() }; }).sort(function (a, b) { return a.d < b.d ? -1 : 1; });
   }
   // #1 reigns: [{n, from, to, days}]
   function reigns() {

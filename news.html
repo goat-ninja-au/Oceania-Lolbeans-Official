@@ -200,11 +200,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 
   function load(own, auto) {
     all = [];
-    if (own.length && /date/i.test(own[0][0])) own.slice(1).forEach(function (r) {
+    if (own.length && /date/i.test(own[0][0]) && /headline/i.test(own[0][1] || "")) own.slice(1).forEach(function (r) {
       var d = parts(String(r[0]).trim()); if (!d || !String(r[1] || "").trim()) return;
       all.push({ d: d, type: "own", h: String(r[1]).trim(), s: String(r[2] || "").trim(), img: r[3] });
     });
-    if (auto.length && /date/i.test(auto[0][0])) auto.slice(1).forEach(function (r) {
+    if (auto.length && /date/i.test(auto[0][0]) && /type/i.test(auto[0][1] || "")) auto.slice(1).forEach(function (r) {
       var d = parts(String(r[0]).trim()), type = String(r[1] || "").trim(), s = String(r[2] || "").trim(); if (!d || !s) return;
       all.push({ d: d, type: type, h: headline(type, s), s: s });
     });
