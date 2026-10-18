@@ -827,6 +827,7 @@ function enterApp(user) {
     countMain(); renderLists();
   }));
   openView("main");
+  if (location.hash === "#profile") setTimeout(() => { if (S.me) editProfileForm(); history.replaceState(null, "", location.pathname); }, 900);
 }
 function countMain() {
   const r = readMain();
@@ -1618,5 +1619,6 @@ start();
   top.addEventListener("focusin", function () { root.classList.remove("olb-hidden"); });
 })();
 </script>
+<script type="module" src="auth-widget.js"></script>
 </body>
 </html>
