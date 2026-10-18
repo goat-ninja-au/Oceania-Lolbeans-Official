@@ -303,6 +303,16 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .gtip { font-size: .85rem; }
 .ghead { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .fame .card { align-content: start; }
+.rec-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.rec-sum > div { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; display: grid; gap: 2px; }
+.rec-sum span { font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.rec-sum b { font-size: 1.25rem; } .rec-sum a { color: var(--blue); }
+.rec-map { display: flex; align-items: center; gap: 12px; }
+.rec-map .pic { width: 64px; height: 42px; border-radius: 6px; overflow: hidden; background: var(--soft); flex: none; }
+.rec-map .pic img, .rec-map .pic .mfall { width: 100%; height: 100%; object-fit: cover; }
+.rec-t td { padding-block: 8px; height: auto; vertical-align: middle; }
+.rec-t .rec-h { color: var(--text); text-decoration: none; font-weight: 600; } .rec-t .rec-h:hover { color: var(--blue); text-decoration: underline; }
+@media (max-width: 600px) { .rec-map .pic { display: none; } }
 .fame { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
 .fline { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--row); }
 .fline:last-child { border-bottom: 0; }
@@ -446,11 +456,13 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     <a class="brand" href="index.html"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
     <nav class="main" aria-label="Main">
       <a href="index.html">Home</a>
-      <a href="rankings.html" aria-current="page">Rankings</a>
+      <a href="rankings.html" id="nav-rankings" aria-current="page">Rankings</a>
+      <a href="rankings.html?s=records" id="nav-records">Records</a>
+      <a href="rankings.html?s=fame" id="nav-halloffame">Hall of Fame</a>
       <a href="news.html">News</a>
       <a href="academy.html">Academy</a>
       <a href="index.html#tournaments">Tournaments</a>
-      <a href="index.html#join">Join</a>
+      <a href="join.html">Join</a>
       <a href="chat.html">Chat</a>
     </nav>
     <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
@@ -471,6 +483,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     </section>
     <div class="sections" role="tablist" aria-label="Sections">
       <button role="tab" id="s-list" data-sec="list" aria-selected="true">Rankings</button>
+      <button role="tab" id="s-records" data-sec="records" aria-selected="false">Oceania Records</button>
       <button role="tab" id="s-maps" data-sec="maps" aria-selected="false">Map Records</button>
       <button role="tab" id="s-h2h" data-sec="h2h" aria-selected="false">Head to Head</button>
       <button role="tab" id="s-fame" data-sec="fame" aria-selected="false">Hall of Fame</button>
@@ -538,6 +551,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     </div>
   </section>
   <datalist id="names"></datalist>
+
+  <!-- OCEANIA RECORDS -->
+  <section class="view" id="v-records" role="tabpanel" aria-labelledby="s-records" hidden>
+    <div id="records-body"></div>
+  </section>
 
   <!-- HALL OF FAME -->
   <section class="view" id="v-fame" role="tabpanel" aria-labelledby="s-fame" hidden>
@@ -753,7 +771,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   // ======================= URL =======================
   function readUrl() {
     var src = location.search && location.search.length > 1 ? location.search.slice(1) : "";
-    if (!src && location.hash.length > 1 && /^(list|maps|h2h|fame|info)$/.test(location.hash.slice(1))) src = "s=" + location.hash.slice(1);
+    if (!src && location.hash.length > 1 && /^(list|records|maps|h2h|fame|info)$/.test(location.hash.slice(1))) src = "s=" + location.hash.slice(1);
     var P = new URLSearchParams(src);
     if (P.get("s")) S.sec = P.get("s");
     if (P.get("map") != null) { var mi = MAPS.indexOf(P.get("map")); if (mi >= 0) S.map = mi; }
@@ -777,8 +795,10 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var onP = !!S.player;
     $("head").hidden = onP;
     $("v-profile").hidden = !onP;
-    ["list", "maps", "h2h", "fame", "info"].forEach(function (s) { $("v-" + s).hidden = onP || S.sec !== s; $("s-" + s).setAttribute("aria-selected", String(!onP && S.sec === s)); });
-    if (onP) renderProfile(); else if (S.sec === "list") renderList(); else if (S.sec === "maps") renderMaps(); else if (S.sec === "h2h") renderH2H(); else if (S.sec === "fame") renderFame();
+    ["list", "records", "maps", "h2h", "fame", "info"].forEach(function (s) { $("v-" + s).hidden = onP || S.sec !== s; $("s-" + s).setAttribute("aria-selected", String(!onP && S.sec === s)); });
+    if (onP) renderProfile(); else if (S.sec === "list") renderList(); else if (S.sec === "maps") renderMaps(); else if (S.sec === "h2h") renderH2H(); else if (S.sec === "fame") renderFame(); else if (S.sec === "records") renderRecords();
+    var navSec = onP ? "rankings" : S.sec === "records" ? "records" : S.sec === "fame" ? "halloffame" : "rankings";
+    ["rankings", "records", "halloffame"].forEach(function (k) { var a = document.getElementById("nav-" + k); if (a) { if (k === navSec) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); } });
     syncUrl();
   }
   function openPlayer(name, tab) { if (!byName[name]) return; S.player = name; S.ptab = tab || "overview"; S.sim = {}; S.vs = null; route(); window.scrollTo(0, 0); }
@@ -1140,6 +1160,38 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
       '<p class="muted gtip">' + (change > 0 ? "Up " + change + (change === 1 ? " place" : " places") : change < 0 ? "Down " + (-change) + (change === -1 ? " place" : " places") : "No change") + " over this period · Best: " + ordinal(best) + " · Gold dot marks the best ranking. Hover a dot for details.</p></div>";
   }
 
+  // ======================= OCEANIA RECORDS LIST =======================
+  function orSince(m) {
+    var t = OR && OR.t[m]; if (!t) return null;
+    var first = recLog.length ? recLog[0].d : "";
+    var log = recLog.filter(function (e) { return e.m === m; }), lastE = log[log.length - 1];
+    var d = lastE && same(lastE.t, t) ? lastE.d : "";
+    return { d: d, orig: d && d === first, n: log.length };
+  }
+  function renderRecords() {
+    var rows = MAPS.map(function (name, m) { var t = OR && OR.t[m]; return t ? { m: m, t: t, h: holders(m), s: orSince(m), wr: WR && WR.t[m] } : null; }).filter(Boolean);
+    var sort = S.rsort || "map";
+    if (sort === "old") rows.sort(function (a, b) { return (a.s && a.s.d || "9") < (b.s && b.s.d || "9") ? -1 : 1; });
+    if (sort === "new") rows.sort(function (a, b) { return (a.s && a.s.d || "") > (b.s && b.s.d || "") ? -1 : 1; });
+    if (sort === "wr") rows.sort(function (a, b) { return (a.wr ? a.t - a.wr : 99) - (b.wr ? b.t - b.wr : 99); });
+    var count = {}; players.forEach(function (p) { if (p.orN) count[p.name] = p.orN; });
+    var top = Object.keys(count).sort(function (a, b) { return count[b] - count[a]; })[0];
+    $("records-body").innerHTML =
+      '<div class="rec-sum"><div><span>Oceania record total</span><b class="mono">' + fmt(OR && OR.total) + '</b></div><div><span>World record total</span><b class="mono">' + fmt(WR && WR.total) + "</b></div>" +
+      '<div><span>Players holding a record</span><b>' + Object.keys(count).length + "</b></div>" + (top ? '<div><span>Most records</span><b><a href="#" data-player="' + esc(top) + '">' + esc(top) + "</a> (" + count[top] + ")</b></div>" : "") + "</div>" +
+      '<div class="controls"><label class="perpage">Sort by <select class="field" id="rsort"><option value="map">Map order</option><option value="old">Longest standing</option><option value="new">Newest first</option><option value="wr">Closest to WR</option></select></label><span class="count">' + rows.length + " records</span></div>" +
+      '<div class="rwrap"><table class="rtable rec-t"><thead><tr><th>Map</th><th>Oceania Record</th><th>Held by</th><th class="c-maps">Set</th><th class="c-or">World Record</th></tr></thead><tbody>' +
+      rows.map(function (r) {
+        var gap = r.wr ? r.t - r.wr : null;
+        return '<tr data-map="' + r.m + '"><td><span class="rec-map"><span class="pic">' + mapPic(r.m) + "</span><b>" + esc(MAPS[r.m]) + "</b></span></td>" +
+          '<td class="num"><b>' + fmt(r.t) + "</b>" + (r.wr && same(r.t, r.wr) ? ' <span class="tag wr">WR</span>' : "") + "</td>" +
+          "<td>" + (r.h.length ? r.h.map(function (n) { return '<a href="#" class="rec-h" data-player="' + esc(n) + '">' + flag(byName[n].country) + " " + esc(n) + "</a>"; }).join("<br>") : '<span class="muted">Not ranked</span>') + "</td>" +
+          '<td class="c-maps">' + (r.s && r.s.d ? (r.s.orig ? "Sep 2024 or earlier" : niceDate(r.s.d)) + '<br><small class="muted">' + since(r.s.d) + "</small>" : "–") + "</td>" +
+          '<td class="num c-or">' + fmt(r.wr) + (gap != null && gap > EPS ? '<br><small class="muted">+' + gap.toFixed(3) + "</small>" : "") + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+    $("rsort").value = sort;
+  }
+
   // ======================= HALL OF FAME =======================
   function plink(n) { return byName[n] ? '<b data-player="' + esc(n) + '">' + esc(n) + "</b>" : "<b>" + esc(n) + "</b>"; }
   function since(d) { var n = days(d, ymd(new Date())); var y = (n / 365).toFixed(1).replace(/\.0$/, ""); return n >= 365 ? y + (y === "1" ? " year" : " years") : n >= 14 ? Math.floor(n / 7) + " weeks" : n + (n === 1 ? " day" : " days"); }
@@ -1215,7 +1267,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (t.closest("[data-sharex]")) { window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(S.player + " on the Oceania LOLBeans rankings") + "&url=" + encodeURIComponent(location.origin + urlFor()), "_blank", "noopener"); return; }
     var pt = t.closest("[data-ptab]"); if (pt) { S.ptab = pt.dataset.ptab; renderProfile(); syncUrl(); if (S.ptab === "h2h" && $("p-vs")) $("p-vs").focus(); return; }
     var fill = t.closest("[data-fill]"); if (fill) { var m = +fill.dataset.fill; S.sim[m] = OR.t[m]; var inp = $("sim-" + m); inp.value = OR.t[m].toFixed(3); inp.classList.add("changed"); updateSim(); return; }
-    var mc = t.closest("[data-map]"); if (mc) { S.map = +mc.dataset.map; renderMaps(); syncUrl(); window.scrollTo(0, 0); return; }
+    var pl0 = t.closest("[data-player]"); if (pl0 && t.closest(".rec-t, .rec-sum")) { e.preventDefault(); openPlayer(pl0.dataset.player); return; }
+    var mc = t.closest("[data-map]"); if (mc) { S.map = +mc.dataset.map; if (S.sec !== "maps") { S.sec = "maps"; route(); } else renderMaps(); syncUrl(); window.scrollTo(0, 0); return; }
     var hb = t.closest("[data-h2h]"); if (hb) { S.sec = "h2h"; S.player = null; S.a = hb.dataset.h2h; S.b = null; route(); window.scrollTo(0, 0); return; }
     var pl = t.closest("[data-player]"); if (pl) openPlayer(pl.dataset.player);
   });
@@ -1223,7 +1276,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-player][tabindex]")) { e.preventDefault(); openPlayer(e.target.dataset.player); }
     if (e.key === "Enter" && e.target.id === "p-vs") { var hit = findPlayer(e.target.value); if (hit) { S.vs = hit.name; renderProfile(); syncUrl(); } }
   });
-  document.addEventListener("change", function (e) { if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } });
+  document.addEventListener("change", function (e) { if (e.target.id === "rsort") { S.rsort = e.target.value; renderRecords(); return; } if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } });
   document.addEventListener("input", function (e) {
     if (e.target.id === "p-vs") { var v = e.target.value.trim(); if (byName[v]) { S.vs = v; renderProfile(); syncUrl(); } return; }
     if (!e.target.dataset || e.target.dataset.sim == null) return;

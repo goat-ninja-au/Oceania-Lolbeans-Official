@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join the Oceania Server</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: clean light-blue site matching the recoloured Academy pages. Sticky header, left-aligned hero, simple stacked sections in a 1040px column. */
+:root {
+  --bg: #c3e1f4;
+  --panel: #ffffff;
+  --panel-2: #acd3ec;
+  --line: #98c5e2;
+  --text: #0c2a43;
+  --muted: #3a5a73;
+  --blue: #1478c2;
+  --blue-hover: #0f62a0;
+  --green: #3fb80a;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; line-height: 1.15; text-wrap: balance; font-weight: 800; }
+p { margin: 0; max-width: 62ch; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+
+/* Header */
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: rgba(195,225,244,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding-block: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; font-size: 1.05rem; }
+.brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.brand .mark { width: 40px; height: 40px; border-radius: 8px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .9rem; }
+nav { display: flex; flex-wrap: wrap; gap: 2px; }
+nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: .95rem; padding: 8px 12px; border-radius: 8px; }
+nav a:hover { color: var(--text); background: var(--panel-2); }
+
+/* Hero */
+.hero { padding-block: 88px 72px; border-bottom: 1px solid var(--line); background: radial-gradient(80% 120% at 100% 0%, rgba(20,120,194,.18), transparent 60%); }
+.hero .wrap { display: grid; gap: 22px; }
+.eyebrow { color: var(--blue); font-weight: 700; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; }
+.hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); max-width: 16ch; }
+.hero p { font-size: 1.15rem; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; font: 700 1rem var(--font); padding: 12px 20px; border-radius: 8px; text-decoration: none; border: 1px solid transparent; cursor: pointer; }
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: var(--blue-hover); }
+.btn-outline { border-color: var(--line); color: var(--text); background: transparent; }
+.btn-outline:hover { background: var(--panel-2); }
+
+/* Sections */
+section.block { padding-block: 72px; border-bottom: 1px solid var(--line); }
+.sec-head { display: grid; gap: 10px; margin-bottom: 32px; }
+.sec-head h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); }
+.sec-head p { color: var(--muted); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 2px 8px rgba(12,42,67,.06); padding: 22px; display: grid; gap: 8px; align-content: start; }
+.card h3 { font-size: 1.1rem; }
+.card p { color: var(--muted); }
+
+.feature { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: clamp(22px, 4vw, 36px); display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+.feature .text { display: grid; gap: 10px; min-width: 0; }
+.feature h2 { font-size: clamp(1.5rem, 3.6vw, 2rem); }
+.feature p { color: var(--muted); }
+.feature.academy { border-left: 4px solid var(--green); }
+.feature.academy .eyebrow { color: var(--green); }
+.btn-green { background: var(--green); color: #0b1a02; }
+.btn-green:hover { filter: brightness(.92); }
+.note { font-size: .92rem; }
+.soon { font-weight: 800; padding: 10px 16px; border-radius: 8px; background: var(--panel-2); color: var(--muted); white-space: nowrap; }
+@media (max-width: 640px) { .feature { grid-template-columns: 1fr; } .feature .btn { justify-self: start; } }
+
+/* Join */
+.join-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; max-width: 520px; }
+.join-row .label { color: var(--muted); font-weight: 600; font-size: .9rem; }
+.join-row .name { font-weight: 800; font-size: 1.15rem; flex: 1; min-width: 0; overflow-wrap: anywhere; user-select: all; }
+.copy { font: 700 .9rem var(--font); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); cursor: pointer; }
+.copy:hover { border-color: var(--blue); }
+
+footer .wrap { padding-block: 28px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .9rem; }
+
+/* Dark mode (toggle in the header, shared across the site) */
+:root[data-mode="dark"] { --bg: #0d1a26; --panel: #142636; --panel-2: #1c3346; --line: #27445c; --text: #e6f1f9; --muted: #9cb6c9; --blue: #4aa8f0; --blue-hover: #6bb9f5; color-scheme: dark; }
+header { background: color-mix(in srgb, var(--bg) 92%, transparent) !important; }
+.mode { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 1.05rem; cursor: pointer; }
+.head-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+nav a[aria-current] { color: var(--text); background: var(--panel); }
+
+/* Join page */
+.jp { padding-block: 48px 72px; display: grid; gap: 28px; }
+.dcard { background: #2b2d31; color: #f2f3f5; border-radius: 18px; overflow: hidden; max-width: 560px; box-shadow: 0 14px 40px rgba(12,42,67,.18); }
+.dcard .ban { height: 96px; background: linear-gradient(180deg, #3d8fe0, #8ed3f7); }
+.dcard .in { padding: 0 24px 24px; display: grid; gap: 10px; }
+.dcard .icon { width: 104px; height: 104px; border-radius: 26px; border: 6px solid #2b2d31; margin-top: -54px; background: #1e1f22; overflow: hidden; }
+.dcard .icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dcard h1 { font-size: clamp(1.5rem, 4.5vw, 1.9rem); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dcard .tag { font-size: .8rem; font-weight: 800; background: #3f4147; border-radius: 6px; padding: 2px 8px; color: #dbdee1; }
+.dcard .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: #b5bac1; font-size: .98rem; }
+.dcard .meta i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #80848e; margin-right: 6px; }
+.dcard .meta i.on { background: #23a55a; }
+.dcard p { color: #dbdee1; }
+.jp-head { display: grid; gap: 10px; }
+.jp-head h2 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); }
+.jp-head p { color: var(--muted); }
+.steps { display: grid; gap: 14px; counter-reset: s; max-width: 760px; padding: 0; margin: 0; list-style: none; }
+.steps li { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px 18px 66px; position: relative; display: grid; gap: 8px; }
+.steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 18px; top: 18px; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; }
+.steps h3 { font-size: 1.1rem; }
+.steps p { color: var(--muted); }
+.who { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.who .av { width: 42px; height: 42px; border-radius: 50%; background: #5865f2; color: #fff; display: grid; place-items: center; font-weight: 800; }
+.who b { display: block; font-size: 1.05rem; } .who small { color: var(--muted); font-size: .88rem; }
+.who .grow { flex: 1 1 150px; min-width: 0; }
+@media (max-width: 480px) { .steps li { padding-left: 58px; } .steps li::before { left: 14px; } .who .copy { width: 100%; } }
+.copy { font: 700 .9rem var(--font); padding: 9px 16px; border-radius: 8px; border: 0; background: #5865f2; color: #fff; cursor: pointer; }
+.copy:hover { filter: brightness(1.08); }
+</style>
+</head>
+<body style="margin:0">
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
+    <div class="head-right">
+    <nav aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="rankings.html" id="nav-rankings">Rankings</a>
+      <a href="rankings.html?s=records" id="nav-records">Records</a>
+      <a href="rankings.html?s=fame" id="nav-halloffame">Hall of Fame</a>
+      <a href="news.html">News</a>
+      <a href="academy.html">Academy</a>
+      <a href="index.html#tournaments">Tournaments</a>
+      <a href="join.html" aria-current="page">Join</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+    <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap jp">
+  <div class="dcard">
+    <div class="ban"></div>
+    <div class="in">
+      <div class="icon"><img src="server-icon.png" alt="Oceania LOLBeans Official server icon"></div>
+      <h1>Oceania LOLBeans Official <span class="tag">💧 RIUU</span></h1>
+      <div class="meta"><span><i class="on"></i>Active every day</span><span><i></i>230+ members</span><span>Est. April 2024</span></div>
+      <p>The Discord home of Oceania LOLBeans: lobbies on our time zone, the rankings, tournaments and plenty of beans.</p>
+    </div>
+  </div>
+
+  <div class="jp-head">
+    <div class="eyebrow">Discord</div>
+    <h2>Want to join the Oceania server?</h2>
+    <p>The server is invite only, so add the owner on Discord and he'll send you an invite.</p>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <h3>Add Goat Ninja on Discord</h3>
+      <div class="who"><span class="av">GN</span><span class="grow"><b>Goat Ninja</b><small>Username: <span id="uname">phoenix001699</span></small></span><button class="copy" type="button" data-copy="phoenix001699">Copy username</button></div>
+      <p>In Discord, go to <b>Friends → Add Friend</b> and paste the username.</p>
+    </li>
+    <li>
+      <h3>Ask for an invite</h3>
+      <p>Send him a message saying you'd like to join the Oceania LOLBeans server, and he'll send you the invite link.</p>
+    </li>
+    <li>
+      <h3>Get on the rankings</h3>
+      <p>Once you're in, fill out the sign-up form with your times to be added to the Oceania rankings.</p>
+      <div><a class="btn btn-outline" href="https://docs.google.com/forms/d/e/1FAIpQLSetxzjFJqwo8pSUdBE4dmVAc5z0OZNikdj7WvN0tAhXYIVIuQ/viewform?usp=header" target="_blank" rel="noopener">Rankings sign-up form</a></div>
+    </li>
+  </ol>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Oceania LOLBeans Official</span>
+    <span>A fan community, not affiliated with the LOLBeans developers.</span>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll(".copy").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var text = btn.dataset.copy, orig = btn.textContent;
+    var done = function () { btn.textContent = "Copied!"; setTimeout(function () { btn.textContent = orig; }, 1500); };
+    var fallback = function () { var r = document.createRange(); r.selectNodeContents(document.getElementById("uname")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  });
+});
+</script>
+<script>
+(function () {
+  var b = document.getElementById("mode");
+  function setMode(dark) {
+    document.documentElement.setAttribute("data-mode", dark ? "dark" : "light");
+    b.textContent = dark ? "☀" : "☾"; b.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+    try { localStorage.setItem("olb-mode", dark ? "dark" : "light"); } catch (e) {}
+  }
+  b.addEventListener("click", function () { setMode(document.documentElement.getAttribute("data-mode") !== "dark"); });
+  try { if (localStorage.getItem("olb-mode") === "dark") setMode(true); } catch (e) {}
+})();
+</script>
+</body>
+</html>

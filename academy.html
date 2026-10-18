@@ -89,6 +89,13 @@ footer .wrap { padding-block: 28px; display: flex; flex-wrap: wrap; justify-cont
 .soon-wrap h1 { font-size: clamp(2.2rem, 7vw, 3.6rem); }
 .soon-wrap p { color: var(--muted); font-size: 1.1rem; }
 nav a[aria-current] { color: var(--text); background: var(--panel); }
+
+/* Dark mode (toggle in the header, shared across the site) */
+:root[data-mode="dark"] { --bg: #0d1a26; --panel: #142636; --panel-2: #1c3346; --line: #27445c; --text: #e6f1f9; --muted: #9cb6c9; --blue: #4aa8f0; --blue-hover: #6bb9f5; color-scheme: dark; }
+header { background: color-mix(in srgb, var(--bg) 92%, transparent) !important; }
+.mode { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 1.05rem; cursor: pointer; }
+.head-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+nav a[aria-current] { color: var(--text); background: var(--panel); }
 </style>
 </head>
 <body style="margin:0">
@@ -96,16 +103,20 @@ nav a[aria-current] { color: var(--text); background: var(--panel); }
 <header>
   <div class="wrap">
     <a class="brand" href="index.html"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
+    <div class="head-right">
     <nav aria-label="Main">
       <a href="index.html">Home</a>
-      <a href="rankings.html">Rankings</a>
+      <a href="rankings.html" id="nav-rankings">Rankings</a>
+      <a href="rankings.html?s=records" id="nav-records">Records</a>
+      <a href="rankings.html?s=fame" id="nav-halloffame">Hall of Fame</a>
       <a href="news.html">News</a>
-      <a href="index.html#about">About</a>
       <a href="academy.html" aria-current="page">Academy</a>
       <a href="index.html#tournaments">Tournaments</a>
-      <a href="index.html#join">Join</a>
+      <a href="join.html">Join</a>
       <a href="chat.html">Chat</a>
     </nav>
+    <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
+    </div>
   </div>
 </header>
 
@@ -116,7 +127,7 @@ nav a[aria-current] { color: var(--text); background: var(--panel); }
       <h1>Coming soon</h1>
       <p>Map-by-map video tutorials matched to your PB are on the way. Keep an eye on the Discord server for the launch.</p>
       <div class="actions" style="justify-content:center">
-        <a class="btn btn-primary" href="index.html#join">Join the Discord</a>
+        <a class="btn btn-primary" href="join.html">Join the Discord</a>
         <a class="btn btn-outline" href="rankings.html">View the rankings</a>
       </div>
     </div>
@@ -130,5 +141,17 @@ nav a[aria-current] { color: var(--text); background: var(--panel); }
   </div>
 </footer>
 
+<script>
+(function () {
+  var b = document.getElementById("mode");
+  function setMode(dark) {
+    document.documentElement.setAttribute("data-mode", dark ? "dark" : "light");
+    b.textContent = dark ? "☀" : "☾"; b.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+    try { localStorage.setItem("olb-mode", dark ? "dark" : "light"); } catch (e) {}
+  }
+  b.addEventListener("click", function () { setMode(document.documentElement.getAttribute("data-mode") !== "dark"); });
+  try { if (localStorage.getItem("olb-mode") === "dark") setMode(true); } catch (e) {}
+})();
+</script>
 </body>
 </html>
