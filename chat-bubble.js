@@ -3,10 +3,10 @@
    (same accounts, main chat, DMs and groups as the Oceania LOLBeans Official website).
 
    To use it on a page, paste this one line just before </body>:
-     <script src="https://goat-ninja-au.github.io/Oceania-Lolbeans-Official/chat-bubble.js" data-view="champs"></script>
+     <script src="https://goat-ninja-au.github.io/Oceania-Lolbeans-Official/chat-bubble.js" data-view="main"></script>
 
    Options (attributes on that script tag):
-     data-view="champs"   open on the Championships channel (or "main" for the main chat)
+     data-view="main"   open on the Championships channel (or "main" for the main chat)
      data-label="Chat"    text next to the 💬 icon (use data-label="" for just the icon)
      data-side="left"     put the button on the bottom-left instead
 */
@@ -15,7 +15,7 @@
   var me = document.currentScript || document.querySelector('script[src*="chat-bubble.js"]');
   var opt = function (k, d) { var v = me && me.getAttribute("data-" + k); return v == null ? d : v; };
   var BASE = (me && me.src ? me.src.replace(/chat-bubble\.js.*$/, "") : "https://goat-ninja-au.github.io/Oceania-Lolbeans-Official/");
-  var view = opt("view", "champs"), label = opt("label", "Chat"), side = opt("side", "right") === "left" ? "left" : "right";
+  var view = opt("view", "main"), label = opt("label", "Chat"), side = opt("side", "right") === "left" ? "left" : "right";
 
   var css = "" +
     ".olb-bub{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));" + side + ":18px;z-index:2147483000;display:inline-flex;align-items:center;gap:8px;height:56px;padding:0 20px 0 16px;border-radius:999px;border:0;cursor:pointer;background:#1478c2;color:#fff;font:700 15px/1 system-ui,-apple-system,'Segoe UI',Arial,sans-serif;box-shadow:0 10px 28px rgba(7,17,28,.35);transition:transform .15s}" +

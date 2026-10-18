@@ -385,7 +385,6 @@ html.embed-bubble .gate { padding: 18px; }
         <div class="scroll">
           <h3 class="h3row">Chats <button class="linkbtn" type="button" id="new-group">+ New group</button></h3>
           <button class="item" type="button" data-open="main" id="open-main"><span class="hash">#</span><span><b>Main chat</b><small>Everyone</small></span><span id="main-badge"></span></button>
-          <button class="item" type="button" data-open="champs" id="open-champs"><span class="hash champs">🏆</span><span><b>Championships</b><small>Oceania Championships 2026</small></span><span id="champs-badge"></span></button>
           <div id="dm-list"></div>
           <div id="inv-wrap" hidden><h3>Group invites</h3><div id="inv-list"></div></div>
           <div id="req-wrap"><h3>Friend requests</h3><div id="req-list"></div></div>
@@ -505,8 +504,7 @@ function parseCSV(s) {
 // which kind of conversation a view is: "main", a DM ("uidA_uidB") or a group ("grp:ID")
 // public channels everyone can read: the main chat and the Oceania Championships channel
 const PUB = {
-  main: { col: "messages", title: "Main chat", sub: "Everyone in the Oceania community", icon: "#" },
-  champs: { col: "champs", title: "Championships", sub: "Oceania Championships 2026 · tournament talk", icon: "🏆" }
+  main: { col: "messages", title: "Main chat", sub: "Everyone in the Oceania community", icon: "#" }
 };
 const kindOf = v => PUB[v] ? "main" : v.startsWith("grp:") ? "grp" : "dm";
 const gidOf = v => v.slice(4);
@@ -545,7 +543,7 @@ async function loadRankings() {
 const S = {
   uid: null, me: null, admin: false, users: {}, known: {}, status: {},
   friends: [], chats: {}, groups: {}, invites: [], reads: {}, blocked: {},
-  view: "main", live: [], older: [], cursor: null, pubLive: { main: [], champs: [] }, pubCursor: {}, pubFirst: { main: true, champs: true },
+  view: "main", live: [], older: [], cursor: null, pubLive: { main: [] }, pubCursor: {}, pubFirst: { main: true },
   unsubMsgs: null, pinUnsub: null, seenUnsub: null, typingUnsub: null,
   pins: [], otherSeen: 0, dividerAt: 0, unread: {}, unreadKey: {},
   reports: [], lastSend: 0, replyTo: null, editing: null, pendingImg: null,
