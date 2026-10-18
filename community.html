@@ -755,7 +755,7 @@ async function start() {
     const [app, a, fs, d] = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js"), import(SDK + "firebase-firestore.js"), import(SDK + "firebase-database.js")]);
     fb = { app, a, fs, d }; F = fs; R = d;
   } catch (e) { return demo(); }
-  const app = fb.app.initializeApp(FIREBASE);
+  const app = fb.app.getApps().length ? fb.app.getApp() : fb.app.initializeApp(FIREBASE);
   auth = fb.a.getAuth(app); db = F.getFirestore(app); rdb = R.getDatabase(app);
   loadRankings();
   try { await fb.a.getRedirectResult(auth); } catch (e) {}

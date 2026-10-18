@@ -109,9 +109,10 @@ async function init(box) {
   drawSignedOut(); if (cached && cached.name) drawChip(cached);
 
   try {
-    const [app, a, l] = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js"), import(SDK + "firebase-firestore-lite.js")]);
+    // same app + sign-in as the Community page (the full database library there, the small one elsewhere)
+    const [app, a, l] = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js"), import(SDK + (ON_COMMUNITY ? "firebase-firestore.js" : "firebase-firestore-lite.js"))]);
     A = a; L = l;
-    const fapp = app.getApps().find(x => x.name === "olb-acct") || app.initializeApp(FIREBASE, "olb-acct");
+    const fapp = app.getApps().length ? app.getApp() : app.initializeApp(FIREBASE);
     auth = a.getAuth(fapp); db = l.getFirestore(fapp);
   } catch (e) {}   // offline: keep the buttons, they just won't sign in
 
