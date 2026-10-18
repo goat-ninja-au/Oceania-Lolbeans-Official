@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Bean Times</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: site header, then a "newspaper" sheet: masthead, lead story + side column, filter chips, then stories grouped by week. */
+:root {
+  --bg: #c3e1f4; --panel: #ffffff; --panel-2: #acd3ec; --soft: #eef7fd; --line: #98c5e2; --row: #e3eff7;
+  --text: #0c2a43; --muted: #3a5a73; --blue: #1478c2; --navy: #0c2a43; --gold: #b07d00; --green: #2a8a07; --red: #c0392b;
+  --paper: #fdfcf8; --ink: #1a1a1a; --ink-2: #555049; --rule: #d9d4c7;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --display: "Playfair Display", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+:root[data-mode="dark"] {
+  --bg: #0d1a26; --panel: #142636; --panel-2: #1c3346; --soft: #10202e; --line: #27445c; --row: #1c3346;
+  --text: #e6f1f9; --muted: #9cb6c9; --blue: #4aa8f0; --navy: #071420; --gold: #e0b33a; --green: #5fd12a; --red: #f07a6c;
+  --paper: #18232d; --ink: #ece8df; --ink-2: #b3ada1; --rule: #34404b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; line-height: 1.15; }
+p { margin: 0; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+
+header.site { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header.site .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-block: 10px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; font-size: 1.05rem; margin-right: auto; }
+.brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.brand .mark { width: 40px; height: 40px; border-radius: 8px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .9rem; }
+nav.main { display: flex; flex-wrap: wrap; gap: 2px; }
+nav.main a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: .95rem; padding: 8px 12px; border-radius: 8px; }
+nav.main a:hover { color: var(--text); background: var(--panel-2); }
+nav.main a[aria-current] { color: var(--text); background: var(--panel); }
+.mode { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); font-size: 1.05rem; }
+
+/* The newspaper sheet */
+.paper { background: var(--paper); color: var(--ink); margin: 28px 0 40px; padding: clamp(18px, 4vw, 40px); border-radius: 4px; box-shadow: 0 1px 0 var(--rule), 0 10px 30px rgba(12, 42, 67, .12); }
+.mast { text-align: center; border-bottom: 3px double var(--ink); padding-bottom: 14px; }
+.mast .top { display: flex; justify-content: space-between; gap: 10px; font-family: var(--font); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1px solid var(--rule); padding-bottom: 8px; }
+.mast h1 { font-family: var(--display); font-weight: 900; font-size: clamp(2.6rem, 9vw, 5rem); letter-spacing: -.01em; margin: 10px 0 4px; }
+.mast .tag { font-family: var(--serif); font-style: italic; color: var(--ink-2); }
+.dateline { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 14px; border-bottom: 1px solid var(--ink); padding: 8px 0; font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+
+.front { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 0; border-bottom: 1px solid var(--ink); }
+.front > * { padding: 22px 0; }
+.lead { padding-right: 24px; border-right: 1px solid var(--rule); }
+.side { padding-left: 24px; display: grid; gap: 18px; align-content: start; }
+.kicker { font-family: var(--font); font-size: .7rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
+.kicker.record { color: var(--gold); } .kicker.number-one { color: var(--red); } .kicker.climber { color: var(--green); }
+.lead h2 { font-family: var(--display); font-weight: 800; font-size: clamp(1.9rem, 4.6vw, 2.9rem); line-height: 1.08; margin: 6px 0 12px; }
+.lead .body { font-family: var(--serif); font-size: 1.12rem; line-height: 1.6; color: var(--ink); white-space: pre-line; }
+.lead .body::first-letter { font-family: var(--display); float: left; font-size: 3.4em; line-height: .85; padding: 4px 8px 0 0; font-weight: 900; }
+.lead img, .story img { width: 100%; border-radius: 2px; margin: 4px 0 12px; display: block; }
+.byline { font-size: .78rem; color: var(--ink-2); margin-top: 12px; font-weight: 600; }
+.side h3 { font-family: var(--font); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; border-bottom: 2px solid var(--ink); padding-bottom: 6px; }
+.box { display: grid; gap: 10px; }
+.num { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; border-bottom: 1px dotted var(--rule); padding-bottom: 6px; font-family: var(--serif); }
+.num b { font-family: var(--display); font-size: 1.4rem; }
+.mini { font-family: var(--serif); font-size: .95rem; line-height: 1.45; border-bottom: 1px dotted var(--rule); padding-bottom: 8px; }
+.mini:last-child { border-bottom: 0; }
+.mini .kicker { display: block; margin-bottom: 2px; }
+
+.filters { display: flex; gap: 6px; flex-wrap: wrap; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.filters button { border: 1px solid var(--rule); background: transparent; border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: .85rem; color: var(--ink-2); }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.week { padding-top: 22px; }
+.week > h3 { font-family: var(--font); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); display: flex; align-items: center; gap: 10px; }
+.week > h3::after { content: ""; flex: 1; border-top: 1px solid var(--rule); }
+.cols { column-width: 300px; column-gap: 28px; column-rule: 1px solid var(--rule); margin-top: 14px; }
+.story { break-inside: avoid; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--rule); }
+.story h4 { font-family: var(--display); font-size: 1.3rem; line-height: 1.15; margin: 4px 0 6px; font-weight: 800; }
+.story p { font-family: var(--serif); font-size: 1rem; line-height: 1.55; color: var(--ink); white-space: pre-line; }
+.story .when { font-size: .75rem; color: var(--ink-2); font-weight: 600; margin-top: 6px; }
+.story.own { background: color-mix(in srgb, var(--blue) 7%, transparent); padding: 12px; border: 1px solid color-mix(in srgb, var(--blue) 25%, transparent); border-radius: 3px; }
+.more { display: block; margin: 20px auto 0; border: 1px solid var(--ink); background: transparent; padding: 10px 22px; font-weight: 700; border-radius: 999px; }
+.empty { font-family: var(--serif); font-style: italic; color: var(--ink-2); padding: 20px 0; }
+.howto { margin-top: 26px; border-top: 3px double var(--ink); padding-top: 14px; font-size: .88rem; color: var(--ink-2); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
+.howto a { font-weight: 700; color: var(--ink); }
+.status { font-family: var(--serif); font-style: italic; color: var(--ink-2); padding: 18px 0; }
+
+footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+@media (max-width: 760px) {
+  .front { grid-template-columns: 1fr; }
+  .lead { padding-right: 0; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .side { padding-left: 0; }
+  .mast .top span:nth-child(2) { display: none; }
+}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
+    <nav class="main" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="rankings.html">Rankings</a>
+      <a href="news.html" aria-current="page">News</a>
+      <a href="academy.html">Academy</a>
+      <a href="index.html#tournaments">Tournaments</a>
+      <a href="index.html#join">Join</a>
+      <a href="chat.html">Chat</a>
+    </nav>
+    <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <article class="paper">
+    <header class="mast">
+      <div class="top"><span>Oceania LOLBeans</span><span>Australia &amp; New Zealand</span><span id="edition">Weekly edition</span></div>
+      <h1>The Bean Times</h1>
+      <p class="tag">Records, rankings and everything in between</p>
+    </header>
+    <div class="dateline"><span id="today"></span><span id="tally"></span></div>
+
+    <div id="status" class="status">Fetching this week's edition…</div>
+    <div id="front"></div>
+    <div class="filters" id="filters" role="group" aria-label="Show" hidden>
+      <button type="button" data-f="" aria-pressed="true">All news</button>
+      <button type="button" data-f="own" aria-pressed="false">Announcements</button>
+      <button type="button" data-f="record" aria-pressed="false">Records</button>
+      <button type="button" data-f="number-one" aria-pressed="false">Number one</button>
+      <button type="button" data-f="climber" aria-pressed="false">On the rise</button>
+      <button type="button" data-f="new" aria-pressed="false">New players</button>
+    </div>
+    <div id="stories"></div>
+
+    <div class="howto">
+      <span>Stories about records, #1 changes and big climbs are written automatically from the rankings spreadsheet.</span>
+      <a href="rankings.html?s=fame">Hall of Fame →</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Oceania LOLBeans Official</span>
+    <span>A fan community, not affiliated with the LOLBeans developers.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var SHEET_ID = "12D4wvMVKNqAoot5Ytk2ttgE-CZPNSUCPfktiAiGIE6w"; // "Oceania LOLBeans website data" spreadsheet (News + Auto news tabs)
+  var BASE = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&sheet=";
+  var PAGE = 8; // weeks shown before "Older news"
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var MON = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var DAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  function parts(s) { var m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s || "") || /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s || ""); if (!m) return null; return m[1].length === 4 ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(+m[3], +m[2] - 1, +m[1]); }
+  function ymd(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function nice(d) { return d.getDate() + " " + MON[d.getMonth()].slice(0, 3) + " " + d.getFullYear(); }
+  function monday(d) { var x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; }
+  function parseCSV(s) {
+    var rows = [], row = [], f = "", q = false;
+    for (var i = 0; i < s.length; i++) {
+      var c = s[i];
+      if (q) { if (c === '"') { if (s[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+      else if (c === '"') q = true; else if (c === ",") { row.push(f); f = ""; }
+      else if (c === "\n") { row.push(f); rows.push(row); row = []; f = ""; } else if (c !== "\r") f += c;
+    }
+    if (f || row.length) { row.push(f); rows.push(row); }
+    return rows;
+  }
+  function img(u) {
+    u = String(u || "").trim(); if (!/^https:\/\//.test(u)) return "";
+    var g = /drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/.exec(u); if (g) u = "https://lh3.googleusercontent.com/d/" + g[1];
+    return '<img src="' + esc(u) + '" alt="" loading="lazy" onerror="this.remove()">';
+  }
+
+  // Turn an automatic line into a headline + story
+  function headline(type, text) {
+    var m;
+    if (type === "record" && (m = /record on (.+?): ([\d.]+)(?: by (.+?))? \(was ([\d.]+)\)/.exec(text)))
+      return (m[3] ? m[3] + " breaks the " + m[1] + " record" : "New Oceania record on " + m[1]);
+    if (type === "number-one" && (m = /^(.+?) is the new Oceania #1/.exec(text))) return m[1] + " takes the top spot";
+    if (type === "climber" && (m = /^(.+?) climbed (\d+) places to #(\d+)/.exec(text))) return m[1] + " up " + m[2] + " places";
+    if (type === "new") return "New faces in the rankings";
+    return text.split(/[.!?]/)[0];
+  }
+  var LABEL = { own: "Announcement", record: "Oceania record", "number-one": "New number one", climber: "On the rise", "new": "Welcome" };
+  var WEIGHT = { own: 5, "number-one": 4, record: 3, climber: 2, "new": 1 };
+
+  var all = [], filter = "", shown = PAGE;
+
+  function load(own, auto) {
+    all = [];
+    if (own.length && /date/i.test(own[0][0])) own.slice(1).forEach(function (r) {
+      var d = parts(String(r[0]).trim()); if (!d || !String(r[1] || "").trim()) return;
+      all.push({ d: d, type: "own", h: String(r[1]).trim(), s: String(r[2] || "").trim(), img: r[3] });
+    });
+    if (auto.length && /date/i.test(auto[0][0])) auto.slice(1).forEach(function (r) {
+      var d = parts(String(r[0]).trim()), type = String(r[1] || "").trim(), s = String(r[2] || "").trim(); if (!d || !s) return;
+      all.push({ d: d, type: type, h: headline(type, s), s: s });
+    });
+    all.sort(function (a, b) { return b.d - a.d || WEIGHT[b.type] - WEIGHT[a.type]; });
+    $("status").hidden = true; $("filters").hidden = false;
+    renderFront(); renderStories();
+  }
+
+  function storyHTML(x, cls) {
+    return '<div class="story' + (x.type === "own" ? " own" : "") + (cls || "") + '"><span class="kicker ' + esc(x.type) + '">' + esc(LABEL[x.type] || "News") + "</span>" +
+      (x.img ? img(x.img) : "") + "<h4>" + esc(x.h) + "</h4>" + (x.s && x.s !== x.h ? "<p>" + esc(x.s) + "</p>" : "") + '<div class="when">' + nice(x.d) + "</div></div>";
+  }
+
+  function renderFront() {
+    if (!all.length) { $("front").innerHTML = '<p class="empty">No stories yet. The first edition is on its way.</p>'; return; }
+    var now = new Date(), wk = monday(now), lastWk = new Date(wk); lastWk.setDate(lastWk.getDate() - 7);
+    // Lead: newest announcement from the last 2 weeks, otherwise the biggest recent story
+    var recent = all.filter(function (x) { return x.d >= lastWk; });
+    var lead = recent.filter(function (x) { return x.type === "own"; })[0] || recent.slice().sort(function (a, b) { return WEIGHT[b.type] - WEIGHT[a.type] || b.d - a.d; })[0] || all[0];
+    var thisWeek = all.filter(function (x) { return x.d >= wk; });
+    var count = function (t) { return thisWeek.filter(function (x) { return x.type === t; }).length; };
+    var briefs = all.filter(function (x) { return x !== lead; }).slice(0, 4);
+    $("front").innerHTML = '<section class="front"><div class="lead"><span class="kicker ' + esc(lead.type) + '">' + esc(LABEL[lead.type] || "News") + "</span><h2>" + esc(lead.h) + "</h2>" +
+      (lead.img ? img(lead.img) : "") + '<p class="body">' + esc(lead.s || lead.h) + '</p><p class="byline">' + (lead.type === "own" ? "From the Oceania LOLBeans team" : "Rankings desk") + " · " + nice(lead.d) + "</p></div>" +
+      '<aside class="side"><div class="box"><h3>This week</h3>' +
+        '<div class="num"><span>Records broken</span><b>' + count("record") + "</b></div>" +
+        '<div class="num"><span>Changes at #1</span><b>' + count("number-one") + "</b></div>" +
+        '<div class="num"><span>New players</span><b>' + thisWeek.filter(function (x) { return x.type === "new"; }).reduce(function (a, x) { var m = /: (.+?)( and (\d+) more)?\.$/.exec(x.s); return a + (m ? m[1].split(", ").length + (m[3] ? +m[3] : 0) : 0); }, 0) + "</b></div>" +
+      '</div><div class="box"><h3>In brief</h3>' + briefs.map(function (x) {
+        return '<div class="mini"><span class="kicker ' + esc(x.type) + '">' + esc(LABEL[x.type] || "News") + "</span>" + esc(x.h) + "</div>";
+      }).join("") + "</div></aside></section>";
+    $("tally").textContent = all.length + " stories in the archive";
+  }
+
+  function renderStories() {
+    var list = all.filter(function (x) { return !filter || x.type === filter; });
+    if (!list.length) { $("stories").innerHTML = '<p class="empty">Nothing here yet.</p>'; return; }
+    var groups = [], idx = {};
+    list.forEach(function (x) { var k = ymd(monday(x.d)); if (idx[k] == null) { idx[k] = groups.length; groups.push({ k: k, d: monday(x.d), items: [] }); } groups[idx[k]].items.push(x); });
+    var thisWk = ymd(monday(new Date()));
+    $("stories").innerHTML = groups.slice(0, shown).map(function (g) {
+      return '<section class="week"><h3>' + (g.k === thisWk ? "This week" : "Week of " + nice(g.d)) + '</h3><div class="cols">' + g.items.map(function (x) { return storyHTML(x); }).join("") + "</div></section>";
+    }).join("") + (groups.length > shown ? '<button type="button" class="more" id="more">Older news</button>' : "");
+  }
+
+  document.addEventListener("click", function (e) {
+    var f = e.target.closest("[data-f]");
+    if (f) { filter = f.dataset.f; shown = PAGE; document.querySelectorAll("[data-f]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === f)); }); renderStories(); return; }
+    if (e.target.id === "more") { shown += PAGE; renderStories(); }
+  });
+
+  var now = new Date();
+  $("today").textContent = DAY[now.getDay()] + ", " + now.getDate() + " " + MON[now.getMonth()] + " " + now.getFullYear();
+  var start = new Date(2024, 8, 23);
+  $("edition").textContent = "No. " + (Math.floor((monday(now) - monday(start)) / 6048e5) + 1);
+
+  // Dark mode (shared with the rest of the site)
+  function setMode(dark) {
+    document.documentElement.setAttribute("data-mode", dark ? "dark" : "light");
+    $("mode").textContent = dark ? "☀" : "☾";
+    $("mode").setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+    try { localStorage.setItem("olb-mode", dark ? "dark" : "light"); } catch (e) {}
+  }
+  $("mode").addEventListener("click", function () { setMode(document.documentElement.getAttribute("data-mode") !== "dark"); });
+  try { if (localStorage.getItem("olb-mode") === "dark") setMode(true); } catch (e) {}
+
+  function get(name) { return fetch(BASE + encodeURIComponent(name)).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(parseCSV); }
+  Promise.all([get("News").catch(function () { return []; }), get("Auto news").catch(function () { return []; })]).then(function (r) {
+    if (!r[0].length && !r[1].length && !/github\.io$/.test(location.hostname) && window.NEWS_SAMPLE) return load(window.NEWS_SAMPLE.own, window.NEWS_SAMPLE.auto);
+    load(r[0], r[1]);
+  });
+})();
+</script>
+</body>
+</html>

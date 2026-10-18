@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: site header, compact page header with section tabs, then one view (rankings list / map records / head to head / info / player profile) in a 1080px column. Light blue by default, dark mode from the header toggle. */
+/* Layout: site header, compact page header with section tabs, then one view (rankings list / map records / head to head / hall of fame / info / player profile) in a 1080px column. Light blue by default, dark mode from the header toggle. */
 :root {
   --bg: #c3e1f4;
   --panel: #ffffff;
@@ -242,16 +242,42 @@ input.field[type="search"] { flex: 1 1 220px; max-width: 340px; }
 .status.err { border-color: #e4707a; }
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 10px; font-weight: 700; z-index: 50; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
 footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+.lrow { grid-template-columns: 56px 44px 28px minmax(0, 1fr) auto; }
+.mv { font-family: var(--mono); font-size: .78rem; font-weight: 700; white-space: nowrap; color: var(--muted); }
+.mv.up { color: var(--green); } .mv.down { color: #d9505c; } .mv.new { color: var(--blue); font-family: var(--font); font-size: .68rem; letter-spacing: .06em; }
+.lrow.mrow { grid-template-columns: 56px minmax(0, 1fr) 80px 76px; }
+@media (max-width: 600px) { .lrow.mrow { grid-template-columns: 40px minmax(0, 1fr) 72px; } }
+.graph { width: 100%; height: auto; display: block; }
+.graph .ax { stroke: var(--row); stroke-width: 1; }
+.graph text { fill: var(--muted); font-size: 11px; font-family: var(--font); }
+.graph .ln { fill: none; stroke: var(--blue); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.graph .ar { fill: var(--blue); opacity: .12; }
+.graph .dt { fill: var(--blue); }
+.graph .hi { fill: var(--gold); }
+.gsel { display: flex; gap: 6px; }
+.gsel button { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px; padding: 4px 12px; font-weight: 700; font-size: .8rem; }
+.gsel button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.ghead { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fame .card { align-content: start; }
+.fame { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.fline { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--row); }
+.fline:last-child { border-bottom: 0; }
+.fline .n { font-family: var(--mono); font-weight: 700; color: var(--muted); text-align: right; }
+.fline:first-child .n { color: var(--gold); }
+.fline b { display: block; } .fline small { color: var(--muted); font-size: .82rem; }
+.fline .v { text-align: right; font-weight: 800; font-family: var(--mono); } .fline .v small { display: block; font-family: var(--font); font-weight: 500; }
+.fline.rec { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
+.fline .pic { width: 52px; height: 34px; border-radius: 6px; overflow: hidden; background: var(--soft); }
+.fline .pic img, .fline .pic .mfall { width: 100%; height: 100%; object-fit: cover; }
+.fline [data-player] { cursor: pointer; } .fline [data-player]:hover { color: var(--blue); text-decoration: underline; }
 @media (max-width: 600px) {
-  .lrow { grid-template-columns: 40px 24px minmax(0, 1fr) auto; gap: 8px; padding-inline: 12px; }
+  .lrow { grid-template-columns: 34px 40px 22px minmax(0, 1fr) auto; gap: 8px; padding-inline: 12px; }
   .hrow { grid-template-columns: minmax(0, 1fr) 72px 72px; } .hrow .d { display: none; }
   .srow { grid-template-columns: minmax(0, 1fr) 56px 76px auto; }
   .stat b { font-size: 1.5rem; }
 }
 @media (prefers-reduced-motion: reduce) { .mcard { transition: none; } }
 </style>
-</head>
-<body>
 
 <header class="site">
   <div class="wrap">
@@ -259,6 +285,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     <nav class="main" aria-label="Main">
       <a href="index.html">Home</a>
       <a href="rankings.html" aria-current="page">Rankings</a>
+      <a href="news.html">News</a>
       <a href="academy.html">Academy</a>
       <a href="index.html#tournaments">Tournaments</a>
       <a href="index.html#join">Join</a>
@@ -284,6 +311,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
       <button role="tab" id="s-list" data-sec="list" aria-selected="true">Rankings</button>
       <button role="tab" id="s-maps" data-sec="maps" aria-selected="false">Map Records</button>
       <button role="tab" id="s-h2h" data-sec="h2h" aria-selected="false">Head to Head</button>
+      <button role="tab" id="s-fame" data-sec="fame" aria-selected="false">Hall of Fame</button>
       <button role="tab" id="s-info" data-sec="info" aria-selected="false">Info</button>
     </div>
   </div>
@@ -338,6 +366,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   </section>
   <datalist id="names"></datalist>
 
+  <!-- HALL OF FAME -->
+  <section class="view" id="v-fame" role="tabpanel" aria-labelledby="s-fame" hidden>
+    <div id="fame-body"></div>
+  </section>
+
   <!-- INFO -->
   <section class="view" id="v-info" role="tabpanel" aria-labelledby="s-info" hidden>
     <div class="info">
@@ -381,6 +414,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   var BASE = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv";
   var RANKINGS_URL = BASE + "&gid=0";
   var CAREER_URL = BASE + "&sheet=" + encodeURIComponent("Career highs");
+  // Website data (history, records, #1 log) lives in a separate spreadsheet so the rankings sheet stays clean
+  var DATA = "https://docs.google.com/spreadsheets/d/12D4wvMVKNqAoot5Ytk2ttgE-CZPNSUCPfktiAiGIE6w/gviz/tq?tqx=out:csv";
+  var HIST_URL = DATA + "&sheet=" + encodeURIComponent("Rank history");
+  var ONE_URL = DATA + "&sheet=" + encodeURIComponent("Number one log");
+  var REC_URL = DATA + "&sheet=" + encodeURIComponent("Record log");
   var MISSING = 60;            // a time of 60 in the sheet means "no time entered"
 
   // Map order = column order in the sheet (after Country, Place, Name)
@@ -415,8 +453,9 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   }
 
   // ======================= STATE =======================
-  var S = { sec: "list", q: "", country: "", map: null, a: null, b: null, player: null, ptab: "overview", vs: null, sim: {} };
+  var S = { grange: "all", sec: "list", q: "", country: "", map: null, a: null, b: null, player: null, ptab: "overview", vs: null, sim: {} };
   var WR = null, OR = null, players = [], byName = {}, sorted = [], career = {};
+  var hist = {}, weeks = [], prevWeek = null, ones = [], recLog = [];
 
   // ======================= DATA =======================
   function parseCSV(s) {
@@ -436,8 +475,45 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   function times(r) { return MAPS.map(function (_, i) { var n = num(r[FIRST_MAP_COL + i]); return (n == null || n >= MISSING - EPS) ? null : n; }); }
   function country(v) { var s = String(v || "").trim().toLowerCase(); return s.indexOf("aus") === 0 ? "AUS" : (s.indexOf("nz") === 0 || s.indexOf("new zealand") === 0) ? "NZ" : ""; }
 
-  function load(rows, careerRows) {
+  function ymd(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function weekOf(s) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); var d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return ymd(d); }
+  function days(a, b) { var x = /^(\d{4})-(\d{2})-(\d{2})/.exec(a), y = /^(\d{4})-(\d{2})-(\d{2})/.exec(b); if (!x || !y) return 0; return Math.round((Date.UTC(+y[1], +y[2] - 1, +y[3]) - Date.UTC(+x[1], +x[2] - 1, +x[3])) / 864e5); }
+  function header(rows, first) { return rows && rows[0] && String(rows[0][0]).trim().toLowerCase() === first; }
+  function loadHistory(ex) {
+    hist = {}; weeks = []; ones = []; recLog = [];
+    if (header(ex.hist, "week")) ex.hist.slice(1).forEach(function (r) {
+      var w = String(r[0]).trim(), n = String(r[1] || "").trim().toLowerCase(), k = parseInt(r[2], 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(w) || !n || isNaN(k)) return;
+      if (!hist[w]) { hist[w] = {}; weeks.push(w); }
+      hist[w][n] = k;
+    });
+    weeks.sort();
+    var thisWeek = weekOf(ymd(new Date()));
+    prevWeek = weeks.filter(function (w) { return w < thisWeek; }).pop() || null;
+    if (header(ex.one, "date")) ones = ex.one.slice(1).filter(function (r) { return /^\d{4}-/.test(r[0]) && r[1]; }).map(function (r) { return { d: String(r[0]).trim(), n: String(r[1]).trim() }; }).sort(function (a, b) { return a.d < b.d ? -1 : 1; });
+    if (header(ex.rec, "date")) recLog = ex.rec.slice(1).filter(function (r) { return /^\d{4}-/.test(r[0]) && MAPS.indexOf(String(r[1]).trim()) >= 0; }).map(function (r) { return { d: String(r[0]).trim(), m: MAPS.indexOf(String(r[1]).trim()), t: num(r[2]), h: String(r[3] || "").trim() }; }).sort(function (a, b) { return a.d < b.d ? -1 : 1; });
+  }
+  // #1 reigns: [{n, from, to, days}]
+  function reigns() {
+    var today = ymd(new Date()), out = [];
+    var list = ones.slice();
+    if (players[0] && (!list.length || list[list.length - 1].n.toLowerCase() !== players[0].name.toLowerCase())) list.push({ d: today, n: players[0].name });
+    list.forEach(function (o, i) { var to = list[i + 1] ? list[i + 1].d : today; out.push({ n: o.n, from: o.d, to: to, days: Math.max(days(o.d, to), 0), cur: !list[i + 1] }); });
+    return out;
+  }
+  function weeksAtOne(name) { var k = name.toLowerCase(); return Math.floor(reigns().filter(function (r) { return r.n.toLowerCase() === k; }).reduce(function (a, r) { return a + r.days; }, 0) / 7); }
+  function moveHTML(p) {
+    if (!prevWeek) return '<span class="mv"></span>';
+    var was = hist[prevWeek][p.name.toLowerCase()];
+    if (was == null) return '<span class="mv new" title="New this week">NEW</span>';
+    var d = was - p.place;
+    if (!d) return '<span class="mv" title="No change since last week">–</span>';
+    return '<span class="mv ' + (d > 0 ? "up" : "down") + '" title="' + (d > 0 ? "Up " : "Down ") + Math.abs(d) + " since last week (was " + was + ')">' + (d > 0 ? "▲" : "▼") + Math.abs(d) + "</span>";
+  }
+
+  function load(rows, careerRows, ex) {
     players = []; byName = {}; career = {};
+    loadHistory(ex || {});
     (careerRows || []).slice(1).forEach(function (r) {
       var n = String(r[0] || "").trim().toLowerCase(), p = parseInt(r[1], 10);
       if (n && !isNaN(p)) career[n] = { place: p, date: String(r[2] || "").trim() };
@@ -478,7 +554,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   // ======================= URL =======================
   function readUrl() {
     var src = location.search && location.search.length > 1 ? location.search.slice(1) : "";
-    if (!src && location.hash.length > 1 && /^(list|maps|h2h|info)$/.test(location.hash.slice(1))) src = "s=" + location.hash.slice(1);
+    if (!src && location.hash.length > 1 && /^(list|maps|h2h|fame|info)$/.test(location.hash.slice(1))) src = "s=" + location.hash.slice(1);
     var P = new URLSearchParams(src);
     if (P.get("s")) S.sec = P.get("s");
     if (P.get("map") != null) { var mi = MAPS.indexOf(P.get("map")); if (mi >= 0) S.map = mi; }
@@ -502,8 +578,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var onP = !!S.player;
     $("head").hidden = onP;
     $("v-profile").hidden = !onP;
-    ["list", "maps", "h2h", "info"].forEach(function (s) { $("v-" + s).hidden = onP || S.sec !== s; $("s-" + s).setAttribute("aria-selected", String(!onP && S.sec === s)); });
-    if (onP) renderProfile(); else if (S.sec === "list") renderList(); else if (S.sec === "maps") renderMaps(); else if (S.sec === "h2h") renderH2H();
+    ["list", "maps", "h2h", "fame", "info"].forEach(function (s) { $("v-" + s).hidden = onP || S.sec !== s; $("s-" + s).setAttribute("aria-selected", String(!onP && S.sec === s)); });
+    if (onP) renderProfile(); else if (S.sec === "list") renderList(); else if (S.sec === "maps") renderMaps(); else if (S.sec === "h2h") renderH2H(); else if (S.sec === "fame") renderFame();
     syncUrl();
   }
   function openPlayer(name, tab) { if (!byName[name]) return; S.player = name; S.ptab = tab || "overview"; S.sim = {}; S.vs = null; route(); window.scrollTo(0, 0); }
@@ -514,10 +590,10 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var list = players.filter(function (p) { return (!S.country || p.country === S.country) && (!q || p.name.toLowerCase().indexOf(q) >= 0); });
     $("count").textContent = list.length === players.length ? players.length + " players" : list.length + " of " + players.length;
     if (!list.length) { $("list").innerHTML = '<p class="empty">No players match that search.</p>'; return; }
-    var html = '<div class="lrow head"><span style="text-align:right">Rank</span><span></span><span>Player</span><span>Total time</span></div>';
+    var html = '<div class="lrow head"><span style="text-align:right">Rank</span><span title="Change since last week">+/−</span><span></span><span>Player</span><span>Total time</span></div>';
     list.forEach(function (p, i) {
       html += '<div class="lrow player' + (p.place <= 3 ? " top3" : "") + '" data-player="' + esc(p.name) + '" tabindex="0" role="link" aria-label="' + esc(p.name) + ', rank ' + p.place + '">' +
-        '<span class="rk">' + p.place + '</span><span class="flag" aria-hidden="true">' + flag(p.country) + '</span><span class="pname">' + esc(p.name) + '</span><span class="tot">' + fmt(p.total) + "</span></div>";
+        '<span class="rk">' + p.place + '</span>' + moveHTML(p) + '<span class="flag" aria-hidden="true">' + flag(p.country) + '</span><span class="pname">' + esc(p.name) + '</span><span class="tot">' + fmt(p.total) + "</span></div>";
     });
     $("list").innerHTML = html;
   }
@@ -601,11 +677,12 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
       var best = withT.map(function (m) { return { m: m, r: mapRank(m, p.t[m]) }; }).sort(function (a, b) { return a.r - b.r || a.m - b.m; }).slice(0, 4);
       var weak = withT.filter(function (m) { return ref(m); }).map(function (m) { return { m: m, g: p.t[m] - ref(m) }; }).sort(function (a, b) { return b.g - a.g; }).slice(0, 4);
       var missing = MAPS.length - withT.length;
-      body = '<div class="two"><div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
+      body = graphCard(p) + '<div class="two" style="margin-top:16px"><div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
         "<div><span>Current Oceania ranking</span><b>" + ordinal(p.place) + "</b></div>" +
         "<div><span>Career-high ranking</span><b>" + ordinal(p.high) + (niceDate(p.highDate) ? ' <span class="muted" style="font-weight:500">(' + niceDate(p.highDate) + ")</span>" : "") + "</b></div>" +
         (above ? "<div><span>Gap to " + ordinal(above.place) + " (" + esc(above.name) + ")</span><b class=\"mono\">" + plus(p.total - above.total) + "</b></div>" : "<div><span>Gap to next place</span><b>Ranked first</b></div>") +
         (leader && leader !== p ? "<div><span>Gap to 1st</span><b class=\"mono\">" + plus(p.total - leader.total) + "</b></div>" : "") +
+        (weeksAtOne(p.name) || (p.place === 1) ? "<div><span>Weeks at #1</span><b>" + weeksAtOne(p.name) + "</b></div>" : "") +
         "<div><span>Maps with a time</span><b>" + withT.length + " of 27" + (missing ? ' <span class="muted" style="font-weight:500">(' + missing + " counted as 60s)</span>" : "") + "</b></div>" +
         '</div></div><div class="card"><h3>Best maps</h3>' + best.map(function (b) {
           return '<div class="mapline"><div class="pic">' + mapPic(b.m) + "</div><div><b>" + esc(MAPS[b.m]) + "</b><small>" + fmt(p.t[b.m]) + '</small></div><div class="r">' + ordinal(b.r) + "<small>of " + sorted[b.m].length + "</small></div></div>";
@@ -653,6 +730,90 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
       '<button class="reset" type="button" id="sim-reset"' + (changed ? "" : " disabled") + ">Reset</button>";
   }
 
+
+  // ======================= RANKING GRAPH =======================
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function dnum(s) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : 0; }
+  function graphCard(p) {
+    var k = p.name.toLowerCase(), pts = [];
+    weeks.forEach(function (w) { if (hist[w][k] != null) pts.push({ d: w, r: hist[w][k] }); });
+    var today = ymd(new Date());
+    if (!pts.length || pts[pts.length - 1].d !== weekOf(today) || pts[pts.length - 1].r !== p.place) pts.push({ d: today, r: p.place, live: true });
+    var ranges = [["3m", "3 months", 91], ["1y", "1 year", 365], ["all", "All time", 0]];
+    var sel = ranges.filter(function (r) { return r[0] === S.grange; })[0] || ranges[2];
+    if (sel[2]) { var cut = dnum(today) - sel[2] * 864e5, inR = pts.filter(function (q) { return dnum(q.d) >= cut; }); var before = pts.filter(function (q) { return dnum(q.d) < cut; }).pop(); if (before) inR.unshift({ d: ymd(new Date(cut)), r: before.r }); pts = inR; }
+    var head = '<div class="ghead"><h3>Ranking history</h3><div class="gsel">' + ranges.map(function (r) { return '<button type="button" data-grange="' + r[0] + '" aria-pressed="' + (r === sel) + '">' + r[1] + "</button>"; }).join("") + "</div></div>";
+    if (pts.length < 2) return '<div class="card">' + head + '<p class="muted">The graph fills in week by week as the rankings are tracked.</p></div>';
+    var W = 680, H = 230, L = 38, R = 14, T = 14, B = 26;
+    var x0 = dnum(pts[0].d), x1 = dnum(pts[pts.length - 1].d); if (x1 === x0) x1 = x0 + 864e5;
+    var worst = Math.max.apply(null, pts.map(function (q) { return q.r; })), best = Math.min.apply(null, pts.map(function (q) { return q.r; }));
+    var lo = 1, hi = Math.max(worst, best + 4);
+    var X = function (d) { return L + (dnum(d) - x0) / (x1 - x0) * (W - L - R); };
+    var Y = function (r) { return T + (r - lo) / (hi - lo) * (H - T - B); };
+    var step = [1, 2, 5, 10, 20, 25, 50, 100].filter(function (s2) { return (hi - lo) / s2 <= 5; })[0] || 100;
+    var svg = "";
+    for (var r = lo; r <= hi; r += (r === 1 && step > 1 ? step - 1 : step)) svg += '<line class="ax" x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(r) + '" y2="' + Y(r) + '"/><text x="' + (L - 8) + '" y="' + (Y(r) + 4) + '" text-anchor="end">' + r + "</text>";
+    var span = (x1 - x0) / 864e5, lastLbl = -1e9;
+    var t = new Date(x0); t.setUTCDate(1);
+    while (t.getTime() <= x1) {
+      if (t.getTime() >= x0) { var xx = X(ymd(new Date(t.getUTCFullYear(), t.getUTCMonth(), 1))); if (xx - lastLbl > 56) { svg += '<text x="' + xx + '" y="' + (H - 6) + '" text-anchor="middle">' + MON[t.getUTCMonth()] + (t.getUTCMonth() === 0 || span > 300 && lastLbl < 0 ? " " + String(t.getUTCFullYear()).slice(2) : "") + "</text>"; lastLbl = xx; } }
+      t.setUTCMonth(t.getUTCMonth() + (span > 500 ? 3 : 1));
+    }
+    var line = pts.map(function (q, i) { return (i ? "L" : "M") + X(q.d).toFixed(1) + " " + Y(q.r).toFixed(1); }).join(" ");
+    svg += '<path class="ar" d="' + line + " L" + X(pts[pts.length - 1].d).toFixed(1) + " " + (H - B) + " L" + X(pts[0].d).toFixed(1) + " " + (H - B) + 'Z"/>';
+    svg += '<path class="ln" d="' + line + '"/>';
+    var bi = pts.map(function (q) { return q.r; }).indexOf(best), last = pts[pts.length - 1];
+    svg += '<circle class="hi" cx="' + X(pts[bi].d) + '" cy="' + Y(best) + '" r="5"><title>Best in this period: ' + ordinal(best) + "</title></circle>";
+    svg += '<circle class="dt" cx="' + X(last.d) + '" cy="' + Y(last.r) + '" r="5"><title>Now: ' + ordinal(last.r) + "</title></circle>";
+    var first = pts[0], change = first.r - last.r;
+    return '<div class="card">' + head + '<svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Ranking over time, from ' + ordinal(first.r) + " to " + ordinal(last.r) + '">' + svg + "</svg>" +
+      '<p class="muted" style="font-size:.85rem">' + (change > 0 ? "Up " + change + " places" : change < 0 ? "Down " + (-change) + " places" : "No change") + " over this period. Best: " + ordinal(best) + ". Ranks are saved every Monday.</p></div>";
+  }
+
+  // ======================= HALL OF FAME =======================
+  function plink(n) { return byName[n] ? '<b data-player="' + esc(n) + '">' + esc(n) + "</b>" : "<b>" + esc(n) + "</b>"; }
+  function since(d) { var n = days(d, ymd(new Date())); var y = (n / 365).toFixed(1).replace(/\.0$/, ""); return n >= 365 ? y + (y === "1" ? " year" : " years") : n >= 14 ? Math.floor(n / 7) + " weeks" : n + (n === 1 ? " day" : " days"); }
+  function renderFame() {
+    var first = recLog.length ? recLog[0].d : ones.length ? ones[0].d : "";
+    // current OR per map and when it was set
+    var recs = [];
+    MAPS.forEach(function (name, m) {
+      var t = OR && OR.t[m]; if (!t) return;
+      var log = recLog.filter(function (e) { return e.m === m; }), lastE = log[log.length - 1];
+      var d = lastE && same(lastE.t, t) ? lastE.d : log.length ? ymd(new Date()) : "";
+      if (!d) return;
+      recs.push({ m: m, t: t, d: d, h: holders(m), orig: d === first });
+    });
+    recs.sort(function (a, b) { return a.d < b.d ? -1 : a.d > b.d ? 1 : a.m - b.m; });
+    var R = reigns(), tot = {}, longest = R.slice().sort(function (a, b) { return b.days - a.days; }).slice(0, 8);
+    R.forEach(function (r) { var k = r.n.toLowerCase(); tot[k] = tot[k] || { n: r.n, days: 0, cur: false }; tot[k].days += r.days; tot[k].n = r.n; if (r.cur) tot[k].cur = true; });
+    var mostOne = Object.keys(tot).map(function (k) { return tot[k]; }).sort(function (a, b) { return b.days - a.days; }).slice(0, 10);
+    var held = players.filter(function (p) { return p.orN; }).sort(function (a, b) { return b.orN - a.orN || a.place - b.place; }).slice(0, 10);
+    var setBy = {};
+    recLog.forEach(function (e) { if (e.d === first) return; e.h.split(/,\s*/).forEach(function (h) { if (!h) return; var k = h.toLowerCase(); setBy[k] = setBy[k] || { n: h, c: 0 }; setBy[k].c++; }); });
+    var mostSet = Object.keys(setBy).map(function (k) { return setBy[k]; }).sort(function (a, b) { return b.c - a.c; }).slice(0, 10);
+    var empty = function (msg) { return '<p class="muted">' + msg + "</p>"; };
+    var noHist = '<p class="muted">This fills in once the rankings history has been collected.</p>';
+    var card = function (title, sub, inner) { return '<div class="card"><div><h3>' + title + '</h3><p class="muted" style="font-size:.85rem;margin-top:4px">' + sub + "</p></div><div>" + inner + "</div></div>"; };
+    $("fame-body").innerHTML = '<div class="fame">' +
+      card("Longest-standing Oceania records", "Current records that have gone the longest without being beaten.", recs.length ? recs.slice(0, 10).map(function (r, i) {
+        return '<div class="fline rec"><span class="n">' + (i + 1) + '</span><div class="pic">' + mapPic(r.m) + "</div><div><b>" + esc(MAPS[r.m]) + "</b><small>" + (r.h.length ? r.h.map(esc).join(", ") : "Holder not ranked") + '</small></div><div class="v">' + fmt(r.t) + "<small>" + (r.orig ? "since records began" : "since " + niceDate(r.d)) + " · " + since(r.d) + "</small></div></div>";
+      }).join("") : noHist) +
+      card("Most weeks at #1", "Total time spent as Oceania number one.", mostOne.length && ones.length ? mostOne.map(function (o, i) {
+        return '<div class="fline"><span class="n">' + (i + 1) + "</span><div>" + plink(o.n) + "<small>" + (o.cur ? "Current #1" : "&nbsp;") + '</small></div><div class="v">' + Math.floor(o.days / 7) + "<small>weeks</small></div></div>";
+      }).join("") : noHist) +
+      card("Longest reigns at #1", "Longest unbroken runs at the top.", longest.length && ones.length ? longest.map(function (r, i) {
+        return '<div class="fline"><span class="n">' + (i + 1) + "</span><div>" + plink(r.n) + "<small>" + niceDate(r.from) + " – " + (r.cur ? "now" : niceDate(r.to)) + '</small></div><div class="v">' + Math.floor(r.days / 7) + "<small>weeks</small></div></div>";
+      }).join("") : noHist) +
+      card("Most Oceania records held", "Records each player holds right now.", held.length ? held.map(function (p, i) {
+        return '<div class="fline"><span class="n">' + (i + 1) + "</span><div>" + plink(p.name) + "<small>" + flag(p.country) + " Rank " + p.place + '</small></div><div class="v">' + p.orN + "<small>records</small></div></div>";
+      }).join("") : empty("No records held by ranked players.")) +
+      card("Most Oceania records set", "Every time a player broke or tied an Oceania record, all time.", mostSet.length ? mostSet.map(function (o, i) {
+        return '<div class="fline"><span class="n">' + (i + 1) + "</span><div>" + plink(o.n) + '<small>&nbsp;</small></div><div class="v">' + o.c + "<small>records</small></div></div>";
+      }).join("") : noHist) +
+      "</div>";
+  }
+
   // ======================= EVENTS =======================
   document.querySelectorAll(".sections button").forEach(function (b) { b.addEventListener("click", function () { S.sec = b.dataset.sec; S.player = null; if (S.sec === "maps") S.map = null; route(); }); });
   $("q").addEventListener("input", function (e) { S.q = e.target.value; renderList(); });
@@ -673,6 +834,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (t.id === "maps-back") { S.map = null; renderMaps(); syncUrl(); return; }
     if (t.id === "share") { var url = location.origin + urlFor(); try { navigator.clipboard.writeText(url).then(function () { toast("Profile link copied"); }, function () { toast(url); }); } catch (er) { toast(url); } return; }
     if (t.id === "sim-reset") { S.sim = {}; renderProfile(); return; }
+    var gr = t.closest("[data-grange]"); if (gr) { S.grange = gr.dataset.grange; renderProfile(); return; }
     var pt = t.closest("[data-ptab]"); if (pt) { S.ptab = pt.dataset.ptab; renderProfile(); syncUrl(); if (S.ptab === "h2h" && $("p-vs")) $("p-vs").focus(); return; }
     var fill = t.closest("[data-fill]"); if (fill) { var m = +fill.dataset.fill; S.sim[m] = OR.t[m]; var inp = $("sim-" + m); inp.value = OR.t[m].toFixed(3); inp.classList.add("changed"); updateSim(); return; }
     var mc = t.closest("[data-map]"); if (mc) { S.map = +mc.dataset.map; renderMaps(); syncUrl(); window.scrollTo(0, 0); return; }
@@ -702,12 +864,13 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 
   // ======================= LOAD =======================
   function get(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); }); }
-  Promise.all([get(RANKINGS_URL), get(CAREER_URL).catch(function () { return ""; })])
-    .then(function (res) { load(parseCSV(res[0]), res[1] ? parseCSV(res[1]) : []); $("status").hidden = true; })
+  function opt(url) { return get(url).then(parseCSV, function () { return []; }); }
+  Promise.all([get(RANKINGS_URL), opt(CAREER_URL), opt(HIST_URL), opt(ONE_URL), opt(REC_URL)])
+    .then(function (res) { load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4] }); $("status").hidden = true; })
     .catch(function () {
       var sample = /github\.io$/.test(location.hostname) ? [] : (window.RANKINGS_SAMPLE || []);
       if (sample.length) {
-        load(sample, window.CAREER_SAMPLE || []);
+        load(sample, window.CAREER_SAMPLE || [], window.HISTORY_SAMPLE || {});
         $("status").innerHTML = '<b>Preview with sample data</b><span class="muted">This preview can\'t reach the spreadsheet, so only the top 5 are shown. The live site loads every player.</span>';
       } else {
         $("status").className = "status err";
@@ -716,6 +879,5 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     });
 })();
 </script>
-
 </body>
 </html>
