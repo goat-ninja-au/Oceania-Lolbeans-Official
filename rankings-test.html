@@ -346,6 +346,9 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .ip-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 26px; align-items: start; }
 .ip-main { display: grid; gap: 14px; min-width: 0; }
 .ip-side { display: grid; gap: 14px; }
+.ip-side .ip-gauge-side { width: auto; margin: 0; border: 1px solid var(--line); box-shadow: none; padding: 14px 18px 10px; }
+.ip-side .ip-gauge-side svg { max-width: 260px; margin: 0 auto; }
+:root[data-mode="dark"] .ip-gauge-side { border-color: transparent; }
 .ip-side .ip-ye th, .ip-side .ip-ye td { padding-inline: 2px; }
 @media (max-width: 900px) { .ip-grid { grid-template-columns: 1fr; } .ip-hero .ip-strip .row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .ip-hero .ip-strip .row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -936,22 +939,25 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
           (p.country ? '<div class="ip-rk"><span>' + countryName(p.country) + " Ranking (" + todayTxt + ')</span><b data-count="' + natRank + '">' + natRank + "</b></div>" : "") +
         '</div><div class="ip-sec"><h3>Career-high rankings</h3>' +
           '<div class="ip-rk"><span>Oceania Ranking' + (longDate(p.highDate) ? " (" + longDate(p.highDate) + ")" : "") + '</span><b data-count="' + p.high + '">' + p.high + "</b></div>" +
-        "</div>" + graphCard(p) +
+        "</div>" +
+        '<div class="ip-sec"><h3>Year-end Ranking</h3>' + (ye.length ? '<table class="ip-ye"><thead><tr><th>Year</th><th>Oceania Ranking</th></tr></thead><tbody>' +
+          ye.map(function (r, i) { return "<tr" + (i > 0 && !S.yeOpen ? " hidden" : "") + "><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
+          (ye.length > 1 ? '<button type="button" class="ip-more" id="ye-more" aria-expanded="' + !!S.yeOpen + '" aria-label="Show all years"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>' : "") : '<p class="muted">No full year ranked yet.</p>') + "</div>" +
+        graphCard(p) +
         '<div class="ip-sec"><div class="ip-head"><h3>Map win-loss record</h3><span class="muted" style="font-size:.82rem">A map counts as a win if your time is faster</span></div>' +
           wl.map(function (x) {
             var tot = x[2].w + x[2].l, pc = tot ? Math.round(100 * x[2].w / tot) : 0;
             return '<div class="ip-wl"><div class="top"><b>' + x[0] + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar" title="vs ' + x[1] + '"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + x[2].w + '">' + x[2].w + "</b></span><span>Losses: <b data-count=\"" + x[2].l + '">' + x[2].l + "</b></span></div></div>";
           }).join("") + "</div>";
-      var side = '<div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
+      var side = '<div class="ip-gauge ip-gauge-side"><div class="tg"><button type="button" data-gmode="rank" aria-pressed="' + (S.gmode === "rank") + '">Ranking</button><button type="button" data-gmode="time" aria-pressed="' + (S.gmode === "time") + '">Total time</button></div>' + gaugeSVG(p, S.gmode) + "</div>" +
+        '<div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
           (above ? "<div><span>Gap to " + ordinal(above.place) + " (" + esc(above.name) + ")</span><b class=\"mono\">" + plus(p.total - above.total) + "</b></div>" : "<div><span>Gap to next place</span><b>Ranked first</b></div>") +
           (leader && leader !== p && leader !== above ? "<div><span>Gap to 1st</span><b class=\"mono\">" + plus(p.total - leader.total) + "</b></div>" : "") +
           "<div><span>Weeks at #1</span><b>" + weeksAtOne(p.name) + "</b></div>" +
           "<div><span>World records</span><b>" + p.wrN + "</b></div>" +
           "<div><span>Maps with a time</span><b>" + withT.length + " of 27" + (missing ? ' <span class="muted" style="font-weight:500">(' + missing + " at 60s)</span>" : "") + "</b></div>" +
         '</div></div>' +
-        '<div class="card"><h3>Year-end ranking</h3>' + (ye.length ? '<table class="ip-ye"><thead><tr><th>Year</th><th>Oceania Ranking</th></tr></thead><tbody>' +
-          ye.map(function (r, i) { return "<tr" + (i > 0 && !S.yeOpen ? " hidden" : "") + "><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
-          (ye.length > 1 ? '<button type="button" class="ip-more" id="ye-more" aria-expanded="' + !!S.yeOpen + '" aria-label="Show all years"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>' : "") : '<p class="muted">No full year ranked yet.</p>') + "</div>" +
+
         "";
       body = '<h2>' + esc(p.name) + ' Oceania Overview</h2><div class="ip-grid"><div class="ip-main">' + main + '</div><aside class="ip-side">' + side + "</aside></div>";
     } else if (S.ptab === "times") {
