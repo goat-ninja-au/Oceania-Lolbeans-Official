@@ -91,6 +91,29 @@ nav.main a[aria-current] { color: var(--text); background: var(--panel); }
 .howto a { font-weight: 700; color: var(--ink); }
 .status { font-family: var(--serif); font-style: italic; color: var(--ink-2); padding: 18px 0; }
 
+/* ranking movers */
+.movers { border-bottom: 1px solid var(--ink); padding: 22px 0; }
+.mv-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+.mv-head h2 { font-family: var(--display); font-weight: 900; font-size: clamp(1.5rem, 4vw, 2rem); margin: 0; }
+.mv-nav { display: flex; align-items: center; gap: 8px; font-size: .8rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.mv-nav button { border: 1px solid var(--rule); background: transparent; color: var(--ink); width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; font-weight: 800; }
+.mv-nav button:disabled { opacity: .3; }
+.mv-cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 0 28px; margin-top: 14px; }
+.mv-cols h3 { font-family: var(--font); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; margin: 0 0 8px; }
+.mv-cols h3.up { color: var(--green); } .mv-cols h3.down { color: var(--red); }
+.mv-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted var(--rule); font-family: var(--serif); }
+.mv-row .pos { font-family: var(--font); font-weight: 800; color: var(--ink-2); font-size: .85rem; }
+.mv-row a { color: var(--ink); font-weight: 700; text-decoration: none; font-family: var(--font); }
+.mv-row a:hover { text-decoration: underline; }
+.mv-row small { display: block; color: var(--ink-2); font-size: .82rem; }
+.mv-row .d { font-family: var(--display); font-weight: 900; font-size: 1.25rem; white-space: nowrap; }
+.mv-row .d.up { color: var(--green); } .mv-row .d.down { color: var(--red); }
+.mv-row.top .d { font-size: 1.6rem; }
+.mv-side { border-left: 1px solid var(--rule); padding-left: 28px; }
+.mv-new { margin-top: 14px; font-family: var(--serif); font-size: .95rem; color: var(--ink-2); }
+.mv-new b { color: var(--ink); }
+@media (max-width: 760px) { .mv-cols { grid-template-columns: 1fr; } .mv-side { border-left: 0; padding-left: 0; margin-top: 16px; } }
+
 footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
 @media (max-width: 760px) {
   .front { grid-template-columns: 1fr; }
@@ -150,6 +173,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 
     <div id="status" class="status">Fetching this week's edition…</div>
     <div id="front"></div>
+    <section class="movers" id="movers" hidden aria-labelledby="mv-title"></section>
     <div class="filters" id="filters" role="group" aria-label="Show" hidden>
       <button type="button" data-f="" aria-pressed="true">All news</button>
       <button type="button" data-f="own" aria-pressed="false">Announcements</button>
@@ -306,6 +330,50 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     if (!r[0].length && !r[1].length && !/github\.io$/.test(location.hostname) && window.NEWS_SAMPLE) return load(window.NEWS_SAMPLE.own, window.NEWS_SAMPLE.auto);
     load(r[0], r[1]);
   });
+})();
+</script>
+<script>
+// Ranking movers: compare each weekly snapshot in the "Rank history" tab with the week before
+(function () {
+  var URL = "https://docs.google.com/spreadsheets/d/12D4wvMVKNqAoot5Ytk2ttgE-CZPNSUCPfktiAiGIE6w/gviz/tq?tqx=out:csv&headers=1&sheet=";
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  function csv(s) { var rows = [], row = [], f = "", q = false; for (var i = 0; i < s.length; i++) { var c = s[i]; if (q) { if (c === '"') { if (s[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; } else if (c === '"') q = true; else if (c === ",") { row.push(f); f = ""; } else if (c === "\n") { row.push(f); rows.push(row); row = []; f = ""; } else if (c !== "\r") f += c; } if (f || row.length) { row.push(f); rows.push(row); } return rows; }
+  function get(n) { return fetch(URL + encodeURIComponent(n)).then(function (r) { return r.text(); }).then(csv); }
+  function nice(k) { var p = k.split("-"); return +p[2] + " " + MON[+p[1] - 1]; }
+  var weeks = [], snap = {}, idx = 0, box = document.getElementById("movers");
+  function draw() {
+    var cur = weeks[idx], prev = weeks[idx - 1], a = snap[cur], b = snap[prev];
+    var moves = [], fresh = [];
+    Object.keys(a).forEach(function (k) { var x = a[k]; if (b[k]) moves.push({ name: x.name, now: x.rank, was: b[k].rank, d: b[k].rank - x.rank }); else fresh.push(x); });
+    var up = moves.filter(function (m) { return m.d > 0; }).sort(function (x, y) { return y.d - x.d || x.now - y.now; }).slice(0, 5);
+    var down = moves.filter(function (m) { return m.d < 0; }).sort(function (x, y) { return x.d - y.d || x.now - y.now; }).slice(0, 3);
+    fresh.sort(function (x, y) { return x.rank - y.rank; });
+    var link = function (n) { return '<a href="rankings.html?player=' + encodeURIComponent(n) + '">' + esc(n) + "</a>"; };
+    var row = function (m, i, kind) { return '<div class="mv-row' + (i === 0 && kind === "up" ? " top" : "") + '"><span class="pos">' + (i + 1) + "</span><span>" + link(m.name) + "<small>#" + m.was + " → #" + m.now + '</small></span><span class="d ' + kind + '">' + (kind === "up" ? "▲ " : "▼ ") + Math.abs(m.d) + "</span></div>"; };
+    var latest = idx === weeks.length - 1;
+    box.innerHTML = '<div class="mv-head"><h2 id="mv-title">Ranking movers</h2><div class="mv-nav"><button type="button" data-mv="-1" aria-label="Earlier week"' + (idx <= 1 ? " disabled" : "") + '>‹</button><span>' + (latest ? "This week · " : "") + "Week of " + nice(cur) + '</span><button type="button" data-mv="1" aria-label="Later week"' + (latest ? " disabled" : "") + ">›</button></div></div>" +
+      '<div class="mv-cols"><div><h3 class="up">Biggest climbs</h3>' + (up.length ? up.map(function (m, i) { return row(m, i, "up"); }).join("") : '<p class="empty">Nobody climbed this week.</p>') + "</div>" +
+      '<div class="mv-side"><h3 class="down">Biggest drops</h3>' + (down.length ? down.map(function (m, i) { return row(m, i, "down"); }).join("") : '<p class="empty">Nobody dropped this week.</p>') +
+      (fresh.length ? '<p class="mv-new"><b>' + fresh.length + " new " + (fresh.length === 1 ? "player" : "players") + "</b> in the rankings" + (fresh.length === 1 ? ": " : ", led by ") + link(fresh[0].name) + " at #" + fresh[0].rank + ".</p>" : "") + "</div></div>";
+    box.hidden = false;
+  }
+  box.addEventListener("click", function (e) { var b = e.target.closest("[data-mv]"); if (!b || b.disabled) return; idx = Math.max(1, Math.min(weeks.length - 1, idx + +b.dataset.mv)); draw(); });
+  Promise.all([get("Rank history"), get("Name changes").catch(function () { return []; })]).then(function (r) {
+    var h = r[0], al = {};
+    if (!h.length || !/week/i.test(h[0][0] || "") || !/name/i.test(h[0][1] || "")) return;
+    (r[1] || []).slice(1).forEach(function (x) { if (x[0] && x[1]) al[String(x[0]).trim().toLowerCase()] = String(x[1]).trim(); });
+    h.slice(1).forEach(function (x) {
+      var w = String(x[0] || "").trim(), n = String(x[1] || "").trim(), rk = parseInt(x[2], 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(w) || !n || !rk) return;
+      n = al[n.toLowerCase()] || n;
+      if (!snap[w]) { snap[w] = {}; weeks.push(w); }
+      var k = n.toLowerCase(); if (!snap[w][k] || snap[w][k].rank > rk) snap[w][k] = { name: n, rank: rk };
+    });
+    weeks.sort();
+    if (weeks.length < 2) return;
+    idx = weeks.length - 1; draw();
+  }).catch(function () {});
 })();
 </script>
 <script>
