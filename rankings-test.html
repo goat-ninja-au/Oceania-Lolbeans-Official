@@ -346,10 +346,9 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .ip-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 26px; align-items: start; }
 .ip-main { display: grid; gap: 14px; min-width: 0; }
 .ip-side { display: grid; gap: 14px; }
-.prof-band .ip-gauge-top { margin: 0 0 0 auto; width: 200px; padding: 10px 12px 6px; flex: none; }
-.prof-band .prof-actions { margin-top: 10px; }
-.prof-band { align-items: center; }
-@media (max-width: 640px) { .prof-band .ip-gauge-top { margin: 4px auto 0; width: 220px; } }
+.ip-side .ip-gauge-side { width: auto; margin: 0; border: 1px solid var(--line); box-shadow: none; padding: 14px 18px 10px; }
+.ip-side .ip-gauge-side svg { max-width: 260px; margin: 0 auto; }
+:root[data-mode="dark"] .ip-gauge-side { border-color: transparent; }
 .ip-side .ip-ye th, .ip-side .ip-ye td { padding-inline: 2px; }
 @media (max-width: 900px) { .ip-grid { grid-template-columns: 1fr; } .ip-hero .ip-strip .row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .ip-hero .ip-strip .row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -911,8 +910,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var longDate = function (d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ""); return m ? (+m[3]) + " " + MONTHS[+m[2] - 1] + " " + m[1] : ""; };
     var html = '<button type="button" class="back" id="prof-back">← Oceania Rankings</button>' +
       '<div class="prof-top"><div class="prof-band"><div class="avatar" style="background:' + color(p.name) + '" aria-hidden="true">' + initial(p.name) + '</div>' +
-      '<div class="prof-id"><h1>' + esc(p.name) + '</h1><span class="nat">' + flag(p.country) + " " + countryName(p.country) + '</span><div class="prof-actions"><button class="btn" type="button" data-ptab="h2h">Head to Head</button><button class="btn" type="button" id="share">Share profile</button></div></div>' +
-      '<div class="ip-gauge ip-gauge-top"><div class="tg"><button type="button" data-gmode="rank" aria-pressed="' + (S.gmode === "rank") + '">Ranking</button><button type="button" data-gmode="time" aria-pressed="' + (S.gmode === "time") + '">Total time</button></div>' + gaugeSVG(p, S.gmode) + "</div></div>" +
+      '<div class="prof-id"><h1>' + esc(p.name) + '</h1><span class="nat">' + flag(p.country) + " " + countryName(p.country) + "</span></div>" +
+      '<div class="prof-actions"><button class="btn" type="button" data-ptab="h2h">Head to Head</button><button class="btn" type="button" id="share">Share profile</button></div></div>' +
       '<div class="stats">' +
         '<div class="stat"><span>Current ranking</span><b data-count="' + p.place + '">' + p.place + "</b><small>Oceania</small></div>" +
         '<div class="stat"><span>Career high</span><b data-count="' + p.high + '">' + p.high + "</b><small>" + (niceDate(p.highDate) ? "Reached " + niceDate(p.highDate) : p.high < p.place ? "Best ever" : "Current") + "</small></div>" +
@@ -950,7 +949,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
             var tot = x[2].w + x[2].l, pc = tot ? Math.round(100 * x[2].w / tot) : 0;
             return '<div class="ip-wl"><div class="top"><b>' + x[0] + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar" title="vs ' + x[1] + '"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + x[2].w + '">' + x[2].w + "</b></span><span>Losses: <b data-count=\"" + x[2].l + '">' + x[2].l + "</b></span></div></div>";
           }).join("") + "</div>";
-      var side = 
+      var side = '<div class="ip-gauge ip-gauge-side"><div class="tg"><button type="button" data-gmode="rank" aria-pressed="' + (S.gmode === "rank") + '">Ranking</button><button type="button" data-gmode="time" aria-pressed="' + (S.gmode === "time") + '">Total time</button></div>' + gaugeSVG(p, S.gmode) + "</div>" +
         '<div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
           (above ? "<div><span>Gap to " + ordinal(above.place) + " (" + esc(above.name) + ")</span><b class=\"mono\">" + plus(p.total - above.total) + "</b></div>" : "<div><span>Gap to next place</span><b>Ranked first</b></div>") +
           (leader && leader !== p && leader !== above ? "<div><span>Gap to 1st</span><b class=\"mono\">" + plus(p.total - leader.total) + "</b></div>" : "") +
