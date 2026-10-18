@@ -333,7 +333,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 })();
 </script>
 <script>
-// Ranking movers: compare each weekly snapshot in the "Rank history" tab with the week before
+// Ranking movers: last week's biggest climbs and drops (the newest Monday snapshot in "Rank history" vs the one before).
+// Updates by itself every Monday when the daily tracker saves the new weekly snapshot.
 (function () {
   var URL = "https://docs.google.com/spreadsheets/d/12D4wvMVKNqAoot5Ytk2ttgE-CZPNSUCPfktiAiGIE6w/gviz/tq?tqx=out:csv&headers=1&sheet=";
   var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -351,14 +352,12 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     fresh.sort(function (x, y) { return x.rank - y.rank; });
     var link = function (n) { return '<a href="rankings.html?player=' + encodeURIComponent(n) + '">' + esc(n) + "</a>"; };
     var row = function (m, i, kind) { return '<div class="mv-row' + (i === 0 && kind === "up" ? " top" : "") + '"><span class="pos">' + (i + 1) + "</span><span>" + link(m.name) + "<small>#" + m.was + " → #" + m.now + '</small></span><span class="d ' + kind + '">' + (kind === "up" ? "▲ " : "▼ ") + Math.abs(m.d) + "</span></div>"; };
-    var latest = idx === weeks.length - 1;
-    box.innerHTML = '<div class="mv-head"><h2 id="mv-title">Ranking movers</h2><div class="mv-nav"><button type="button" data-mv="-1" aria-label="Earlier week"' + (idx <= 1 ? " disabled" : "") + '>‹</button><span>' + (latest ? "This week · " : "") + "Week of " + nice(cur) + '</span><button type="button" data-mv="1" aria-label="Later week"' + (latest ? " disabled" : "") + ">›</button></div></div>" +
+    box.innerHTML = '<div class="mv-head"><h2 id="mv-title">Ranking movers</h2><div class="mv-nav"><span>Last week · ' + nice(prev) + " → " + nice(cur) + "</span></div></div>" +
       '<div class="mv-cols"><div><h3 class="up">Biggest climbs</h3>' + (up.length ? up.map(function (m, i) { return row(m, i, "up"); }).join("") : '<p class="empty">Nobody climbed this week.</p>') + "</div>" +
       '<div class="mv-side"><h3 class="down">Biggest drops</h3>' + (down.length ? down.map(function (m, i) { return row(m, i, "down"); }).join("") : '<p class="empty">Nobody dropped this week.</p>') +
       (fresh.length ? '<p class="mv-new"><b>' + fresh.length + " new " + (fresh.length === 1 ? "player" : "players") + "</b> in the rankings" + (fresh.length === 1 ? ": " : ", led by ") + link(fresh[0].name) + " at #" + fresh[0].rank + ".</p>" : "") + "</div></div>";
     box.hidden = false;
   }
-  box.addEventListener("click", function (e) { var b = e.target.closest("[data-mv]"); if (!b || b.disabled) return; idx = Math.max(1, Math.min(weeks.length - 1, idx + +b.dataset.mv)); draw(); });
   Promise.all([get("Rank history"), get("Name changes").catch(function () { return []; })]).then(function (r) {
     var h = r[0], al = {};
     if (!h.length || !/week/i.test(h[0][0] || "") || !/name/i.test(h[0][1] || "")) return;
