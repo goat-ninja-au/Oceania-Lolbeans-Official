@@ -400,6 +400,12 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .ip-wl .bot { display: flex; justify-content: space-between; font-size: .88rem; margin-top: 8px; }
 .ip-body > .back { justify-self: start; }
 @media (max-width: 560px) { .bt-map { grid-template-columns: 64px minmax(0, 1fr); } .bt-map .pic { width: 64px; height: 44px; } }
+.avatar, .t5 .av { position: relative; overflow: hidden; }
+.t5 .av { overflow: visible; }
+.avatar img, .t5 .av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.t5 .av i { z-index: 1; }
+.addpic { justify-self: start; margin-top: 6px; font-size: .82rem; font-weight: 700; color: #fff; opacity: .85; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,.5); }
+.addpic:hover { opacity: 1; }
 .ip-link { background: none; border: 0; color: var(--blue); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; padding: 0; }
 .ip-link:hover { text-decoration: underline; }
 .bt-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
@@ -584,6 +590,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   var ONE_URL = DATA + "&sheet=" + encodeURIComponent("Number one log");
   var REC_URL = DATA + "&sheet=" + encodeURIComponent("Record log");
   var ALIAS_URL = DATA + "&sheet=" + encodeURIComponent("Name changes"); // Old name | New name
+  var PHOTO_URL = DATA + "&sheet=" + encodeURIComponent("Photos");       // Date | Name entered | Ranked name | Image link | Approved
+  var PHOTO_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScgIzG9jsceIb0dIM6hSrHkDDn4NJuqvs79XnXwMrmHRejbhg/viewform";                                                      // Google Form link for sending a profile picture
   var MISSING = 60;            // a time of 60 in the sheet means "no time entered"
 
   // Map order = column order in the sheet (after Country, Place, Name)
@@ -647,10 +655,27 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   function header(rows, first, second) { return rows && rows[0] && String(rows[0][0]).trim().toLowerCase() === first && String(rows[0][1] || "").trim().toLowerCase() === second; }
   // Players who changed name: old name -> current name, so their history stays together
   var ALIAS = {};
+  var PHOTOS = {};
+  function loadPhotos(rows) {
+    PHOTOS = {};
+    if (!rows || !rows[0] || !/date/i.test(rows[0][0]) || !/image/i.test(rows[0][3] || "")) return;
+    rows.slice(1).forEach(function (r) {
+      if (!/^true$/i.test(String(r[4] || "").trim())) return;
+      var link = String(r[3] || "").trim(); if (!/^https:\/\//.test(link)) return;
+      var nm = String(r[2] || "").trim(); if (!nm || nm.charAt(0) === "(") nm = String(r[1] || "").trim();
+      if (nm) PHOTOS[canon(nm).toLowerCase()] = link;
+    });
+  }
+  function photoOf(name) { return PHOTOS[String(name).toLowerCase()] || ""; }
+  function avatarInner(p) {
+    var ph = photoOf(p.name);
+    return ph ? '<img src="' + esc(ph) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' + initial(p.name) : initial(p.name);
+  }
   function canon(n) { n = String(n || "").trim(); return ALIAS[n.toLowerCase()] || n; }
   function loadHistory(ex) {
     hist = {}; weeks = []; ones = []; recLog = []; ALIAS = {};
     if (header(ex.alias, "old name", "new name")) ex.alias.slice(1).forEach(function (r) { var o = String(r[0] || "").trim(), nw = String(r[1] || "").trim(); if (o && nw) ALIAS[o.toLowerCase()] = nw; });
+    loadPhotos(ex.photo);
     if (header(ex.hist, "week", "name")) ex.hist.slice(1).forEach(function (r) {
       var w = String(r[0]).trim(), n = canon(r[1]).toLowerCase(), k = parseInt(r[2], 10);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(w) || !n || isNaN(k)) return;
@@ -770,7 +795,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var list = players.filter(function (p) { return (!S.country || p.country === S.country) && (!q || p.name.toLowerCase().indexOf(q) >= 0); });
     $("count").textContent = list.length === players.length ? players.length + " players" : list.length + " of " + players.length;
     $("top5").innerHTML = players.slice(0, 5).map(function (p) {
-      return '<button type="button" class="t5" data-player="' + esc(p.name) + '"><span class="av" style="background:' + color(p.name) + '">' + initial(p.name) + "<i>" + p.place + '</i></span><span style="min-width:0"><b>' + esc(p.name) + "</b><small>" + flag(p.country) + " " + (p.country || "OCE") + "</small><em>View profile ›</em></span></button>";
+      return '<button type="button" class="t5" data-player="' + esc(p.name) + '"><span class="av" style="background:' + color(p.name) + '">' + avatarInner(p) + "<i>" + p.place + '</i></span><span style="min-width:0"><b>' + esc(p.name) + "</b><small>" + flag(p.country) + " " + (p.country || "OCE") + "</small><em>View profile ›</em></span></button>";
     }).join("");
     var d = new Date();
     $("updated").textContent = "Last updated: " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear() + (prevWeek ? " · Movement compared with the ranking of " + niceDate(prevWeek) : " · Weekly movement starts on 26 October");
@@ -931,8 +956,9 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var today = new Date(), todayTxt = today.getDate() + " " + MONTHS[today.getMonth()] + " " + today.getFullYear();
     var longDate = function (d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ""); return m ? (+m[3]) + " " + MONTHS[+m[2] - 1] + " " + m[1] : ""; };
     var html = '<button type="button" class="back" id="prof-back">← Oceania Rankings</button>' +
-      '<div class="prof-top"><div class="prof-band"><div class="avatar" style="background:' + color(p.name) + '" aria-hidden="true">' + initial(p.name) + '</div>' +
-      '<div class="prof-id"><h1>' + esc(p.name) + '</h1><span class="nat">' + flag(p.country) + " " + countryName(p.country) + "</span></div>" +
+      '<div class="prof-top"><div class="prof-band"><div class="avatar" style="background:' + color(p.name) + '" aria-hidden="true">' + avatarInner(p) + '</div>' +
+      '<div class="prof-id"><h1>' + esc(p.name) + '</h1><span class="nat">' + flag(p.country) + " " + countryName(p.country) + "</span>" +
+        (PHOTO_FORM ? '<a class="addpic" href="' + PHOTO_FORM + '" target="_blank" rel="noopener">📷 ' + (photoOf(p.name) ? "Change profile picture" : "Add a profile picture") + "</a>" : "") + "</div>" +
       '<div class="prof-actions"><button class="btn" type="button" data-ptab="h2h">Head to Head</button><button class="btn" type="button" id="share">Share profile</button></div></div>' +
       '<div class="stats">' +
         '<div class="stat"><span>Current ranking</span><b data-count="' + p.place + '">' + p.place + "</b><small>Oceania</small></div>" +
@@ -1216,8 +1242,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   // ======================= LOAD =======================
   function get(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); }); }
   function opt(url) { return get(url).then(parseCSV, function () { return []; }); }
-  Promise.all([get(RANKINGS_URL), opt(CAREER_URL), opt(HIST_URL), opt(ONE_URL), opt(REC_URL), opt(ALIAS_URL)])
-    .then(function (res) { load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4], alias: res[5] }); $("status").hidden = true; })
+  Promise.all([get(RANKINGS_URL), opt(CAREER_URL), opt(HIST_URL), opt(ONE_URL), opt(REC_URL), opt(ALIAS_URL), opt(PHOTO_URL)])
+    .then(function (res) { window.__photos = res[6]; load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4], alias: res[5], photo: res[6] }); $("status").hidden = true; })
     .catch(function () {
       var sample = /github\.io$/.test(location.hostname) ? [] : (window.RANKINGS_SAMPLE || []);
       if (sample.length) {
