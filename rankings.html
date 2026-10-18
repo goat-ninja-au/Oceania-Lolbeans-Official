@@ -585,7 +585,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
       '<div class="prof-actions"><button class="btn" type="button" data-ptab="h2h">Head to Head</button><button class="btn" type="button" id="share">Share profile</button></div></div>' +
       '<div class="stats">' +
         '<div class="stat"><span>Current ranking</span><b>' + p.place + "</b><small>Oceania</small></div>" +
-        '<div class="stat"><span>Career high</span><b>' + p.high + "</b><small>" + (p.highDate ? "Reached " + niceDate(p.highDate) : "Current") + "</small></div>" +
+        '<div class="stat"><span>Career high</span><b>' + p.high + "</b><small>" + (niceDate(p.highDate) ? "Reached " + niceDate(p.highDate) : p.high < p.place ? "Best ever" : "Current") + "</small></div>" +
         '<div class="stat"><span>Total time</span><b class="mono">' + fmt(p.total) + "</b><small>" + (OR && OR.total ? plus(p.total - OR.total) + " vs OR total" : "") + "</small></div>" +
         '<div class="stat"><span>Oceania records</span><b>' + p.orN + "</b><small>of 27 maps</small></div>" +
         '<div class="stat"><span>World records</span><b>' + p.wrN + "</b><small>of 27 maps</small></div>" +
@@ -602,7 +602,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
       var missing = MAPS.length - withT.length;
       body = '<div class="two"><div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
         "<div><span>Current Oceania ranking</span><b>" + ordinal(p.place) + "</b></div>" +
-        "<div><span>Career-high ranking</span><b>" + ordinal(p.high) + (p.highDate ? ' <span class="muted" style="font-weight:500">(' + niceDate(p.highDate) + ")</span>" : "") + "</b></div>" +
+        "<div><span>Career-high ranking</span><b>" + ordinal(p.high) + (niceDate(p.highDate) ? ' <span class="muted" style="font-weight:500">(' + niceDate(p.highDate) + ")</span>" : "") + "</b></div>" +
         (above ? "<div><span>Gap to " + ordinal(above.place) + " (" + esc(above.name) + ")</span><b class=\"mono\">" + plus(p.total - above.total) + "</b></div>" : "<div><span>Gap to next place</span><b>Ranked first</b></div>") +
         (leader && leader !== p ? "<div><span>Gap to 1st</span><b class=\"mono\">" + plus(p.total - leader.total) + "</b></div>" : "") +
         "<div><span>Maps with a time</span><b>" + withT.length + " of 27" + (missing ? ' <span class="muted" style="font-weight:500">(' + missing + " counted as 60s)</span>" : "") + "</b></div>" +
