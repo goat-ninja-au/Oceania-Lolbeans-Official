@@ -101,6 +101,12 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 
 /* ☰ menu on phones (shared across pages) */
 .menu-btn { display: none; color: var(--text); cursor: pointer; }
+/* top bar hides when you scroll down, comes back when you scroll up */
+.olb-top { transition: transform .25s ease; will-change: transform; }
+html.olb-hidden .olb-top { transform: translateY(calc(-100% - env(safe-area-inset-top, 0px) - 2px)); }
+html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
+.sim-sum { transition: top .25s ease; }
+@media (prefers-reduced-motion: reduce) { .olb-top, .sim-sum { transition: none; } }
 @media (max-width: 760px) {
   .menu-btn { display: inline-grid; place-items: center; font-size: 1.2rem; }
   .olb-top .wrap { flex-wrap: nowrap !important; gap: 8px !important; }
@@ -312,6 +318,18 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   btn.addEventListener("click", function (e) { e.stopPropagation(); set(!top.classList.contains("open")); });
   document.addEventListener("click", function (e) { if (top.classList.contains("open") && (!top.contains(e.target) || e.target.closest("nav a"))) set(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") set(false); });
+  // hide the top bar while scrolling down, show it again when scrolling up
+  var lastY = window.scrollY, root = document.documentElement, ticking = false;
+  function onScroll() {
+    var y = window.scrollY, dy = y - lastY;
+    if (top.classList.contains("open") || y < top.offsetHeight + 20) root.classList.remove("olb-hidden");
+    else if (dy > 6) root.classList.add("olb-hidden");
+    else if (dy < -6) root.classList.remove("olb-hidden");
+    if (Math.abs(dy) > 6 || y < 20) lastY = y;
+    ticking = false;
+  }
+  window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  top.addEventListener("focusin", function () { root.classList.remove("olb-hidden"); });
 })();
 </script>
 </body>
