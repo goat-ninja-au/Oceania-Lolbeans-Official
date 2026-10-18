@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Install the app · Oceania LOLBeans Official</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0c2a43">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Oceania LOLBeans">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap">
+<style>
+:root {
+  --bg: #c3e1f4; --panel: #ffffff; --panel-2: #acd3ec; --soft: #eef7fd; --line: #98c5e2; --row: #e3eff7;
+  --text: #0c2a43; --muted: #3a5a73; --blue: #1478c2; --navy: #0c2a43; --green: #22a447;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color-scheme: light;
+}
+:root[data-mode="dark"] { --bg: #0d1a26; --panel: #142636; --panel-2: #1c3346; --soft: #10202e; --line: #27445c; --row: #1c3346; --text: #e6f1f9; --muted: #9cb6c9; --blue: #4aa8f0; --navy: #071420; color-scheme: dark; }
+* { box-sizing: border-box; } [hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: inherit; } button { font: inherit; color: inherit; cursor: pointer; }
+header.site { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header.site .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-block: 10px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; font-size: 1.05rem; margin-right: auto; }
+.brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.brand .mark { width: 40px; height: 40px; border-radius: 8px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .9rem; }
+nav.main { display: flex; flex-wrap: wrap; gap: 2px; }
+nav.main a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: .95rem; padding: 8px 12px; border-radius: 8px; }
+nav.main a:hover { color: var(--text); background: var(--panel-2); }
+.mode { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); font-size: 1.05rem; }
+
+.test { margin-top: 18px; background: var(--panel); border: 1px solid #d99a00; border-radius: 12px; padding: 10px 14px; font-size: .9rem; }
+.hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; align-items: center; padding: 34px 0 20px; }
+.eyebrow { color: var(--blue); font-weight: 800; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; }
+h1 { font-size: clamp(2rem, 6vw, 3rem); line-height: 1.05; margin: 6px 0 12px; font-weight: 900; }
+.lede { color: var(--muted); font-size: 1.08rem; max-width: 34em; margin: 0 0 20px; }
+.appcard { display: flex; align-items: center; gap: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; max-width: 460px; }
+.appcard img { width: 64px; height: 64px; border-radius: 16px; box-shadow: 0 4px 12px rgba(7,17,28,.2); }
+.appcard b { display: block; font-size: 1.05rem; } .appcard small { color: var(--muted); }
+.install { margin-left: auto; background: var(--blue); color: #fff; border: 0; border-radius: 999px; padding: 10px 20px; font-weight: 800; font-size: .95rem; white-space: nowrap; }
+.install:disabled { opacity: .55; cursor: default; }
+.note { margin-top: 12px; font-size: .9rem; color: var(--muted); max-width: 460px; }
+.ok { color: var(--green); font-weight: 800; }
+
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 40px; }
+.step { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+.step h3 { margin: 0 0 8px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+.step ol { margin: 0; padding-left: 20px; color: var(--muted); display: grid; gap: 6px; font-size: .95rem; }
+.step.me { border-color: var(--blue); box-shadow: 0 0 0 2px color-mix(in srgb, var(--blue) 30%, transparent); }
+.step .you { font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--blue); border-radius: 999px; padding: 2px 8px; margin-left: auto; }
+.perks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 50px; }
+.perk { background: var(--soft); border: 1px solid var(--row); border-radius: 14px; padding: 14px; font-size: .92rem; }
+.perk b { display: block; font-size: 1rem; margin-bottom: 2px; } .perk span { font-size: 1.5rem; }
+h2 { font-size: 1.4rem; margin: 10px 0 4px; }
+
+/* phone preview */
+.phone { justify-self: center; width: 270px; height: 540px; border-radius: 40px; background: #050c14; padding: 12px; box-shadow: 0 30px 60px rgba(7,17,28,.35); position: relative; }
+.screen { width: 100%; height: 100%; border-radius: 30px; overflow: hidden; position: relative; background: linear-gradient(160deg, #1d4f7c, #0c2a43 55%, #071420); }
+.screen .time { color: #fff; font-weight: 700; font-size: .8rem; padding: 12px 20px 0; display: flex; justify-content: space-between; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 8px; padding: 26px 16px; }
+.ico { display: grid; justify-items: center; gap: 5px; color: #fff; font-size: .6rem; font-weight: 600; text-align: center; }
+.ico i { width: 46px; height: 46px; border-radius: 12px; display: block; background: rgba(255,255,255,.18); }
+.ico.ours i { background: center / cover no-repeat url(icons/icon-192.png); box-shadow: 0 0 0 2px #fff, 0 0 18px rgba(74,168,240,.9); animation: glow 2s ease-in-out infinite; }
+@keyframes glow { 50% { box-shadow: 0 0 0 2px #fff, 0 0 4px rgba(74,168,240,.4); } }
+.dock { position: absolute; left: 12px; right: 12px; bottom: 12px; height: 64px; border-radius: 22px; background: rgba(255,255,255,.16); display: flex; justify-content: space-around; align-items: center; }
+.dock i { width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,.22); display: block; }
+.splash { position: absolute; inset: 0; background: #c3e1f4; display: grid; place-items: center; align-content: center; gap: 12px; color: #0c2a43; font-weight: 800; opacity: 0; transition: opacity .4s; pointer-events: none; }
+.splash img { width: 86px; height: 86px; border-radius: 22px; }
+.phone.open .splash { opacity: 1; }
+.cap { text-align: center; font-size: .85rem; color: var(--muted); margin-top: 12px; }
+footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+@media (max-width: 860px) { .hero { grid-template-columns: 1fr; } .steps { grid-template-columns: 1fr; } .perks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .appcard { flex-wrap: wrap; } .install { margin-left: 0; width: 100%; } }
+/* ☰ menu on phones (shared across pages) */
+.menu-btn { display: none; color: var(--text); cursor: pointer; }
+/* top bar hides when you scroll down, comes back when you scroll up */
+.olb-top { transition: transform .25s ease; will-change: transform; }
+html.olb-hidden .olb-top { transform: translateY(calc(-100% - env(safe-area-inset-top, 0px) - 2px)); }
+html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
+.sim-sum { transition: top .25s ease; }
+@media (prefers-reduced-motion: reduce) { .olb-top, .sim-sum { transition: none; } }
+@media (max-width: 760px) {
+  .menu-btn { display: inline-grid; place-items: center; font-size: 1.2rem; }
+  .olb-top .wrap { flex-wrap: nowrap !important; gap: 8px !important; }
+  .olb-top .brand { flex: 1 1 0; min-width: 0; font-size: .95rem; line-height: 1.2; gap: 10px; margin-right: 0; }
+  .olb-top .head-right { flex-wrap: nowrap; }
+  .olb-top nav[aria-label="Main"] { display: none !important; position: absolute; left: 0; right: 0; top: 100%; z-index: 40; flex-direction: column; flex-wrap: nowrap; gap: 0; padding: 4px max(16px, env(safe-area-inset-left, 0px)) 12px; background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(7,17,28,.18); max-height: calc(100vh - 70px); overflow-y: auto; }
+  .olb-top.open nav[aria-label="Main"] { display: flex !important; }
+  .olb-top nav[aria-label="Main"] a { padding: 12px; border-radius: 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  .olb-top nav[aria-label="Main"] a:last-child { border-bottom: 0; }
+}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
+    <nav class="main" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="rankings.html" id="nav-rankings">Rankings</a>
+      <a href="rankings.html?s=records" id="nav-records">Records</a>
+      <a href="rankings.html?s=fame" id="nav-halloffame">Hall of Fame</a>
+      <a href="news.html">News</a>
+      <a href="academy.html">Academy</a>
+      <a href="index.html#tournaments">Tournaments</a>
+      <a href="join.html">Join</a>
+      <a href="community.html">Community</a>
+    </nav>
+    <button class="mode menu-btn" type="button" id="menu" aria-label="Open menu" aria-expanded="false">☰</button>
+    <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="test"><b>Test version.</b> Only this page lets you install the app for now. Nothing else on the site has changed.</div>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Oceania LOLBeans app</div>
+      <h1>Get the app on your phone</h1>
+      <p class="lede">Install Oceania LOLBeans to your home screen for free. It opens full screen like a real app, with the rankings, news and community chat one tap away. No app store needed.</p>
+      <div class="appcard">
+        <img src="icons/icon-192.png" alt="">
+        <div><b>Oceania LOLBeans</b><small>Rankings · News · Community</small></div>
+        <button class="install" type="button" id="install">Install</button>
+      </div>
+      <p class="note" id="note"></p>
+    </div>
+    <div>
+      <div class="phone" id="phone" aria-hidden="true">
+        <div class="screen">
+          <div class="time"><span>9:41</span><span>▮▮▮ 100%</span></div>
+          <div class="grid">
+            <div class="ico"><i></i>Camera</div><div class="ico"><i></i>Photos</div><div class="ico"><i></i>Discord</div><div class="ico"><i></i>LOLBeans</div>
+            <div class="ico"><i></i>Maps</div><div class="ico ours"><i></i>Oceania LOLBeans</div><div class="ico"><i></i>Music</div><div class="ico"><i></i>Clock</div>
+            <div class="ico"><i></i>Notes</div><div class="ico"><i></i>Weather</div><div class="ico"><i></i>Settings</div><div class="ico"><i></i>Files</div>
+          </div>
+          <div class="dock"><i></i><i></i><i></i><i></i></div>
+          <div class="splash"><img src="icons/icon-192.png" alt=""><span>Oceania LOLBeans</span></div>
+        </div>
+      </div>
+      <p class="cap">Your home screen after installing. Tap the glowing icon to try the opening screen.</p>
+    </div>
+  </section>
+
+  <h2>How to install</h2>
+  <div class="steps">
+    <div class="step" id="st-android"><h3>🤖 Android</h3><ol><li>Open this page in <b>Chrome</b>.</li><li>Tap <b>Install</b> above, or tap <b>⋮</b> then <b>Install app</b>.</li><li>Find Oceania LOLBeans on your home screen.</li></ol></div>
+    <div class="step" id="st-ios"><h3>🍎 iPhone / iPad</h3><ol><li>Open this page in <b>Safari</b>.</li><li>Tap <b>Share</b> (the square with an arrow).</li><li>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</li></ol></div>
+    <div class="step" id="st-pc"><h3>💻 Computer</h3><ol><li>Open this page in <b>Chrome</b> or <b>Edge</b>.</li><li>Click <b>Install</b> above, or the install icon in the address bar.</li><li>It opens in its own window and shows up in your apps.</li></ol></div>
+  </div>
+
+  <div class="perks">
+    <div class="perk"><span>📱</span><b>Full screen</b>No browser bars, just the site.</div>
+    <div class="perk"><span>⚡</span><b>One tap</b>Opens straight from your home screen.</div>
+    <div class="perk"><span>🔄</span><b>Always up to date</b>Changes to the site show up straight away.</div>
+    <div class="perk"><span>🆓</span><b>Free</b>No app store, no download size to worry about.</div>
+  </div>
+</main>
+
+<footer><div class="wrap"><span>© Oceania LOLBeans Official</span><span>A fan community, not affiliated with the LOLBeans developers.</span></div></footer>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function setMode(dark) { document.documentElement.setAttribute("data-mode", dark ? "dark" : "light"); $("mode").textContent = dark ? "☀" : "☾"; store("olb-mode", dark ? "dark" : "light"); }
+  $("mode").addEventListener("click", function () { setMode(document.documentElement.getAttribute("data-mode") !== "dark"); });
+  if (store("olb-mode") === "dark") setMode(true);
+
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
+  var ua = navigator.userAgent, ios = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1), android = /android/i.test(ua);
+  $(ios ? "st-ios" : android ? "st-android" : "st-pc").classList.add("me");
+  $(ios ? "st-ios" : android ? "st-android" : "st-pc").querySelector("h3").insertAdjacentHTML("beforeend", '<span class="you">You</span>');
+  var standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  var prompt = null, btn = $("install"), note = $("note");
+  if (standalone) { btn.textContent = "Installed ✓"; btn.disabled = true; note.innerHTML = '<span class="ok">You\'re using the app right now.</span>'; }
+  else if (ios) { btn.textContent = "How to"; note.textContent = "On iPhone, install from Safari: tap Share, then Add to Home Screen."; }
+  else note.textContent = "If the Install button doesn't work, use your browser's menu (steps below).";
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); prompt = e; note.textContent = "Ready to install."; });
+  window.addEventListener("appinstalled", function () { btn.textContent = "Installed ✓"; btn.disabled = true; note.innerHTML = '<span class="ok">Installed! Find Oceania LOLBeans on your home screen.</span>'; });
+  btn.addEventListener("click", function () {
+    if (prompt) { prompt.prompt(); prompt.userChoice.then(function () { prompt = null; }); return; }
+    (ios ? $("st-ios") : $("st-" + (android ? "android" : "pc"))).scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  var ph = $("phone");
+  ph.addEventListener("click", function (e) { if (!e.target.closest(".ours")) return; ph.classList.add("open"); setTimeout(function () { ph.classList.remove("open"); }, 1800); });
+})();
+</script>
+<script>
+// ☰ menu on phones
+(function () {
+  var mode = document.getElementById("mode"), btn = document.getElementById("menu");
+  if (!mode || !btn) return;
+  var top = mode.closest("header"); top.classList.add("olb-top");
+  function set(o) { top.classList.toggle("open", o); btn.setAttribute("aria-expanded", String(o)); btn.setAttribute("aria-label", o ? "Close menu" : "Open menu"); btn.textContent = o ? "✕" : "☰"; }
+  btn.addEventListener("click", function (e) { e.stopPropagation(); set(!top.classList.contains("open")); });
+  document.addEventListener("click", function (e) { if (top.classList.contains("open") && (!top.contains(e.target) || e.target.closest("nav a"))) set(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") set(false); });
+  // hide the top bar while scrolling down, show it again when scrolling up
+  var lastY = window.scrollY, root = document.documentElement, ticking = false;
+  function onScroll() {
+    var y = window.scrollY, dy = y - lastY;
+    if (top.classList.contains("open") || y < top.offsetHeight + 20) root.classList.remove("olb-hidden");
+    else if (dy > 6) root.classList.add("olb-hidden");
+    else if (dy < -6) root.classList.remove("olb-hidden");
+    if (Math.abs(dy) > 6 || y < 20) lastY = y;
+    ticking = false;
+  }
+  window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  top.addEventListener("focusin", function () { root.classList.remove("olb-hidden"); });
+})();
+</script>
+<script type="module" src="auth-widget.js?v=4"></script>
+</body>
+</html>
