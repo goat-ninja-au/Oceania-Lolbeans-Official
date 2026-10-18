@@ -398,6 +398,28 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .ip-bar { height: 14px; border-radius: 999px; background: #ef3340; overflow: hidden; }
 .ip-bar i { display: block; height: 100%; background: #1a66ff; border-radius: 999px 0 0 999px; width: 0; transition: width 1s cubic-bezier(.2,.8,.2,1); }
 .ip-wl .bot { display: flex; justify-content: space-between; font-size: .88rem; margin-top: 8px; }
+.ip-body > .back { justify-self: start; }
+@media (max-width: 560px) { .bt-map { grid-template-columns: 64px minmax(0, 1fr); } .bt-map .pic { width: 64px; height: 44px; } }
+.ip-link { background: none; border: 0; color: var(--blue); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; padding: 0; }
+.ip-link:hover { text-decoration: underline; }
+.bt-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.gsel2 { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.gsel2 button { border: 0; background: none; color: var(--muted); font: inherit; font-weight: 700; font-size: .85rem; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+.gsel2 button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+.rtable.bt td.win { color: #1a66ff; font-weight: 800; } .rtable.bt td.loss { color: #ef3340; font-weight: 800; }
+.ip-bar.mini { height: 8px; min-width: 120px; }
+.bt-maps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 10px; }
+.bt-map { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+.bt-map .pic { width: 92px; height: 60px; border-radius: 8px; overflow: hidden; background: var(--soft); }
+.bt-map .pic img, .bt-map .pic .mfall { width: 100%; height: 100%; object-fit: cover; }
+.bt-info { display: grid; gap: 5px; min-width: 0; }
+.bt-h { display: flex; justify-content: space-between; gap: 8px; } .bt-h .num { font-family: var(--mono); font-weight: 700; }
+.bt-who { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; font-size: .82rem; }
+.chip { border: 1px solid var(--line); background: var(--soft); color: var(--text); border-radius: 999px; padding: 2px 9px; font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer; }
+.chip i { font-style: normal; font-family: var(--mono); color: #ef3340; margin-left: 3px; }
+.chip:hover { border-color: var(--blue); }
+.crown { font-weight: 800; color: var(--gold); font-size: .85rem; }
+.bt-info small { font-size: .78rem; }
 .ip-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 @media (max-width: 760px) {
   .ip-in { grid-template-columns: 1fr; }
@@ -709,11 +731,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (P.get("map") != null) { var mi = MAPS.indexOf(P.get("map")); if (mi >= 0) S.map = mi; }
     if (byName[P.get("a")]) S.a = P.get("a");
     if (byName[P.get("b")]) S.b = P.get("b");
-    if (byName[P.get("player")]) { S.player = P.get("player"); if (P.get("tab")) S.ptab = P.get("tab"); if (byName[P.get("vs")]) S.vs = P.get("vs"); }
+    if (byName[P.get("player")]) { S.player = P.get("player"); if (P.get("tab")) S.ptab = P.get("tab"); if (byName[P.get("vs")]) S.vs = P.get("vs"); if (P.get("g")) S.bg = P.get("g"); if (P.get("view")) S.bview = P.get("view"); }
   }
   function urlFor() {
     var P = new URLSearchParams();
-    if (S.player) { P.set("player", S.player); if (S.ptab !== "overview") P.set("tab", S.ptab); if (S.ptab === "h2h" && S.vs) P.set("vs", S.vs); }
+    if (S.player) { P.set("player", S.player); if (S.ptab !== "overview") P.set("tab", S.ptab); if (S.ptab === "h2h" && S.vs) P.set("vs", S.vs); if (S.ptab === "battles") { P.set("g", S.bg || "all"); if (S.bview === "map") P.set("view", "map"); } }
     else {
       if (S.sec !== "list") P.set("s", S.sec);
       if (S.sec === "maps" && S.map != null) P.set("map", MAPS[S.map]);
@@ -929,7 +951,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (S.ptab === "overview") {
       var ye = yearEnd(p);
       var top10 = players.slice(0, 10), near = players.filter(function (o) { return Math.abs(o.place - p.place) <= 5; });
-      var wl = [["Overall", "every ranked player", mapRecord(p, players)], ["Top 10", "the top 10", mapRecord(p, top10)], ["Near you", "players within 5 places", mapRecord(p, near)]];
+      var wl = [["Overall", "every ranked player", mapRecord(p, players), "all"], ["Top 10", "the top 10", mapRecord(p, top10), "top10"], ["Near you", "players within 5 places", mapRecord(p, near), "near"]];
       var above = players.filter(function (o) { return o.place < p.place; }).sort(function (a, b) { return b.place - a.place; })[0], leader = players[0];
       var best = withT.map(function (m) { return { m: m, r: mapRank(m, p.t[m]) }; }).sort(function (a, b) { return a.r - b.r || a.m - b.m; }).slice(0, 4);
       var weak = withT.filter(function (m) { return ref(m); }).map(function (m) { return { m: m, g: p.t[m] - ref(m) }; }).sort(function (a, b) { return b.g - a.g; }).slice(0, 4);
@@ -944,10 +966,12 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
           ye.map(function (r, i) { return "<tr" + (i > 0 && !S.yeOpen ? " hidden" : "") + "><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
           (ye.length > 1 ? '<button type="button" class="ip-more" id="ye-more" aria-expanded="' + !!S.yeOpen + '" aria-label="Show all years"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>' : "") : '<p class="muted">No full year ranked yet.</p>') + "</div>" +
         graphCard(p) +
-        '<div class="ip-sec"><div class="ip-head"><h3>Map win-loss record</h3><span class="muted" style="font-size:.82rem">A map counts as a win if your time is faster</span></div>' +
+        '<div class="ip-sec"><div class="ip-head"><h3>Map battles</h3><span class="muted" style="font-size:.82rem">Every map is a mini battle: faster time wins</span></div>' +
           wl.map(function (x) {
             var tot = x[2].w + x[2].l, pc = tot ? Math.round(100 * x[2].w / tot) : 0;
-            return '<div class="ip-wl"><div class="top"><b>' + x[0] + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar" title="vs ' + x[1] + '"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + x[2].w + '">' + x[2].w + "</b></span><span>Losses: <b data-count=\"" + x[2].l + '">' + x[2].l + "</b></span></div></div>";
+            return '<div class="ip-wl"><div class="top"><b>' + x[0] + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar" title="vs ' + x[1] + '"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + x[2].w + '">' + x[2].w + "</b></span>" +
+              '<button type="button" class="ip-link" data-battles="' + x[3] + '">See breakdown ›</button>' +
+              "<span>Losses: <b data-count=\"" + x[2].l + '">' + x[2].l + "</b></span></div></div>";
           }).join("") + "</div>";
       var side = 
         '<div class="card"><h3>Ranking summary</h3><div class="facts-list">' +
@@ -961,6 +985,33 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 
         "";
       body = '<h2>' + esc(p.name) + ' Oceania Overview</h2><div class="ip-grid"><div class="ip-main">' + main + '</div><aside class="ip-side">' + side + "</aside></div>";
+    } else if (S.ptab === "battles") {
+      var G = { all: ["Everyone", players], top10: ["Top 10", players.slice(0, 10)], near: ["Near you", players.filter(function (o) { return Math.abs(o.place - p.place) <= 5; })] };
+      var gk = G[S.bg] ? S.bg : "all", grp = G[gk][1].filter(function (o) { return o !== p; });
+      var rec = mapRecord(p, G[gk][1]), tot = rec.w + rec.l, pc = tot ? Math.round(100 * rec.w / tot) : 0;
+      var view = S.bview === "map" ? "map" : "player";
+      body = '<button type="button" class="back" data-ptab="overview">← Overview</button><h2>' + esc(p.name) + ' Map Battles</h2>' +
+        '<p class="muted">Every map is a mini battle against each player: the faster time wins. No time on a map loses to anyone who has one. Ties don\'t count.</p>' +
+        '<div class="bt-bar"><div class="gsel2" role="group" aria-label="Group">' + Object.keys(G).map(function (k) { return '<button type="button" data-bg="' + k + '" aria-pressed="' + (k === gk) + '">' + G[k][0] + "</button>"; }).join("") + "</div>" +
+        '<div class="gsel2" role="group" aria-label="View">' + [["player", "By player"], ["map", "By map"]].map(function (v) { return '<button type="button" data-bview="' + v[0] + '" aria-pressed="' + (v[0] === view) + '">' + v[1] + "</button>"; }).join("") + "</div></div>" +
+        '<div class="ip-wl" style="border:0"><div class="top"><b>vs ' + G[gk][0].toLowerCase() + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + rec.w + '">' + rec.w + '</b></span><span>Losses: <b data-count="' + rec.l + '">' + rec.l + "</b></span></div></div>";
+      if (view === "player") {
+        body += '<div class="rwrap"><table class="rtable bt"><thead><tr><th>Rank</th><th>Player</th><th>Wins</th><th>Losses</th><th class="c-maps">Record</th><th></th></tr></thead><tbody>' +
+          grp.map(function (o) {
+            var r = mapRecord(p, [o]), t2 = r.w + r.l, pp = t2 ? Math.round(100 * r.w / t2) : 0;
+            return '<tr data-vs="' + esc(o.name) + '"><td class="rk"><span>' + o.place + '</span></td><td class="pn">' + flag(o.country) + " " + esc(o.name) + '</td><td class="num win">' + r.w + '</td><td class="num loss">' + r.l + '</td><td class="c-maps"><div class="ip-bar mini"><i data-w="' + pp + '"></i></div></td><td><span class="h2hb">Head 2 Head</span></td></tr>';
+          }).join("") + "</tbody></table></div>";
+      } else {
+        body += '<div class="bt-maps">' + MAPS.map(function (name, m) {
+          var mine = p.t[m];
+          var faster = grp.filter(function (o) { return o.t[m] != null && (mine == null || o.t[m] < mine - EPS); }).sort(function (a, b) { return a.t[m] - b.t[m]; });
+          var beaten = grp.filter(function (o) { return mine != null && (o.t[m] == null || o.t[m] > mine + EPS); }).length;
+          return '<div class="bt-map"><div class="pic">' + mapPic(m) + '</div><div class="bt-info"><div class="bt-h"><b>' + esc(name) + '</b><span class="num">' + fmt(mine) + "</span></div>" +
+            (faster.length ? '<div class="bt-who"><span class="muted">Faster than you (' + faster.length + "):</span> " + faster.slice(0, 8).map(function (o) { return '<button type="button" class="chip" data-player="' + esc(o.name) + '">' + esc(o.name) + " <i>" + fmt(o.t[m]) + "</i></button>"; }).join("") + (faster.length > 8 ? '<span class="muted"> +' + (faster.length - 8) + " more</span>" : "") + "</div>"
+              : '<div class="bt-who"><span class="crown">👑 Best in this group</span></div>') +
+            '<small class="muted">You beat ' + beaten + " of " + grp.length + "</small></div></div>";
+        }).join("") + "</div>";
+      }
     } else if (S.ptab === "times") {
       body = '<div class="ttable"><div class="trow head"><span></span><span>Map</span><span style="text-align:right">Time</span><span style="text-align:right">Map rank</span><span style="text-align:right">vs OR</span></div>' +
         MAPS.map(function (name, m) {
@@ -988,7 +1039,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
             (OR && OR.t[m] ? '<button type="button" class="fill" data-fill="' + m + '" title="Use the Oceania record">OR</button>' : "<span></span>") + "</div>";
         }).join("") + "</div></div>";
     }
-    $("pbody").innerHTML = (S.ptab === "overview" ? "" : title) + body;
+    $("pbody").innerHTML = (S.ptab === "overview" || S.ptab === "battles" ? "" : title) + body;
     if (S.ptab === "target") updateSim();
     countUp($("v-profile"));
     animateGauge();
@@ -1126,6 +1177,10 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (t.id === "maps-back") { S.map = null; renderMaps(); syncUrl(); return; }
     if (t.id === "share") { var url = location.origin + urlFor(); try { navigator.clipboard.writeText(url).then(function () { toast("Profile link copied"); }, function () { toast(url); }); } catch (er) { toast(url); } return; }
     if (t.id === "sim-reset") { S.sim = {}; renderProfile(); return; }
+    var bb = t.closest("[data-battles]"); if (bb) { S.ptab = "battles"; S.bg = bb.dataset.battles; S.bview = "player"; renderProfile(); syncUrl(); window.scrollTo(0, 0); return; }
+    var bg = t.closest("[data-bg]"); if (bg) { S.bg = bg.dataset.bg; renderProfile(); syncUrl(); return; }
+    var bv = t.closest("[data-bview]"); if (bv) { S.bview = bv.dataset.bview; renderProfile(); syncUrl(); return; }
+    var vsr = t.closest("[data-vs]"); if (vsr) { S.vs = vsr.dataset.vs; S.ptab = "h2h"; renderProfile(); syncUrl(); window.scrollTo(0, 0); return; }
     var gm = t.closest("[data-gmode]"); if (gm) { S.gmode = gm.dataset.gmode; var gw = document.querySelector(".ip-gauge"); var p0 = byName[S.player]; if (gw && p0) { gw.querySelector("svg").outerHTML = gaugeSVG(p0, S.gmode); gw.querySelectorAll("[data-gmode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.gmode === S.gmode)); }); countUp(gw); animateGauge(); } return; }
     if (t.closest("#ye-more")) { S.yeOpen = !S.yeOpen; document.querySelectorAll(".ip-ye tbody tr").forEach(function (r, i) { if (i > 0) r.hidden = !S.yeOpen; }); $("ye-more").setAttribute("aria-expanded", String(!!S.yeOpen)); return; }
     if (t.closest("[data-sharex]")) { window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(S.player + " on the Oceania LOLBeans rankings") + "&url=" + encodeURIComponent(location.origin + urlFor()), "_blank", "noopener"); return; }
