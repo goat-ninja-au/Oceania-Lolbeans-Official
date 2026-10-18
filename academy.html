@@ -96,6 +96,19 @@ header { background: color-mix(in srgb, var(--bg) 92%, transparent) !important; 
 .mode { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 1.05rem; cursor: pointer; }
 .head-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 nav a[aria-current] { color: var(--text); background: var(--panel); }
+
+/* ☰ menu on phones (shared across pages) */
+.menu-btn { display: none; color: var(--text); cursor: pointer; }
+@media (max-width: 760px) {
+  .menu-btn { display: inline-grid; place-items: center; font-size: 1.2rem; }
+  .olb-top .wrap { flex-wrap: nowrap !important; gap: 8px !important; }
+  .olb-top .brand { flex: 1 1 0; min-width: 0; font-size: .95rem; line-height: 1.2; gap: 10px; margin-right: 0; }
+  .olb-top .head-right { flex-wrap: nowrap; }
+  .olb-top nav[aria-label="Main"] { display: none !important; position: absolute; left: 0; right: 0; top: 100%; z-index: 40; flex-direction: column; flex-wrap: nowrap; gap: 0; padding: 4px max(16px, env(safe-area-inset-left, 0px)) 12px; background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(7,17,28,.18); max-height: calc(100vh - 70px); overflow-y: auto; }
+  .olb-top.open nav[aria-label="Main"] { display: flex !important; }
+  .olb-top nav[aria-label="Main"] a { padding: 12px; border-radius: 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  .olb-top nav[aria-label="Main"] a:last-child { border-bottom: 0; }
+}
 </style>
 </head>
 <body style="margin:0">
@@ -113,8 +126,9 @@ nav a[aria-current] { color: var(--text); background: var(--panel); }
       <a href="academy.html" aria-current="page">Academy</a>
       <a href="index.html#tournaments">Tournaments</a>
       <a href="join.html">Join</a>
-      <a href="chat.html">Chat</a>
+      <a href="community.html">Community</a>
     </nav>
+    <button class="mode menu-btn" type="button" id="menu" aria-label="Open menu" aria-expanded="false">☰</button>
     <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
     </div>
   </div>
@@ -151,6 +165,18 @@ nav a[aria-current] { color: var(--text); background: var(--panel); }
   }
   b.addEventListener("click", function () { setMode(document.documentElement.getAttribute("data-mode") !== "dark"); });
   try { if (localStorage.getItem("olb-mode") === "dark") setMode(true); } catch (e) {}
+})();
+</script>
+<script>
+// ☰ menu on phones
+(function () {
+  var mode = document.getElementById("mode"), btn = document.getElementById("menu");
+  if (!mode || !btn) return;
+  var top = mode.closest("header"); top.classList.add("olb-top");
+  function set(o) { top.classList.toggle("open", o); btn.setAttribute("aria-expanded", String(o)); btn.setAttribute("aria-label", o ? "Close menu" : "Open menu"); btn.textContent = o ? "✕" : "☰"; }
+  btn.addEventListener("click", function (e) { e.stopPropagation(); set(!top.classList.contains("open")); });
+  document.addEventListener("click", function (e) { if (top.classList.contains("open") && (!top.contains(e.target) || e.target.closest("nav a"))) set(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") set(false); });
 })();
 </script>
 </body>

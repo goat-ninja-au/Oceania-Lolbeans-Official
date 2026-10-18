@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Oceania Community</title>
-<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap">
 <style>
@@ -139,16 +138,20 @@ nav.main a:hover { color: var(--text); background: var(--panel-2); }
   .app > .pane { display: none; height: 72vh; }
   .app[data-tab="side"] > .side, .app[data-tab="conv"] > .conv, .app[data-tab="online"] > .online { display: flex; }
 }
-.menu-btn { display: none; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); font-size: 1.2rem; }
-@media (max-width: 760px) {
-  .menu-btn { display: inline-grid; place-items: center; }
-  .brand { flex: 1 1 0; min-width: 0; font-size: .95rem; line-height: 1.2; gap: 10px; }
-  header.site .wrap { gap: 8px; }
-  nav.main { display: none; order: 9; width: 100%; flex-direction: column; padding-bottom: 6px; }
-  header.site.open nav.main { display: flex; }
-  nav.main a { padding: 11px 12px; border-bottom: 1px solid var(--row); border-radius: 0; }
-}
 footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+
+/* ☰ menu on phones (shared across pages) */
+.menu-btn { display: none; color: var(--text); cursor: pointer; }
+@media (max-width: 760px) {
+  .menu-btn { display: inline-grid; place-items: center; font-size: 1.2rem; }
+  .olb-top .wrap { flex-wrap: nowrap !important; gap: 8px !important; }
+  .olb-top .brand { flex: 1 1 0; min-width: 0; font-size: .95rem; line-height: 1.2; gap: 10px; margin-right: 0; }
+  .olb-top .head-right { flex-wrap: nowrap; }
+  .olb-top nav[aria-label="Main"] { display: none !important; position: absolute; left: 0; right: 0; top: 100%; z-index: 40; flex-direction: column; flex-wrap: nowrap; gap: 0; padding: 4px max(16px, env(safe-area-inset-left, 0px)) 12px; background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(7,17,28,.18); max-height: calc(100vh - 70px); overflow-y: auto; }
+  .olb-top.open nav[aria-label="Main"] { display: flex !important; }
+  .olb-top nav[aria-label="Main"] a { padding: 12px; border-radius: 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  .olb-top nav[aria-label="Main"] a:last-child { border-bottom: 0; }
+}
 </style>
 </head>
 <body>
@@ -164,9 +167,9 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
       <a href="academy.html">Academy</a>
       <a href="index.html#tournaments">Tournaments</a>
       <a href="join.html">Join</a>
-      <a href="chat.html">Chat</a>
+      <a href="community.html" aria-current="page">Community</a>
     </nav>
-    <button class="menu-btn" type="button" id="menu" aria-label="Menu" aria-expanded="false">☰</button>
+    <button class="mode menu-btn" type="button" id="menu" aria-label="Open menu" aria-expanded="false">☰</button>
     <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
   </div>
 </header>
@@ -174,7 +177,6 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 <main class="wrap">
   <div class="intro">
     <div><div class="eyebrow">Oceania LOLBeans</div><h1>Community</h1><p>Chat with the Oceania community, see who's online and message your friends.</p></div>
-    <div class="testnote"><b>Test version.</b> Not linked in the menu yet.</div>
   </div>
 
   <div id="loading" class="card gate"><p class="muted">Connecting…</p></div>
@@ -315,7 +317,6 @@ function parseCSV(s) {
   return rows;
 }
 
-$("menu").addEventListener("click", () => { const o = document.querySelector("header.site").classList.toggle("open"); $("menu").setAttribute("aria-expanded", String(o)); $("menu").textContent = o ? "✕" : "☰"; });
 // Dark mode (shared with the site)
 function setMode(dark) {
   document.documentElement.setAttribute("data-mode", dark ? "dark" : "light");
@@ -628,6 +629,18 @@ function demo() {
   ]);
 }
 start();
+</script>
+<script>
+// ☰ menu on phones
+(function () {
+  var mode = document.getElementById("mode"), btn = document.getElementById("menu");
+  if (!mode || !btn) return;
+  var top = mode.closest("header"); top.classList.add("olb-top");
+  function set(o) { top.classList.toggle("open", o); btn.setAttribute("aria-expanded", String(o)); btn.setAttribute("aria-label", o ? "Close menu" : "Open menu"); btn.textContent = o ? "✕" : "☰"; }
+  btn.addEventListener("click", function (e) { e.stopPropagation(); set(!top.classList.contains("open")); });
+  document.addEventListener("click", function (e) { if (top.classList.contains("open") && (!top.contains(e.target) || e.target.closest("nav a"))) set(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") set(false); });
+})();
 </script>
 </body>
 </html>
