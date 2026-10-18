@@ -368,9 +368,9 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .ip-strip .row { max-width: 1080px; margin: 0 auto; padding: 14px max(16px, env(safe-area-inset-left, 0px)) 16px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 26px; }
 .ip-strip .it { display: flex; justify-content: space-between; gap: 10px; font-size: .82rem; border-bottom: 1px solid rgba(255,255,255,.45); padding-bottom: 6px; }
 .ip-strip .it b { font-weight: 800; }
-.ip-tabs { width: 100vw; margin-left: calc(50% - 50vw); background: #e4e9ef; }
+.ip-tabs { background: #e4e9ef; border-radius: 0 0 14px 14px; margin-top: 12px; border-radius: 12px; }
 :root[data-mode="dark"] .ip-tabs { background: #0f1d2a; }
-.ip-tabs .row { max-width: 1080px; margin: 0 auto; padding: 14px max(16px, env(safe-area-inset-left, 0px)) 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; overflow-x: auto; }
+.ip-tabs .row { padding: 10px 10px 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; overflow-x: auto; }
 .ip-tabs button { display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 0; background: #f2f4f7; color: #8a96a3; padding: 13px 12px; font: inherit; font-size: .8rem; font-weight: 700; text-align: left; white-space: nowrap; cursor: pointer; }
 :root[data-mode="dark"] .ip-tabs button { background: #162a3b; color: #8aa3b7; }
 .ip-tabs button[aria-selected="true"] { background: var(--panel); color: var(--text); }
@@ -906,18 +906,17 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var today = new Date(), todayTxt = today.getDate() + " " + MONTHS[today.getMonth()] + " " + today.getFullYear();
     var longDate = function (d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ""); return m ? (+m[3]) + " " + MONTHS[+m[2] - 1] + " " + m[1] : ""; };
     var html = '<button type="button" class="back" id="prof-back">← Oceania Rankings</button>' +
-      '<section class="ip-hero"><div class="ip-in">' +
-        '<div class="ip-share">Share: <span class="box"><button type="button" id="share" title="Copy profile link" aria-label="Copy profile link"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></button>' +
-        '<button type="button" data-sharex title="Share on X" aria-label="Share on X"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.2-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg></button></span></div>' +
-        '<div class="ip-id"><div class="ip-photo" style="background:' + color(p.name) + '"><b>' + initial(p.name) + '</b><i class="ip-badge">#' + p.place + '</i></div><div class="ip-name"><small>Oceania #' + p.place + "</small><h1>" + esc(p.name) + '</h1><span class="ip-nat"><span class="fl">' + flag(p.country) + "</span>" + countryName(p.country) + '</span><button type="button" class="ip-h2h" data-ptab="h2h">Head To Head</button></div></div>' +
-        '<div class="ip-gauge"><div class="tg"><button type="button" data-gmode="rank" aria-pressed="' + (S.gmode === "rank") + '">Ranking</button><button type="button" data-gmode="time" aria-pressed="' + (S.gmode === "time") + '">Total time</button></div>' + gaugeSVG(p, S.gmode) + "</div>" +
-      '</div><div class="ip-strip"><div class="row">' +
-        '<div class="it"><span>Current ranking<small>Oceania</small></span><b data-count="' + p.place + '">' + p.place + "</b></div>" +
-        '<div class="it"><span>Career high<small>' + (niceDate(p.highDate) ? niceDate(p.highDate) : p.high < p.place ? "Best ever" : "Current") + '</small></span><b data-count="' + p.high + '">' + p.high + "</b></div>" +
-        '<div class="it"><span>Total time<small>' + (OR && OR.total ? plus(p.total - OR.total) + " vs OR" : "&nbsp;") + '</small></span><b class="num" data-count="' + p.total + '" data-dec="3">' + fmt(p.total) + "</b></div>" +
-        '<div class="it"><span>Oceania records<small>of 27 maps</small></span><b data-count="' + p.orN + '">' + p.orN + "</b></div>" +
-        '<div class="it"><span>' + (weeksAtOne(p.name) ? 'Weeks at #1<small>all time</small>' : 'World records<small>of 27 maps</small>') + '</span><b data-count="' + (weeksAtOne(p.name) || p.wrN) + '">' + (weeksAtOne(p.name) || p.wrN) + "</b></div>" +
-      "</div></div></section>" +
+      '<div class="prof-top"><div class="prof-band"><div class="avatar" style="background:' + color(p.name) + '" aria-hidden="true">' + initial(p.name) + '</div>' +
+      '<div class="prof-id"><h1>' + esc(p.name) + '</h1><span class="nat">' + flag(p.country) + " " + countryName(p.country) + "</span></div>" +
+      '<div class="prof-actions"><button class="btn" type="button" data-ptab="h2h">Head to Head</button><button class="btn" type="button" id="share">Share profile</button></div></div>' +
+      '<div class="stats">' +
+        '<div class="stat"><span>Current ranking</span><b data-count="' + p.place + '">' + p.place + "</b><small>Oceania</small></div>" +
+        '<div class="stat"><span>Career high</span><b data-count="' + p.high + '">' + p.high + "</b><small>" + (niceDate(p.highDate) ? "Reached " + niceDate(p.highDate) : p.high < p.place ? "Best ever" : "Current") + "</small></div>" +
+        '<div class="stat"><span>Total time</span><b class="mono" data-count="' + p.total + '" data-dec="3">' + fmt(p.total) + "</b><small>" + (OR && OR.total ? plus(p.total - OR.total) + " vs OR total" : "") + "</small></div>" +
+        '<div class="stat"><span>Oceania records</span><b data-count="' + p.orN + '">' + p.orN + "</b><small>of 27 maps</small></div>" +
+        (weeksAtOne(p.name) ? '<div class="stat"><span>Weeks at #1</span><b data-count="' + weeksAtOne(p.name) + '">' + weeksAtOne(p.name) + "</b><small>all time</small></div>"
+          : '<div class="stat"><span>World records</span><b data-count="' + p.wrN + '">' + p.wrN + "</b><small>of 27 maps</small></div>") +
+      "</div></div>" +
       '<nav class="ip-tabs" aria-label="Profile sections"><div class="row" role="tablist">' + PTABS.map(function (t) { return '<button role="tab" type="button" data-ptab="' + t[0] + '" aria-selected="' + (S.ptab === t[0]) + '"><span>' + t[1] + "</span>" + ICON[t[0]] + "</button>"; }).join("") + "</div></nav>" +
       '<div class="ip-body" id="pbody"></div>';
     $("v-profile").innerHTML = html;
@@ -953,11 +952,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
         '<div class="card"><h3>Year-end ranking</h3>' + (ye.length ? '<table class="ip-ye"><thead><tr><th>Year</th><th>Oceania Ranking</th></tr></thead><tbody>' +
           ye.map(function (r, i) { return "<tr" + (i > 0 && !S.yeOpen ? " hidden" : "") + "><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
           (ye.length > 1 ? '<button type="button" class="ip-more" id="ye-more" aria-expanded="' + !!S.yeOpen + '" aria-label="Show all years"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>' : "") : '<p class="muted">No full year ranked yet.</p>') + "</div>" +
-        '<div class="card"><h3>Best maps</h3>' + best.map(function (b) {
-          return '<div class="mapline"><div class="pic">' + mapPic(b.m) + "</div><div><b>" + esc(MAPS[b.m]) + "</b><small>" + fmt(p.t[b.m]) + '</small></div><div class="r">' + ordinal(b.r) + "<small>of " + sorted[b.m].length + "</small></div></div>";
-        }).join("") + '</div><div class="card"><h3>Most room to improve</h3>' + weak.map(function (w) {
-          return '<div class="mapline"><div class="pic">' + mapPic(w.m) + "</div><div><b>" + esc(MAPS[w.m]) + "</b><small>" + fmt(p.t[w.m]) + " · OR " + fmt(ref(w.m)) + '</small></div><div class="r">' + plus(w.g) + "<small>behind OR</small></div></div>";
-        }).join("") + "</div>";
+        "";
       body = '<h2>' + esc(p.name) + ' Oceania Overview</h2><div class="ip-grid"><div class="ip-main">' + main + '</div><aside class="ip-side">' + side + "</aside></div>";
     } else if (S.ptab === "times") {
       body = '<div class="ttable"><div class="trow head"><span></span><span>Map</span><span style="text-align:right">Time</span><span style="text-align:right">Map rank</span><span style="text-align:right">vs OR</span></div>' +
