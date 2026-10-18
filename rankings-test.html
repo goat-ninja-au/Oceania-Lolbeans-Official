@@ -404,6 +404,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .t5 .av { overflow: visible; }
 .avatar img, .t5 .av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .t5 .av i { z-index: 1; }
+.avatar.has-photo { background: rgba(255,255,255,.12) !important; width: 150px; height: 170px; border-radius: 14px; border: 3px solid rgba(255,255,255,.4); box-shadow: 0 10px 26px rgba(0,0,0,.3); font-size: 0; }
+.avatar.has-photo img { border-radius: 11px; }
+.prof-band:has(.has-photo) { align-items: flex-end; }
+.prof-band:has(.has-photo) .prof-id h1 { font-size: clamp(2rem, 5vw, 3rem); }
+@media (max-width: 600px) { .avatar.has-photo { width: 116px; height: 132px; } }
 .addpic { justify-self: start; margin-top: 6px; font-size: .82rem; font-weight: 700; color: #fff; opacity: .85; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,.5); }
 .addpic:hover { opacity: 1; }
 .ip-link { background: none; border: 0; color: var(--blue); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; padding: 0; }
@@ -956,7 +961,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     var today = new Date(), todayTxt = today.getDate() + " " + MONTHS[today.getMonth()] + " " + today.getFullYear();
     var longDate = function (d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ""); return m ? (+m[3]) + " " + MONTHS[+m[2] - 1] + " " + m[1] : ""; };
     var html = '<button type="button" class="back" id="prof-back">← Oceania Rankings</button>' +
-      '<div class="prof-top"><div class="prof-band"><div class="avatar" style="background:' + color(p.name) + '" aria-hidden="true">' + avatarInner(p) + '</div>' +
+      '<div class="prof-top"><div class="prof-band"><div class="avatar' + (photoOf(p.name) ? " has-photo" : "") + '" style="background:' + color(p.name) + '" aria-hidden="true">' + avatarInner(p) + '</div>' +
       '<div class="prof-id"><h1>' + esc(p.name) + '</h1><span class="nat">' + flag(p.country) + " " + countryName(p.country) + "</span>" +
         (PHOTO_FORM ? '<a class="addpic" href="' + PHOTO_FORM + '" target="_blank" rel="noopener">📷 ' + (photoOf(p.name) ? "Change profile picture" : "Add a profile picture") + "</a>" : "") + "</div>" +
       '<div class="prof-actions"><button class="btn" type="button" data-ptab="h2h">Head to Head</button><button class="btn" type="button" id="share">Share profile</button></div></div>' +
