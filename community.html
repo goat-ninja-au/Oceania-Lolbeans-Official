@@ -261,6 +261,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .pwwrap .eye { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 38px; height: 34px; border: 0; background: none; cursor: pointer; font-size: 1.05rem; border-radius: 8px; opacity: .75; }
 .pwwrap .eye:hover { opacity: 1; background: var(--soft); }
 .field { color: var(--text); }
+.hash.champs { background: linear-gradient(135deg, #d99a00, #b07d00); font-size: 1.05rem; }
 /* ☰ menu on phones (shared across pages) */
 .menu-btn { display: none; color: var(--text); cursor: pointer; }
 /* top bar hides when you scroll down, comes back when you scroll up */
@@ -279,6 +280,24 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   .olb-top nav[aria-label="Main"] a { padding: 12px; border-radius: 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
   .olb-top nav[aria-label="Main"] a:last-child { border-bottom: 0; }
 }
+</style>
+<script>
+// Embedded on another page (e.g. the tournament site): ?embed=bubble (small chat window) or ?embed=page (full, without this site's header)
+(function () { var e = new URLSearchParams(location.search).get("embed"); if (e === "bubble" || e === "page") { document.documentElement.classList.add("embed", "embed-" + e); var b = document.createElement("base"); b.target = "_blank"; document.head.appendChild(b); } })();
+</script>
+<style>
+html.embed header.site, html.embed footer, html.embed .intro, html.embed #olb-acct { display: none !important; }
+html.embed body { background: var(--bg); }
+html.embed main.wrap { max-width: none; padding: 10px; }
+html.embed .gate { margin: 10px auto; }
+html.embed-page .app { height: calc(100vh - 20px); margin-bottom: 0; }
+html.embed-bubble main.wrap { padding: 8px; }
+html.embed-bubble .mtabs { display: flex; margin-bottom: 8px; }
+html.embed-bubble .mtabs button { padding: 6px; font-size: .88rem; }
+html.embed-bubble .app { grid-template-columns: 1fr; height: calc(100vh - 62px); min-height: 0; margin: 0; }
+html.embed-bubble .app > .pane { display: none; height: 100%; }
+html.embed-bubble .app[data-tab="side"] > .side, html.embed-bubble .app[data-tab="conv"] > .conv, html.embed-bubble .app[data-tab="online"] > .online { display: flex; }
+html.embed-bubble .gate { padding: 18px; }
 </style>
 </head>
 <body>
@@ -366,6 +385,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
         <div class="scroll">
           <h3 class="h3row">Chats <button class="linkbtn" type="button" id="new-group">+ New group</button></h3>
           <button class="item" type="button" data-open="main" id="open-main"><span class="hash">#</span><span><b>Main chat</b><small>Everyone</small></span><span id="main-badge"></span></button>
+          <button class="item" type="button" data-open="champs" id="open-champs"><span class="hash champs">🏆</span><span><b>Championships</b><small>Oceania Championships 2026</small></span><span id="champs-badge"></span></button>
           <div id="dm-list"></div>
           <div id="inv-wrap" hidden><h3>Group invites</h3><div id="inv-list"></div></div>
           <div id="req-wrap"><h3>Friend requests</h3><div id="req-list"></div></div>
@@ -483,10 +503,15 @@ function parseCSV(s) {
   return rows;
 }
 // which kind of conversation a view is: "main", a DM ("uidA_uidB") or a group ("grp:ID")
-const kindOf = v => v === "main" ? "main" : v.startsWith("grp:") ? "grp" : "dm";
+// public channels everyone can read: the main chat and the Oceania Championships channel
+const PUB = {
+  main: { col: "messages", title: "Main chat", sub: "Everyone in the Oceania community", icon: "#" },
+  champs: { col: "champs", title: "Championships", sub: "Oceania Championships 2026 · tournament talk", icon: "🏆" }
+};
+const kindOf = v => PUB[v] ? "main" : v.startsWith("grp:") ? "grp" : "dm";
 const gidOf = v => v.slice(4);
-const timeField = v => v === "main" ? "createdAt" : "at";
-function msgCol(v) { const k = kindOf(v); return k === "main" ? F.collection(db, "messages") : k === "dm" ? F.collection(db, "chats", v, "msgs") : F.collection(db, "groups", gidOf(v), "msgs"); }
+const timeField = v => PUB[v] ? "createdAt" : "at";
+function msgCol(v) { const k = kindOf(v); return k === "main" ? F.collection(db, PUB[v].col) : k === "dm" ? F.collection(db, "chats", v, "msgs") : F.collection(db, "groups", gidOf(v), "msgs"); }
 const msgRef = (v, id) => F.doc(msgCol(v), id);
 
 // Dark mode (shared with the site)
@@ -520,7 +545,7 @@ async function loadRankings() {
 const S = {
   uid: null, me: null, admin: false, users: {}, known: {}, status: {},
   friends: [], chats: {}, groups: {}, invites: [], reads: {}, blocked: {},
-  view: "main", live: [], older: [], cursor: null, mainLive: [], mainCursor: null, mainFirst: true,
+  view: "main", live: [], older: [], cursor: null, pubLive: { main: [], champs: [] }, pubCursor: {}, pubFirst: { main: true, champs: true },
   unsubMsgs: null, pinUnsub: null, seenUnsub: null, typingUnsub: null,
   pins: [], otherSeen: 0, dividerAt: 0, unread: {}, unreadKey: {},
   reports: [], lastSend: 0, replyTo: null, editing: null, pendingImg: null,
@@ -540,7 +565,7 @@ const groupAv = g => '<span class="gav" style="background:' + color(g.name || "g
 function friendOf(uid) { return S.friends.find(f => f.users.includes(uid)); }
 const isFriend = uid => { const f = friendOf(uid); return !!(f && f.status === "accepted"); };
 const otherInView = () => S.view.split("_").find(x => x !== S.uid);
-const readMain = () => +(store("olb-read-main-" + S.uid) || 0);
+const readPub = v => +(store("olb-read-" + v + "-" + S.uid) || 0);
 let drawQueued = false;
 function drawAll() { if (drawQueued) return; drawQueued = true; requestAnimationFrame(() => { drawQueued = false; renderLists(); renderView(); }); }
 
@@ -572,7 +597,7 @@ async function toggleNotify() {
   renderMe();
 }
 function updateTitle() {
-  const n = Object.entries(S.unread).reduce((a, [k, v]) => a + (k === "main" ? 0 : v || 0), 0) + (S.mentionsUnread || 0);
+  const n = Object.entries(S.unread).reduce((a, [k, v]) => a + (PUB[k] ? 0 : v || 0), 0) + (S.mentionsUnread || 0);
   document.title = (n ? "(" + n + ") " : "") + "Oceania Community";
 }
 
@@ -600,9 +625,8 @@ function renderLists() {
   Object.entries(S.groups).forEach(([gid, g]) => { const id = "grp:" + gid; convs.push({ id, at: ms(g.lastAt), html: () => groupAv(g) + "<span><b>" + esc(g.name) + "</b><small>" + (g.lastText ? esc((g.lastFrom === me ? "You" : nameOf(g.lastFrom)) + ": " + g.lastText) : (g.members || []).length + " members") + "</small></span>" }); });
   convs.sort((a, b) => b.at - a.at);
   $("dm-list").innerHTML = convs.length ? convs.map(c => '<button class="item" type="button" data-open="' + esc(c.id) + '"' + (S.view === c.id ? ' aria-current="true"' : "") + ">" + c.html() + badge(S.view === c.id ? 0 : S.unread[c.id]) + "</button>").join("") : '<p class="empty">No friends yet. Tap someone in Online or the chat to add them.</p>';
-  $("open-main").setAttribute("aria-current", String(S.view === "main"));
-  $("main-badge").outerHTML = '<span id="main-badge">' + (S.view === "main" ? "" : badge(S.unread.main).replace("<span></span>", "")) + "</span>";
-  const tot = Object.entries(S.unread).reduce((a, [k, v]) => a + (k === "main" || k === S.view ? 0 : v || 0), 0);
+  Object.keys(PUB).forEach(v => { $("open-" + v).setAttribute("aria-current", String(S.view === v)); $(v + "-badge").outerHTML = '<span id="' + v + '-badge">' + (S.view === v ? "" : badge(S.unread[v]).replace("<span></span>", "")) + "</span>"; });
+  const tot = Object.entries(S.unread).reduce((a, [k, v]) => a + (PUB[k] || k === S.view ? 0 : v || 0), 0);
   $("mt-badge").hidden = !tot; $("mt-badge").textContent = tot;
   // group invites
   $("inv-wrap").hidden = !S.invites.length;
@@ -629,7 +653,7 @@ function renderLists() {
 }
 function renderConvTop() {
   const k = kindOf(S.view);
-  if (k === "main") { $("conv-top").innerHTML = '<span class="hash">#</span><div class="ttl"><b>Main chat</b><small>Everyone in the Oceania community</small></div>'; return; }
+  if (k === "main") { const c = PUB[S.view]; $("conv-top").innerHTML = '<span class="hash">' + c.icon + '</span><div class="ttl"><b>' + c.title + "</b><small>" + c.sub + "</small></div>"; return; }
   if (k === "grp") {
     const g = S.groups[gidOf(S.view)] || { name: "Group", members: [] };
     const on = (g.members || []).filter(u => isOnline(S.users[u])).length;
@@ -658,13 +682,13 @@ function fmtText(t) {
   return h;
 }
 const mentionsMe = t => !!(S.me && t && new RegExp("@" + S.me.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![A-Za-z0-9_])", "i").test(t));
-function currentList() { return S.older.concat(S.view === "main" ? S.mainLive : S.live); }
+function currentList() { return S.older.concat(PUB[S.view] ? S.pubLive[S.view] : S.live); }
 function renderView() { if (!S.uid) return; const l = currentList(); if (l.length || !S.loading) renderMsgs(l); }
 function canPin() { const k = kindOf(S.view); return !S.adminView && (k === "main" ? S.admin : true); }
 function renderMsgs(list) {
   const box = $("msgs");
-  if (!list.length) { box.innerHTML = '<p class="empty" style="margin:auto">' + (S.loading ? "Loading…" : S.view === "main" ? "No messages yet. Say hi!" : "No messages yet. Say hi 👋") + "</p>"; return; }
-  let html = S.cursor ? '<button class="older" type="button" id="load-older">Load older messages</button>' : '<p class="begin">' + (S.view === "main" ? "This is the start of the main chat." : "This is the start of your conversation.") + "</p>";
+  if (!list.length) { box.innerHTML = '<p class="empty" style="margin:auto">' + (S.loading ? "Loading…" : PUB[S.view] ? "No messages yet. Say hi!" : "No messages yet. Say hi 👋") + "</p>"; return; }
+  let html = S.cursor ? '<button class="older" type="button" id="load-older">Load older messages</button>' : '<p class="begin">' + (PUB[S.view] ? "This is the start of " + (S.view === "main" ? "the main chat" : "the " + PUB[S.view].title + " channel") + "." : "This is the start of your conversation.") + "</p>";
   let last = "", divided = false, myLast = null;
   for (const m of list) if (m.uid === S.uid && !m.call) myLast = m;
   for (const m of list) {
@@ -680,7 +704,7 @@ function renderMsgs(list) {
     const rp = m.rp && m.rp.id ? '<div class="replyq" data-jump="' + esc(m.rp.id) + '">↪ <b>' + esc(m.rp.n) + "</b> " + esc(m.rp.t || "📎 Attachment") + "</div>" : "";
     const img = m.img ? '<img class="img" alt="Image from ' + esc(u.name || m.name) + '" data-imgid="' + esc(m.img) + '"' + (IMG.has(m.img) ? ' src="' + IMG.get(m.img) + '"' : "") + ">" : "";
     const aud = m.aud ? '<div class="voice"><span>🎤</span><audio controls preload="none" data-audid="' + esc(m.aud) + '"' + (IMG.has(m.aud) ? ' src="' + IMG.get(m.aud) + '"' : "") + "></audio><small>" + mmss((m.len || 0) * 1000) + "</small></div>" : "";
-    const canDel = mine || (S.admin && S.view === "main") || (kindOf(S.view) === "grp" && (S.groups[gidOf(S.view)] || {}).owner === S.uid);
+    const canDel = mine || (S.admin && kindOf(S.view) === "main") || (kindOf(S.view) === "grp" && (S.groups[gidOf(S.view)] || {}).owner === S.uid);
     const acts = S.adminView ? "<span></span>" : '<div class="acts2"><button type="button" title="React" aria-label="React" data-rxpick="' + esc(m.id) + '">😊</button><button type="button" title="Reply" aria-label="Reply" data-reply="' + esc(m.id) + '">↩</button>' +
       (mine && m.text ? '<button type="button" title="Edit" aria-label="Edit" data-edit="' + esc(m.id) + '">✏️</button>' : "") +
       (canPin() ? '<button type="button" title="' + (m.pinned ? "Unpin" : "Pin") + '" aria-label="' + (m.pinned ? "Unpin" : "Pin") + '" data-pin="' + esc(m.id) + '">📌</button>' : "") +
@@ -798,7 +822,7 @@ function presence() {
   beat = setInterval(online, 120000);
   unsubs.push(R.onValue(R.ref(rdb, "status"), snap => { S.status = snap.val() || {}; Object.keys(S.status).forEach(watchUser); drawAll(); }, () => {}));
 }
-const toMsg = (v, d) => { const x = d.data(); const uid = v === "main" ? x.uid : x.from; watchUser(uid); const t = x.createdAt || x.at; return { id: d.id, uid, name: x.name, text: x.text || "", img: x.img || "", aud: x.aud || "", len: x.len || 0, rx: x.rx || null, rp: x.rp || null, call: x.call || "", edited: !!x.edited, pinned: !!x.pinned, video: !!x.video, dur: x.dur || 0, at: t ? t.toDate() : null }; };
+const toMsg = (v, d) => { const x = d.data(); const uid = PUB[v] ? x.uid : x.from; watchUser(uid); const t = x.createdAt || x.at; return { id: d.id, uid, name: x.name, text: x.text || "", img: x.img || "", aud: x.aud || "", len: x.len || 0, rx: x.rx || null, rp: x.rp || null, call: x.call || "", edited: !!x.edited, pinned: !!x.pinned, video: !!x.video, dur: x.dur || 0, at: t ? t.toDate() : null }; };
 function enterApp(user) {
   show("appwrap");
   F.updateDoc(F.doc(db, "users", S.uid), { lastSeen: F.serverTimestamp() }).catch(() => {});
@@ -822,21 +846,22 @@ function enterApp(user) {
   unsubs.push(F.onSnapshot(F.collection(db, "users", S.uid, "blocked"), s => { S.blocked = {}; s.docs.forEach(d => { S.blocked[d.id] = true; }); drawAll(); }));
   unsubs.push(F.onSnapshot(F.query(F.collection(db, "calls"), F.where("to", "==", S.uid)), onCallsSnap, () => {}));
   if (S.admin) unsubs.push(F.onSnapshot(F.collection(db, "reports"), s => { S.reports = s.docs.map(d => ({ id: d.id, ...d.data() })); S.reports.forEach(r => { watchUser(r.by); watchUser(r.against); }); renderLists(); }, () => {}));
-  // the main chat is always listened to, so mentions and unread counts work from anywhere
-  unsubs.push(F.onSnapshot(F.query(F.collection(db, "messages"), F.orderBy("createdAt", "desc"), F.limit(PAGE)), s => {
-    if (!S.mainFirst) s.docChanges().forEach(ch => { if (ch.type === "added") { const x = ch.doc.data(); if (x.uid !== S.uid && mentionsMe(x.text)) { notify(nameOf(x.uid) + " mentioned you", x.text, "main"); if (S.view !== "main") S.mentionsUnread = (S.mentionsUnread || 0) + 1; } } });
-    S.mainFirst = false;
-    S.mainLive = s.docs.map(d => toMsg("main", d)).reverse();
-    S.mainCursor = s.docs.length === PAGE ? s.docs[s.docs.length - 1] : null;
-    if (S.view === "main") { if (!S.older.length) S.cursor = S.mainCursor; S.loading = false; markRead(); renderView(); }
-    countMain(); renderLists();
-  }));
-  openView("main");
+  // the public channels are always listened to, so mentions and unread counts work from anywhere
+  Object.keys(PUB).forEach(v => unsubs.push(F.onSnapshot(F.query(F.collection(db, PUB[v].col), F.orderBy("createdAt", "desc"), F.limit(PAGE)), s => {
+    if (!S.pubFirst[v]) s.docChanges().forEach(ch => { if (ch.type === "added") { const x = ch.doc.data(); if (x.uid !== S.uid && mentionsMe(x.text)) { notify(nameOf(x.uid) + " mentioned you" + (v === "main" ? "" : " in " + PUB[v].title), x.text, v); if (S.view !== v) S.mentionsUnread = (S.mentionsUnread || 0) + 1; } } });
+    S.pubFirst[v] = false;
+    S.pubLive[v] = s.docs.map(d => toMsg(v, d)).reverse();
+    S.pubCursor[v] = s.docs.length === PAGE ? s.docs[s.docs.length - 1] : null;
+    if (S.view === v) { if (!S.older.length) S.cursor = S.pubCursor[v]; S.loading = false; markRead(); renderView(); }
+    countPub(v); renderLists();
+  }, () => {})));
+  const startView = new URLSearchParams(location.search).get("view");
+  openView(PUB[startView] ? startView : "main");
   if (location.hash === "#profile") setTimeout(() => { if (S.me) editProfileForm(); history.replaceState(null, "", location.pathname); }, 900);
 }
-function countMain() {
-  const r = readMain();
-  S.unread.main = r ? S.mainLive.filter(m => m.uid !== S.uid && m.at && m.at.getTime() > r).length : 0;
+function countPub(v) {
+  const r = readPub(v);
+  S.unread[v] = r ? S.pubLive[v].filter(m => m.uid !== S.uid && m.at && m.at.getTime() > r).length : 0;
 }
 function refreshUnread() {
   const todo = [];
@@ -853,10 +878,10 @@ function refreshUnread() {
 }
 function markRead() {
   if (!db || S.adminView || document.hidden) return;
-  if (S.view === "main") {
-    const newest = S.mainLive.length ? S.mainLive[S.mainLive.length - 1].at : null;
-    if (newest) store("olb-read-main-" + S.uid, String(newest.getTime()));
-    S.unread.main = 0; S.mentionsUnread = 0; updateTitle(); return;
+  if (PUB[S.view]) {
+    const l = S.pubLive[S.view], newest = l.length ? l[l.length - 1].at : null;
+    if (newest) store("olb-read-" + S.view + "-" + S.uid, String(newest.getTime()));
+    S.unread[S.view] = 0; S.mentionsUnread = 0; updateTitle(); return;
   }
   S.unread[S.view] = 0;
   const now = Date.now(); if (now - (markRead.t[S.view] || 0) < 2500) return; markRead.t[S.view] = now;
@@ -876,7 +901,7 @@ function viewOk(v) {
 function syncComposer() {
   const ok = viewOk(S.view) && !S.adminView;
   ["c-text", "c-send", "emoji-btn", "img-btn", "mic-btn"].forEach(id => { $(id).disabled = !ok; });
-  $("c-text").placeholder = S.view === "main" ? "Message the main chat · @ to mention" : ok ? "Message · @ to mention" : kindOf(S.view) === "dm" ? "You need to be friends to message" : "You're not in this group";
+  $("c-text").placeholder = PUB[S.view] ? "Message " + (S.view === "main" ? "the main chat" : PUB[S.view].title) + " · @ to mention" : ok ? "Message · @ to mention" : kindOf(S.view) === "dm" ? "You need to be friends to message" : "You're not in this group";
 }
 function openView(id, keep) {
   if (!db) { toast("Works on the live website."); return; }
@@ -884,12 +909,11 @@ function openView(id, keep) {
   stopView(); stopTyping(); stopRec(false);
   const k = kindOf(id);
   S.view = id; S.live = []; S.older = []; S.cursor = null; S.pins = []; S.otherSeen = 0; S.stick = true; renderMsgs.first = true;
-  S.dividerAt = k === "main" ? readMain() : ms(S.reads[id] && S.reads[id].at);
-  if (k !== "main" && !(S.unread[id] > 0)) S.dividerAt = 0;
-  if (k === "main" && !(S.unread.main > 0)) S.dividerAt = 0;
+  S.dividerAt = k === "main" ? readPub(id) : ms(S.reads[id] && S.reads[id].at);
+  if (!(S.unread[id] > 0)) S.dividerAt = 0;
   clearReply(); clearImg(); renderPins();
   renderLists(); syncComposer(); watchTyping();
-  if (k === "main") { S.cursor = S.mainCursor; S.loading = !S.mainLive.length && S.mainFirst; renderView(); markRead(); }
+  if (k === "main") { S.cursor = S.pubCursor[id] || null; S.loading = !S.pubLive[id].length && S.pubFirst[id]; renderView(); markRead(); }
   else {
     S.loading = true; renderMsgs([]);
     S.unsubMsgs = F.onSnapshot(F.query(msgCol(id), F.orderBy("at", "desc"), F.limit(PAGE)), s => {
@@ -905,7 +929,7 @@ function openView(id, keep) {
     }
   }
   S.pinUnsub = F.onSnapshot(F.query(msgCol(id), F.where("pinned", "==", true)), s => { S.pins = s.docs.map(d => toMsg(id, d)).sort((a, b) => (b.at || 0) - (a.at || 0)); renderPins(); }, () => {});
-  if (window.matchMedia("(max-width: 980px)").matches) setTab("conv");
+  if (window.matchMedia("(max-width: 980px)").matches || document.documentElement.classList.contains("embed-bubble")) setTab("conv");
 }
 async function loadOlder() {
   if (S.loadingOlder || !S.cursor || !db) return;
@@ -968,7 +992,7 @@ function mentionPool() {
   const k = kindOf(S.view);
   if (k === "dm") return S.view.split("_");
   if (k === "grp") return (S.groups[gidOf(S.view)] || {}).members || [];
-  return Array.from(new Set(Object.keys(S.status).concat(Object.keys(S.known), S.mainLive.map(m => m.uid))));
+  return Array.from(new Set(Object.keys(S.status).concat(Object.keys(S.known), (S.pubLive[S.view] || S.pubLive.main).map(m => m.uid))));
 }
 function drawMentions() {
   const mq = mentionQuery(), pop = $("mention-pop");
@@ -1165,7 +1189,7 @@ async function sendMessage(extraIn) {
   if (S.replyTo && !extraIn.aud) extra.rp = S.replyTo;
   const mn = text ? mentionedIds(text) : []; if (mn.length) extra.mn = mn;
   const preview = (text || (img ? "📷 Image" : "🎤 Voice message")).slice(0, 60);
-  if (k === "main") b.set(F.doc(F.collection(db, "messages")), { name: S.me.name, text, uid: S.uid, createdAt: F.serverTimestamp(), ...extra });
+  if (k === "main") b.set(F.doc(msgCol(where)), { name: S.me.name, text, uid: S.uid, createdAt: F.serverTimestamp(), ...extra });
   else if (k === "dm") {
     const f = S.friends.find(x => x.id === where);
     b.set(F.doc(msgCol(where)), { from: S.uid, text, at: F.serverTimestamp(), ...extra });
@@ -1508,7 +1532,7 @@ document.addEventListener("click", async e => {
   const dm = t.closest("[data-delmsg]"); if (dm) {
     if (!confirm("Delete this message?")) return;
     const m = findMsg(dm.dataset.delmsg); if (!m) return;
-    if (!db) { S.live = S.live.filter(x => x !== m); S.mainLive = S.mainLive.filter(x => x !== m); renderMsgs(currentList()); return; }
+    if (!db) { S.live = S.live.filter(x => x !== m); S.pubLive.main = S.pubLive.main.filter(x => x !== m); renderMsgs(currentList()); return; }
     try { await F.deleteDoc(msgRef(S.view, m.id)); [m.img, m.aud].filter(Boolean).forEach(id => F.deleteDoc(F.doc(db, "images", id)).catch(() => {})); S.older = S.older.filter(x => x !== m); renderView(); } catch (err) { toast("Couldn't delete."); }
     return;
   }
@@ -1575,7 +1599,7 @@ function demo() {
   IMG.set("demo1", pic);
   show("appwrap"); renderMe();
   S.dividerAt = now - 200000;
-  S.mainLive = [
+  S.pubLive.main = [
     { id: "a", uid: "j", text: "anyone up for lobbies?", at: new Date(now - 600000), rx: { o: "👍", me: "👍" }, pinned: true },
     { id: "b", uid: "o", text: "yep give me 5", at: new Date(now - 420000) },
     { id: "c", uid: "j", text: "look at this run 😤", img: "demo1", at: new Date(now - 300000), rx: { o: "🔥", me: "🐐", k: "🔥" } },
@@ -1583,7 +1607,7 @@ function demo() {
     { id: "e", uid: "o", text: "@Ninja are the champs this saturday?", at: new Date(now - 60000) },
     { id: "f", uid: "k", aud: "voice1", len: 7, text: "", at: new Date(now - 30000) }
   ];
-  S.pins = [S.mainLive[0]]; S.cursor = { demo: 1 };
+  S.pins = [S.pubLive.main[0]]; S.cursor = { demo: 1 };
   renderLists(); renderPins(); renderView();
   S.typers = { o: { name: "Ottal", at: now } }; S.typeSeen = { o: now + 3600000 }; drawTyping();
   if (location.hash === "#dm") {
