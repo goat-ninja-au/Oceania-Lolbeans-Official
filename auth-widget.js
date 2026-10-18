@@ -36,6 +36,9 @@ const css = `
 .olb-acct .ab { height: 40px; padding: 0 14px; border-radius: 10px; font: inherit; font-weight: 700; font-size: .92rem; cursor: pointer; border: 1px solid var(--line, #98c5e2); background: var(--panel, #fff); color: var(--text, #0c2a43); white-space: nowrap; }
 .olb-acct .ab.primary { background: var(--blue, #1478c2); border-color: var(--blue, #1478c2); color: #fff; }
 .olb-acct .ab:hover { filter: brightness(1.05); border-color: var(--blue, #1478c2); }
+nav a.nav-app { display: none; }
+@media (max-width: 760px) { .olb-top nav[aria-label="Main"] a.nav-app { display: block; color: var(--blue, #1478c2); font-weight: 800; } }
+@media (display-mode: standalone) { nav a.nav-app, .olb-menu a.m-app { display: none !important; } }
 .olb-acct .chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px 0 4px; border-radius: 999px; border: 1px solid var(--line, #98c5e2); background: var(--panel, #fff); color: var(--text, #0c2a43); font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; max-width: 190px; }
 .olb-acct .chip span.n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .olb-av { width: 32px; height: 32px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-weight: 800; font-size: .85rem; background-size: cover; background-position: center; flex: none; }
@@ -84,6 +87,9 @@ const css = `
 }
 `;
 const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
+
+// the site works as an installable app (see app.html)
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register(new URL("sw.js", import.meta.url)).catch(() => {});
 
 // ---------- put the widget at the far right of the top bar ----------
 const modeBtn = document.getElementById("mode");
@@ -156,6 +162,7 @@ async function init(box) {
     const m = document.createElement("div"); m.className = "olb-menu"; m.setAttribute("role", "menu");
     m.innerHTML = '<div class="who"><b>' + esc(d.name) + "</b>" + (d.player ? esc(d.player) : "Not linked to the rankings") + "</div>" +
       '<a href="community.html" role="menuitem">💬 Community</a>' +
+      '<a href="app.html" class="m-app" role="menuitem">📱 Get the app</a>' +
       (d.player ? '<a href="rankings.html?player=' + encodeURIComponent(d.player) + '" role="menuitem">🏆 My ranking</a>' : "") +
       '<a href="community.html#profile" role="menuitem">✏️ Edit profile</a>' +
       '<button type="button" data-a="signout" role="menuitem">↪ Sign out</button>';

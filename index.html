@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Oceania LOLBeans Official</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0c2a43">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Oceania LOLBeans">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
@@ -128,6 +135,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       <a href="index.html#tournaments">Tournaments</a>
       <a href="join.html">Join</a>
       <a href="community.html">Community</a>
+      <a href="app.html" class="nav-app">📱 Get the app</a>
     </nav>
     <button class="mode menu-btn" type="button" id="menu" aria-label="Open menu" aria-expanded="false">☰</button>
     <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
@@ -273,6 +281,6 @@ document.querySelectorAll(".copy").forEach(function (btn) {
   top.addEventListener("focusin", function () { root.classList.remove("olb-hidden"); });
 })();
 </script>
-<script type="module" src="auth-widget.js?v=4"></script>
+<script type="module" src="auth-widget.js?v=5"></script>
 </body>
 </html>
