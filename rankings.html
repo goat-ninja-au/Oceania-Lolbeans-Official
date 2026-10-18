@@ -247,16 +247,18 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .mv.up { color: var(--green); } .mv.down { color: #d9505c; } .mv.new { color: var(--blue); font-family: var(--font); font-size: .68rem; letter-spacing: .06em; }
 .lrow.mrow { grid-template-columns: 56px minmax(0, 1fr) 80px 76px; }
 @media (max-width: 600px) { .lrow.mrow { grid-template-columns: 40px minmax(0, 1fr) 72px; } }
+.graph-wrap { background: var(--soft); border-radius: 14px; padding: 14px 10px 6px; }
 .graph { width: 100%; height: auto; display: block; }
-.graph .ax { stroke: var(--row); stroke-width: 1; }
-.graph text { fill: var(--muted); font-size: 11px; font-family: var(--font); }
+.graph .grid { stroke: var(--line); stroke-width: 1; opacity: .55; }
+.graph text { fill: var(--muted); font-size: 12px; font-family: var(--font); }
+.graph .axt { font-size: 12.5px; font-weight: 600; }
 .graph .ln { fill: none; stroke: var(--blue); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
-.graph .ar { fill: var(--blue); opacity: .12; }
-.graph .dt { fill: var(--blue); }
-.graph .hi { fill: var(--gold); }
-.gsel { display: flex; gap: 6px; }
-.gsel button { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px; padding: 4px 12px; font-weight: 700; font-size: .8rem; }
-.gsel button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.graph .dt { fill: var(--blue); stroke: var(--soft); stroke-width: 2.5; }
+.graph .dt.best { fill: var(--gold); }
+.graph .dt.now { r: 7; }
+.graph .hit { fill: transparent; cursor: default; }
+.gsel { appearance: none; border: 1px solid var(--line); background: var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%233a5a73' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center; color: var(--text); border-radius: 8px; padding: 8px 36px 8px 12px; font: inherit; font-weight: 600; font-size: .9rem; }
+.gtip { font-size: .85rem; }
 .ghead { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .fame .card { align-content: start; }
 .fame { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
@@ -429,6 +431,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   var FIRST_MAP_COL = 3, TOTAL_COL = 3 + MAPS.length;
   var AVATAR = ["#1478c2", "#2f9e08", "#7a5cf0", "#d99a00", "#d9505c", "#0f9aa8", "#c27a3a", "#4b5bdc", "#b0479a"];
   var EPS = 0.0005;
+  var ARROWS_FROM = "2026-10-19"; // weekly arrows only compare snapshots from this Monday onwards
 
   // ======================= HELPERS =======================
   var $ = function (id) { return document.getElementById(id); };
@@ -489,7 +492,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     });
     weeks.sort();
     var thisWeek = weekOf(ymd(new Date()));
-    prevWeek = weeks.filter(function (w) { return w < thisWeek; }).pop() || null;
+    prevWeek = weeks.filter(function (w) { return w < thisWeek && w >= ARROWS_FROM; }).pop() || null;
     if (header(ex.one, "date", "name")) ones = ex.one.slice(1).filter(function (r) { return /^\d{4}-/.test(r[0]) && r[1]; }).map(function (r) { return { d: String(r[0]).trim(), n: String(r[1]).trim() }; }).sort(function (a, b) { return a.d < b.d ? -1 : 1; });
     if (header(ex.rec, "date", "map")) recLog = ex.rec.slice(1).filter(function (r) { return /^\d{4}-/.test(r[0]) && MAPS.indexOf(String(r[1]).trim()) >= 0; }).map(function (r) { return { d: String(r[0]).trim(), m: MAPS.indexOf(String(r[1]).trim()), t: num(r[2]), h: String(r[3] || "").trim() }; }).sort(function (a, b) { return a.d < b.d ? -1 : 1; });
   }
@@ -735,39 +738,54 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   function dnum(s) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : 0; }
   function graphCard(p) {
-    var k = p.name.toLowerCase(), pts = [];
-    weeks.forEach(function (w) { if (hist[w][k] != null) pts.push({ d: w, r: hist[w][k] }); });
-    var today = ymd(new Date());
-    if (!pts.length || pts[pts.length - 1].d !== weekOf(today) || pts[pts.length - 1].r !== p.place) pts.push({ d: today, r: p.place, live: true });
-    var ranges = [["3m", "3 months", 91], ["1y", "1 year", 365], ["all", "All time", 0]];
+    var k = p.name.toLowerCase(), today = ymd(new Date()), all = [];
+    weeks.forEach(function (w) { if (hist[w][k] != null) all.push({ d: w, r: hist[w][k] }); });
+    if (!all.length || all[all.length - 1].d !== weekOf(today)) all.push({ d: today, r: p.place });
+    else all[all.length - 1].r = p.place;
+    var ranges = [["3m", "Last 3 months", 91], ["1y", "Last 12 months", 365], ["all", "Career (All)", 0]];
     var sel = ranges.filter(function (r) { return r[0] === S.grange; })[0] || ranges[2];
-    if (sel[2]) { var cut = dnum(today) - sel[2] * 864e5, inR = pts.filter(function (q) { return dnum(q.d) >= cut; }); var before = pts.filter(function (q) { return dnum(q.d) < cut; }).pop(); if (before) inR.unshift({ d: ymd(new Date(cut)), r: before.r }); pts = inR; }
-    var head = '<div class="ghead"><h3>Ranking history</h3><div class="gsel">' + ranges.map(function (r) { return '<button type="button" data-grange="' + r[0] + '" aria-pressed="' + (r === sel) + '">' + r[1] + "</button>"; }).join("") + "</div></div>";
-    if (pts.length < 2) return '<div class="card">' + head + '<p class="muted">The graph fills in week by week as the rankings are tracked.</p></div>';
-    var W = 680, H = 230, L = 38, R = 14, T = 14, B = 26;
-    var x0 = dnum(pts[0].d), x1 = dnum(pts[pts.length - 1].d); if (x1 === x0) x1 = x0 + 864e5;
-    var worst = Math.max.apply(null, pts.map(function (q) { return q.r; })), best = Math.min.apply(null, pts.map(function (q) { return q.r; }));
-    var lo = 1, hi = Math.max(worst, best + 4);
-    var X = function (d) { return L + (dnum(d) - x0) / (x1 - x0) * (W - L - R); };
-    var Y = function (r) { return T + (r - lo) / (hi - lo) * (H - T - B); };
-    var step = [1, 2, 5, 10, 20, 25, 50, 100].filter(function (s2) { return (hi - lo) / s2 <= 5; })[0] || 100;
-    var svg = "";
-    for (var r = lo; r <= hi; r += (r === 1 && step > 1 ? step - 1 : step)) svg += '<line class="ax" x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(r) + '" y2="' + Y(r) + '"/><text x="' + (L - 8) + '" y="' + (Y(r) + 4) + '" text-anchor="end">' + r + "</text>";
-    var span = (x1 - x0) / 864e5, lastLbl = -1e9;
-    var t = new Date(x0); t.setUTCDate(1);
-    while (t.getTime() <= x1) {
-      if (t.getTime() >= x0) { var xx = X(ymd(new Date(t.getUTCFullYear(), t.getUTCMonth(), 1))); if (xx - lastLbl > 56) { svg += '<text x="' + xx + '" y="' + (H - 6) + '" text-anchor="middle">' + MON[t.getUTCMonth()] + (t.getUTCMonth() === 0 || span > 300 && lastLbl < 0 ? " " + String(t.getUTCFullYear()).slice(2) : "") + "</text>"; lastLbl = xx; } }
-      t.setUTCMonth(t.getUTCMonth() + (span > 500 ? 3 : 1));
+    var cut = sel[2] ? dnum(today) - sel[2] * 864e5 : 0;
+    var pts = all.filter(function (q) { return dnum(q.d) >= cut; });
+    // Weekly points for 3 months; one point per month (end-of-month rank) for longer ranges
+    if (sel[0] !== "3m") {
+      var byM = {}, order = [];
+      pts.forEach(function (q) { var mk = q.d.slice(0, 7); if (!byM[mk]) order.push(mk); byM[mk] = q; });
+      pts = order.map(function (mk) { return byM[mk]; });
     }
-    var line = pts.map(function (q, i) { return (i ? "L" : "M") + X(q.d).toFixed(1) + " " + Y(q.r).toFixed(1); }).join(" ");
-    svg += '<path class="ar" d="' + line + " L" + X(pts[pts.length - 1].d).toFixed(1) + " " + (H - B) + " L" + X(pts[0].d).toFixed(1) + " " + (H - B) + 'Z"/>';
-    svg += '<path class="ln" d="' + line + '"/>';
-    var bi = pts.map(function (q) { return q.r; }).indexOf(best), last = pts[pts.length - 1];
-    svg += '<circle class="hi" cx="' + X(pts[bi].d) + '" cy="' + Y(best) + '" r="5"><title>Best in this period: ' + ordinal(best) + "</title></circle>";
-    svg += '<circle class="dt" cx="' + X(last.d) + '" cy="' + Y(last.r) + '" r="5"><title>Now: ' + ordinal(last.r) + "</title></circle>";
-    var first = pts[0], change = first.r - last.r;
-    return '<div class="card">' + head + '<svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Ranking over time, from ' + ordinal(first.r) + " to " + ordinal(last.r) + '">' + svg + "</svg>" +
-      '<p class="muted" style="font-size:.85rem">' + (change > 0 ? "Up " + change + " places" : change < 0 ? "Down " + (-change) + " places" : "No change") + " over this period. Best: " + ordinal(best) + ". Ranks are saved every Monday.</p></div>";
+    var head = '<div class="ghead"><h3>Ranking history</h3><select class="gsel" id="grange" aria-label="Time range">' +
+      ranges.map(function (r) { return '<option value="' + r[0] + '"' + (r === sel ? " selected" : "") + ">" + r[1] + "</option>"; }).join("") + "</select></div>";
+    if (pts.length < 2) return '<div class="card">' + head + '<p class="muted">Not enough history for this period yet. Ranks are saved every Monday.</p></div>';
+    var W = 720, H = 330, L = 64, R = 22, T = 18, B = 58;
+    var worst = Math.max.apply(null, pts.map(function (q) { return q.r; })), best = Math.min.apply(null, pts.map(function (q) { return q.r; }));
+    var raw = Math.max(worst - 1, 4) / 5, mag = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).filter(function (v) { return v >= raw && (v >= 1) && v === Math.round(v); })[0] || Math.ceil(raw);
+    var lo = 1, hi = Math.max(Math.ceil((worst + 1) / step) * step, 5);
+    var n = pts.length, X = function (i) { return L + (n === 1 ? 0 : i / (n - 1)) * (W - L - R); };
+    var Y = function (r) { return T + (r - lo) / (hi - lo) * (H - T - B); };
+    var svg = "";
+    var ticks = [1]; for (var t = step; t <= hi; t += step) if (t > 1) ticks.push(t);
+    ticks.forEach(function (r) { svg += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(r) + '" y2="' + Y(r) + '"/><text x="' + (L - 10) + '" y="' + (Y(r) + 4) + '" text-anchor="end">' + r + "</text>"; });
+    var every = Math.ceil(n / 12);
+    pts.forEach(function (q, i) {
+      var x = X(i);
+      svg += '<line class="grid" x1="' + x + '" x2="' + x + '" y1="' + T + '" y2="' + (H - B) + '"/>';
+      if (i % every === 0 || i === n - 1) {
+        var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(q.d), lbl = sel[0] === "3m" ? (+m[3]) + " " + MON[+m[2] - 1] : MON[+m[2] - 1] + (+m[2] === 1 || i === 0 ? " " + m[1].slice(2) : "");
+        if (i === n - 1 && i % every !== 0 && n > 2 && (X(i) - X(i - (i % every))) < 40) return;
+        svg += '<text x="' + x + '" y="' + (H - B + 22) + '" text-anchor="middle">' + lbl + "</text>";
+      }
+    });
+    svg += '<text class="axt" transform="translate(16 ' + ((T + H - B) / 2) + ') rotate(-90)" text-anchor="middle">Rank</text>';
+    svg += '<text class="axt" x="' + ((L + W - R) / 2) + '" y="' + (H - 8) + '" text-anchor="middle">' + (sel[0] === "3m" ? "Weeks" : "Months") + "</text>";
+    svg += '<path class="ln" d="' + pts.map(function (q, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(q.r).toFixed(1); }).join(" ") + '"/>';
+    var bi = pts.map(function (q) { return q.r; }).indexOf(best);
+    pts.forEach(function (q, i) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(q.d), when = sel[0] === "3m" ? "Week of " + niceDate(q.d) : MON[+m[2] - 1] + " " + m[1];
+      if (i === n - 1) when = "Now";
+      svg += '<circle class="dt' + (i === bi ? " best" : "") + (i === n - 1 ? " now" : "") + '" cx="' + X(i).toFixed(1) + '" cy="' + Y(q.r).toFixed(1) + '" r="' + (i === n - 1 ? 7 : 5.5) + '"><title>' + when + ": " + ordinal(q.r) + "</title></circle>";
+    });
+    var first = pts[0], last = pts[n - 1], change = first.r - last.r;
+    return '<div class="card">' + head + '<div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Ranking over time, from ' + ordinal(first.r) + " to " + ordinal(last.r) + '">' + svg + "</svg></div>" +
+      '<p class="muted gtip">' + (change > 0 ? "Up " + change + (change === 1 ? " place" : " places") : change < 0 ? "Down " + (-change) + (change === -1 ? " place" : " places") : "No change") + " over this period · Best: " + ordinal(best) + " · Gold dot marks the best ranking. Hover a dot for details.</p></div>";
   }
 
   // ======================= HALL OF FAME =======================
@@ -834,7 +852,6 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (t.id === "maps-back") { S.map = null; renderMaps(); syncUrl(); return; }
     if (t.id === "share") { var url = location.origin + urlFor(); try { navigator.clipboard.writeText(url).then(function () { toast("Profile link copied"); }, function () { toast(url); }); } catch (er) { toast(url); } return; }
     if (t.id === "sim-reset") { S.sim = {}; renderProfile(); return; }
-    var gr = t.closest("[data-grange]"); if (gr) { S.grange = gr.dataset.grange; renderProfile(); return; }
     var pt = t.closest("[data-ptab]"); if (pt) { S.ptab = pt.dataset.ptab; renderProfile(); syncUrl(); if (S.ptab === "h2h" && $("p-vs")) $("p-vs").focus(); return; }
     var fill = t.closest("[data-fill]"); if (fill) { var m = +fill.dataset.fill; S.sim[m] = OR.t[m]; var inp = $("sim-" + m); inp.value = OR.t[m].toFixed(3); inp.classList.add("changed"); updateSim(); return; }
     var mc = t.closest("[data-map]"); if (mc) { S.map = +mc.dataset.map; renderMaps(); syncUrl(); window.scrollTo(0, 0); return; }
@@ -844,6 +861,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-player][tabindex]")) { e.preventDefault(); openPlayer(e.target.dataset.player); }
     if (e.key === "Enter" && e.target.id === "p-vs") { var hit = findPlayer(e.target.value); if (hit) { S.vs = hit.name; renderProfile(); syncUrl(); } }
   });
+  document.addEventListener("change", function (e) { if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } });
   document.addEventListener("input", function (e) {
     if (e.target.id === "p-vs") { var v = e.target.value.trim(); if (byName[v]) { S.vs = v; renderProfile(); syncUrl(); } return; }
     if (!e.target.dataset || e.target.dataset.sim == null) return;
