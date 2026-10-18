@@ -256,6 +256,11 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .inline { display: flex; gap: 8px; width: 100%; }
 .modal .card { max-height: calc(100vh - 32px); overflow-y: auto; }
 
+.pwwrap { position: relative; display: block; }
+.pwwrap .field { padding-right: 46px; }
+.pwwrap .eye { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 38px; height: 34px; border: 0; background: none; cursor: pointer; font-size: 1.05rem; border-radius: 8px; opacity: .75; }
+.pwwrap .eye:hover { opacity: 1; background: var(--soft); }
+.field { color: var(--text); }
 /* ☰ menu on phones (shared across pages) */
 .menu-btn { display: none; color: var(--text); cursor: pointer; }
 /* top bar hides when you scroll down, comes back when you scroll up */
@@ -311,7 +316,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     <div class="or">or</div>
     <form id="e-form">
       <label>Email<input class="field" type="email" id="e-email" autocomplete="email" required></label>
-      <label>Password<input class="field" type="password" id="e-pass" autocomplete="current-password" minlength="6" required></label>
+      <label>Password<span class="pwwrap"><input class="field" type="password" id="e-pass" autocomplete="current-password" minlength="6" required><button class="eye" type="button" id="e-eye" aria-label="Show password" title="Show password">👁</button></span></label>
       <button class="btn primary" type="submit" id="e-submit">Sign in</button>
     </form>
     <p class="small-print"><span id="e-switch-text">New here?</span> <button class="linkbtn" type="button" id="e-switch">Create an account</button> · <button class="linkbtn" type="button" id="e-forgot">Forgot password</button></p>
@@ -1234,6 +1239,7 @@ async function saveProfile() {
 
 // ---------- sign in ----------
 let creating = false;
+$("e-eye").addEventListener("click", () => { const i = $("e-pass"), show = i.type === "password"; i.type = show ? "text" : "password"; $("e-eye").textContent = show ? "🙈" : "👁"; $("e-eye").setAttribute("aria-label", show ? "Hide password" : "Show password"); i.focus(); });
 $("e-switch").addEventListener("click", () => { creating = !creating; $("e-submit").textContent = creating ? "Create account" : "Sign in"; $("e-switch-text").textContent = creating ? "Already have an account?" : "New here?"; $("e-switch").textContent = creating ? "Sign in" : "Create an account"; $("e-pass").autocomplete = creating ? "new-password" : "current-password"; });
 $("g-btn").addEventListener("click", async () => {
   if (!auth) { toast("Sign-in works on the live website."); return; }
@@ -1619,6 +1625,6 @@ start();
   top.addEventListener("focusin", function () { root.classList.remove("olb-hidden"); });
 })();
 </script>
-<script type="module" src="auth-widget.js?v=3"></script>
+<script type="module" src="auth-widget.js?v=4"></script>
 </body>
 </html>

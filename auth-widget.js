@@ -54,7 +54,15 @@ const css = `
 .olb-dlg .steps i.on { background: var(--blue, #1478c2); }
 .olb-dlg .sub { color: var(--muted, #3a5a73); font-size: .9rem; }
 .olb-dlg label { display: grid; gap: 4px; font-size: .85rem; font-weight: 700; }
-.olb-dlg input { font: inherit; color: inherit; background: var(--soft, #eef7fd); border: 1px solid var(--line, #98c5e2); border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+.olb-dlg input { font: inherit; color: #0c2a43; background: #eef7fd; border: 1px solid #98c5e2; border-radius: 10px; padding: 10px 12px; width: 100%; box-sizing: border-box; caret-color: currentColor; }
+.olb-dlg input::placeholder { color: #6a8597; }
+:root[data-mode="dark"] .olb-dlg input { color: #e6f1f9; background: #10202e; border-color: #27445c; }
+:root[data-mode="dark"] .olb-dlg input::placeholder { color: #7f98ab; }
+.olb-dlg input:focus { outline: 2px solid var(--blue, #1478c2); outline-offset: 1px; }
+.olb-pw { position: relative; display: block; }
+.olb-pw input { padding-right: 46px; }
+.olb-pw .eye { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 38px; height: 34px; border: 0; background: none; cursor: pointer; font-size: 1.05rem; border-radius: 8px; color: inherit; opacity: .75; }
+.olb-pw .eye:hover { opacity: 1; background: rgba(20,120,194,.1); }
 .olb-dlg .btnx { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 700; padding: 11px 16px; border-radius: 10px; border: 1px solid var(--line, #98c5e2); background: var(--panel, #fff); color: inherit; cursor: pointer; width: 100%; box-sizing: border-box; }
 .olb-dlg .btnx.primary { background: var(--blue, #1478c2); border-color: var(--blue, #1478c2); color: #fff; }
 .olb-dlg .btnx.google { background: #fff; color: #1f1f1f; border-color: #dadce0; }
@@ -184,6 +192,13 @@ async function init(box) {
   const steps = n => '<div class="steps" aria-label="Step ' + n + ' of 3"><i class="' + (n >= 1 ? "on" : "") + '"></i><i class="' + (n >= 2 ? "on" : "") + '"></i><i class="' + (n >= 3 ? "on" : "") + '"></i></div>';
   const X = '<button class="x" type="button" aria-label="Close">×</button>';
 
+  const EYE = '<button class="eye" type="button" aria-label="Show password" title="Show password">👁</button>';
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".olb-pw .eye"); if (!b) return;
+    const i = b.parentElement.querySelector("input"), show = i.type === "password";
+    i.type = show ? "text" : "password"; b.textContent = show ? "🙈" : "👁";
+    b.setAttribute("aria-label", show ? "Hide password" : "Show password"); b.title = b.getAttribute("aria-label"); i.focus();
+  });
   function stepStart() {
     dlg().innerHTML = X + (creating ? steps(1) : "") +
       '<h2 id="olb-t">' + (creating ? "Join the Oceania community" : "Welcome back") + "</h2>" +
@@ -192,7 +207,7 @@ async function init(box) {
       '<div class="or">or use your email</div>' +
       '<form id="olb-f" style="display:grid;gap:10px">' +
       '<label>Email<input type="email" id="olb-em" autocomplete="email" required></label>' +
-      '<label>Password<input type="password" id="olb-pw" minlength="6" autocomplete="' + (creating ? "new-password" : "current-password") + '" required></label>' +
+      '<label>Password<span class="olb-pw"><input type="password" id="olb-pw" minlength="6" autocomplete="' + (creating ? "new-password" : "current-password") + '" required>' + EYE + "</span></label>" +
       '<button class="btnx primary" type="submit" id="olb-go">' + (creating ? "Create account" : "Log in") + "</button></form>" +
       '<p class="small">' + (creating ? 'Already have an account? <button class="lnk" type="button" id="olb-sw">Log in</button>' : 'New here? <button class="lnk" type="button" id="olb-sw">Sign up</button> · <button class="lnk" type="button" id="olb-fp">Forgot password</button>') + "</p>" +
       '<p id="olb-msg" class="small" aria-live="polite"></p>' +
