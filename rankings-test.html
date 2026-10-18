@@ -735,7 +735,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
   }
   function urlFor() {
     var P = new URLSearchParams();
-    if (S.player) { P.set("player", S.player); if (S.ptab !== "overview") P.set("tab", S.ptab); if (S.ptab === "h2h" && S.vs) P.set("vs", S.vs); if (S.ptab === "battles") { P.set("g", S.bg || "all"); if (S.bview === "map") P.set("view", "map"); } }
+    if (S.player) { P.set("player", S.player); if (S.ptab !== "overview") P.set("tab", S.ptab); if (S.ptab === "h2h" && S.vs) P.set("vs", S.vs); if (S.ptab === "matchups") { P.set("g", S.bg || "all"); if (S.bview === "map") P.set("view", "map"); } }
     else {
       if (S.sec !== "list") P.set("s", S.sec);
       if (S.sec === "maps" && S.map != null) P.set("map", MAPS[S.map]);
@@ -966,7 +966,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
           ye.map(function (r, i) { return "<tr" + (i > 0 && !S.yeOpen ? " hidden" : "") + "><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
           (ye.length > 1 ? '<button type="button" class="ip-more" id="ye-more" aria-expanded="' + !!S.yeOpen + '" aria-label="Show all years"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>' : "") : '<p class="muted">No full year ranked yet.</p>') + "</div>" +
         graphCard(p) +
-        '<div class="ip-sec"><div class="ip-head"><h3>Map battles</h3><span class="muted" style="font-size:.82rem">Every map is a mini battle: faster time wins</span></div>' +
+        '<div class="ip-sec"><div class="ip-head"><h3>Map matchups</h3><span class="muted" style="font-size:.82rem">Each map is a matchup: the faster time wins</span></div>' +
           wl.map(function (x) {
             var tot = x[2].w + x[2].l, pc = tot ? Math.round(100 * x[2].w / tot) : 0;
             return '<div class="ip-wl"><div class="top"><b>' + x[0] + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar" title="vs ' + x[1] + '"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + x[2].w + '">' + x[2].w + "</b></span>" +
@@ -985,13 +985,13 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 
         "";
       body = '<h2>' + esc(p.name) + ' Oceania Overview</h2><div class="ip-grid"><div class="ip-main">' + main + '</div><aside class="ip-side">' + side + "</aside></div>";
-    } else if (S.ptab === "battles") {
+    } else if (S.ptab === "matchups") {
       var G = { all: ["Everyone", players], top10: ["Top 10", players.slice(0, 10)], near: ["Near you", players.filter(function (o) { return Math.abs(o.place - p.place) <= 5; })] };
       var gk = G[S.bg] ? S.bg : "all", grp = G[gk][1].filter(function (o) { return o !== p; });
       var rec = mapRecord(p, G[gk][1]), tot = rec.w + rec.l, pc = tot ? Math.round(100 * rec.w / tot) : 0;
       var view = S.bview === "map" ? "map" : "player";
-      body = '<button type="button" class="back" data-ptab="overview">← Overview</button><h2>' + esc(p.name) + ' Map Battles</h2>' +
-        '<p class="muted">Every map is a mini battle against each player: the faster time wins. No time on a map loses to anyone who has one. Ties don\'t count.</p>' +
+      body = '<button type="button" class="back" data-ptab="overview">← Overview</button><h2>' + esc(p.name) + ' Map Matchups</h2>' +
+        '<p class="muted">Every map is a matchup against each player: the faster time wins. No time on a map loses to anyone who has one. Ties don\'t count.</p>' +
         '<div class="bt-bar"><div class="gsel2" role="group" aria-label="Group">' + Object.keys(G).map(function (k) { return '<button type="button" data-bg="' + k + '" aria-pressed="' + (k === gk) + '">' + G[k][0] + "</button>"; }).join("") + "</div>" +
         '<div class="gsel2" role="group" aria-label="View">' + [["player", "By player"], ["map", "By map"]].map(function (v) { return '<button type="button" data-bview="' + v[0] + '" aria-pressed="' + (v[0] === view) + '">' + v[1] + "</button>"; }).join("") + "</div></div>" +
         '<div class="ip-wl" style="border:0"><div class="top"><b>vs ' + G[gk][0].toLowerCase() + "</b><span>" + pc + '% Win rate</span><span></span></div><div class="ip-bar"><i data-w="' + pc + '"></i></div><div class="bot"><span>Wins: <b data-count="' + rec.w + '">' + rec.w + '</b></span><span>Losses: <b data-count="' + rec.l + '">' + rec.l + "</b></span></div></div>";
@@ -1039,7 +1039,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
             (OR && OR.t[m] ? '<button type="button" class="fill" data-fill="' + m + '" title="Use the Oceania record">OR</button>' : "<span></span>") + "</div>";
         }).join("") + "</div></div>";
     }
-    $("pbody").innerHTML = (S.ptab === "overview" || S.ptab === "battles" ? "" : title) + body;
+    $("pbody").innerHTML = (S.ptab === "overview" || S.ptab === "matchups" ? "" : title) + body;
     if (S.ptab === "target") updateSim();
     countUp($("v-profile"));
     animateGauge();
@@ -1177,7 +1177,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
     if (t.id === "maps-back") { S.map = null; renderMaps(); syncUrl(); return; }
     if (t.id === "share") { var url = location.origin + urlFor(); try { navigator.clipboard.writeText(url).then(function () { toast("Profile link copied"); }, function () { toast(url); }); } catch (er) { toast(url); } return; }
     if (t.id === "sim-reset") { S.sim = {}; renderProfile(); return; }
-    var bb = t.closest("[data-battles]"); if (bb) { S.ptab = "battles"; S.bg = bb.dataset.battles; S.bview = "player"; renderProfile(); syncUrl(); window.scrollTo(0, 0); return; }
+    var bb = t.closest("[data-battles]"); if (bb) { S.ptab = "matchups"; S.bg = bb.dataset.battles; S.bview = "player"; renderProfile(); syncUrl(); window.scrollTo(0, 0); return; }
     var bg = t.closest("[data-bg]"); if (bg) { S.bg = bg.dataset.bg; renderProfile(); syncUrl(); return; }
     var bv = t.closest("[data-bview]"); if (bv) { S.bview = bv.dataset.bview; renderProfile(); syncUrl(); return; }
     var vsr = t.closest("[data-vs]"); if (vsr) { S.vs = vsr.dataset.vs; S.ptab = "h2h"; renderProfile(); syncUrl(); window.scrollTo(0, 0); return; }
