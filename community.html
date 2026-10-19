@@ -216,6 +216,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .older { align-self: center; border: 1px solid var(--line); background: var(--soft); border-radius: 999px; padding: 5px 14px; font-size: .82rem; font-weight: 700; }
 .begin { align-self: center; color: var(--muted); font-size: .8rem; margin: 4px 0 8px; }
 .mention { display: inline-block; white-space: nowrap; background: color-mix(in srgb, var(--blue) 18%, transparent); color: var(--blue); font-weight: 700; border-radius: 4px; padding: 0 2px; }
+.mention.me.everyone { background: color-mix(in srgb, #e5484d 22%, transparent); color: #e5484d; }
+.mopt .ev-ic { width: 28px; height: 28px; display: grid; place-items: center; font-size: 1.1rem; }
 .mention.me { background: color-mix(in srgb, #d99a00 28%, transparent); color: inherit; }
 .msg.mentioned { background: color-mix(in srgb, #d99a00 12%, transparent); border-left: 3px solid #d99a00; margin-left: -14px; padding-left: 11px; border-radius: 0 8px 8px 0; }
 .seen { font-size: .72rem; color: var(--muted); margin-top: 3px; text-align: right; }
@@ -685,9 +687,11 @@ function fmtText(t) {
   let h = esc(t);
   const re = mentionNames();
   if (re) h = h.replace(re, (m) => '<span class="mention' + (S.me && m.slice(1).toLowerCase() === esc(S.me.name).toLowerCase() ? " me" : "") + '">' + m + "</span>");
+  h = h.replace(/@everyone(?![A-Za-z0-9_])/gi, '<span class="mention me everyone">@everyone</span>');
   return h;
 }
-const mentionsMe = t => !!(S.me && t && new RegExp("@" + S.me.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![A-Za-z0-9_])", "i").test(t));
+const EVERY_RE = /@everyone(?![A-Za-z0-9_])/i;   // only admins can send it (main chat), and it pings everyone
+const mentionsMe = t => !!(S.me && t && (EVERY_RE.test(t) || new RegExp("@" + S.me.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![A-Za-z0-9_])", "i").test(t)));
 function currentList() { return S.older.concat(PUB[S.view] ? S.pubLive[S.view] : S.live); }
 function renderView() { if (!S.uid) return; const l = currentList(); if (l.length || !S.loading) renderMsgs(l); }
 function canPin() { const k = kindOf(S.view); return !S.adminView && (k === "main" ? S.admin : true); }
@@ -854,7 +858,7 @@ function enterApp(user) {
   if (S.admin) unsubs.push(F.onSnapshot(F.collection(db, "reports"), s => { S.reports = s.docs.map(d => ({ id: d.id, ...d.data() })); S.reports.forEach(r => { watchUser(r.by); watchUser(r.against); }); renderLists(); }, () => {}));
   // the public channels are always listened to, so mentions and unread counts work from anywhere
   Object.keys(PUB).forEach(v => unsubs.push(F.onSnapshot(F.query(F.collection(db, PUB[v].col), F.orderBy("createdAt", "desc"), F.limit(PAGE)), s => {
-    if (!S.pubFirst[v]) s.docChanges().forEach(ch => { if (ch.type === "added") { const x = ch.doc.data(); if (x.uid !== S.uid && mentionsMe(x.text)) { notify(nameOf(x.uid) + " mentioned you" + (v === "main" ? "" : " in " + PUB[v].title), x.text, v); if (S.view !== v) S.mentionsUnread = (S.mentionsUnread || 0) + 1; } } });
+    if (!S.pubFirst[v]) s.docChanges().forEach(ch => { if (ch.type === "added") { const x = ch.doc.data(); if (x.uid !== S.uid && mentionsMe(x.text)) { notify(nameOf(x.uid) + (EVERY_RE.test(x.text) ? " pinged @everyone" : " mentioned you") + (v === "main" ? "" : " in " + PUB[v].title), x.text, v); if (S.view !== v) S.mentionsUnread = (S.mentionsUnread || 0) + 1; } } });
     S.pubFirst[v] = false;
     S.pubLive[v] = s.docs.map(d => toMsg(v, d)).reverse();
     S.pubCursor[v] = s.docs.length === PAGE ? s.docs[s.docs.length - 1] : null;
@@ -1005,13 +1009,14 @@ function drawMentions() {
   if (!mq) { pop.hidden = true; return; }
   const q = mq.q.toLowerCase();
   const list = mentionPool().filter(uid => uid !== S.uid && S.users[uid]).map(uid => S.users[uid]).filter(u => u.name.toLowerCase().startsWith(q) || (q.length > 1 && u.name.toLowerCase().includes(q))).sort((a, b) => (isOnline(b) - isOnline(a)) || a.name.localeCompare(b.name)).slice(0, 6);
-  if (!list.length) { pop.hidden = true; return; }
-  S.mentionSel = Math.min(S.mentionSel || 0, list.length - 1);
-  pop.innerHTML = list.map((u, i) => '<button type="button" class="mopt' + (i === S.mentionSel ? " sel" : "") + '" data-mention="' + esc(u.uid) + '">' + avatar(u) + "<b>" + esc(u.name) + "</b>" + (u.player ? "<small>" + esc(u.player) + "</small>" : "") + "</button>").join("");
+  const all = S.admin && S.view === "main" && "everyone".startsWith(q);
+  if (!list.length && !all) { pop.hidden = true; return; }
+  S.mentionSel = Math.min(S.mentionSel || 0, list.length - (all ? 0 : 1));
+  pop.innerHTML = (all ? '<button type="button" class="mopt' + (S.mentionSel === 0 ? " sel" : "") + '" data-mention="@everyone"><span class="ev-ic">📣</span><b>@everyone</b><small>Pings everyone in the main chat</small></button>' : "") + list.map((u, i) => '<button type="button" class="mopt' + (i + (all ? 1 : 0) === S.mentionSel ? " sel" : "") + '" data-mention="' + esc(u.uid) + '">' + avatar(u) + "<b>" + esc(u.name) + "</b>" + (u.player ? "<small>" + esc(u.player) + "</small>" : "") + "</button>").join("");
   pop.hidden = false;
 }
 function pickMention(uid) {
-  const mq = mentionQuery(), u = S.users[uid]; if (!mq || !u) return;
+  const mq = mentionQuery(), u = uid === "@everyone" ? { name: "everyone" } : S.users[uid]; if (!mq || !u) return;
   const t = $("c-text"), ins = "@" + u.name + " ";
   t.value = (t.value.slice(0, mq.start) + ins + t.value.slice(mq.end)).slice(0, 300);
   const p = Math.min(300, mq.start + ins.length); t.focus(); t.setSelectionRange(p, p);
@@ -1184,6 +1189,7 @@ async function sendMessage(extraIn) {
   const text = extraIn.aud ? "" : clean($("c-text").value).slice(0, 300), img = extraIn.aud ? null : S.pendingImg;
   if (!text && !img && !extraIn.aud) return;
   if (LINK.test(text)) { toast("Links aren't allowed."); return; }
+  if (EVERY_RE.test(text) && !(S.admin && where === "main")) { toast("Only admins can ping @everyone, in the main chat."); return; }
   if (!viewOk(where)) { toast(k === "dm" ? "You need to be friends to message." : "You're not in this group."); return; }
   const gap = S.lastSend + MIN_GAP - Date.now(); if (gap > 0) await sleep(gap);
   $("c-send").disabled = true;
