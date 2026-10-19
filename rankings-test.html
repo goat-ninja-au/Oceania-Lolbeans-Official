@@ -373,6 +373,17 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .trk-rec { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 10px; } .trk-rec div { background: var(--soft); border-radius: 10px; padding: 12px; } .trk-rec span { display: block; font-size: .74rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; } .trk-rec b { display: block; font-size: 1.15rem; margin: 2px 0; } .trk-rec small { color: var(--muted); font-size: .78rem; }
 .trk-modal { position: fixed; inset: 0; z-index: 9999; background: rgba(4, 12, 22, .72); display: grid; place-items: center; padding: 16px; } .trk-modal .box { background: var(--card); border-radius: 16px; padding: 16px; width: min(640px, 100%); max-height: 100%; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
 .trk-modal img { width: 100%; border-radius: 10px; display: block; } .trk-modal .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; justify-content: flex-end; } .trk-modal h3 { margin: 0 0 10px; }
+.trk-chance { margin-top: 10px !important; color: var(--text) !important; } .trk-chance b { color: inherit; }
+.trk-tal { display: inline-block; font-weight: 800; font-size: .8rem; padding: 3px 10px; border-radius: 999px; background: var(--soft); white-space: nowrap; }
+.trk-tal.gen { background: linear-gradient(90deg, #f7c948, #f08c00); color: #2b1a00; } .trk-tal.star { background: color-mix(in srgb, #7950f2 22%, var(--card)); color: #9775fa; } .trk-tal.elite { background: color-mix(in srgb, #f0b429 22%, var(--card)); color: #e0a526; } .trk-tal.steady { background: color-mix(in srgb, #2a9d5c 18%, var(--card)); color: #2a9d5c; } .trk-tal.quiet { color: var(--muted); } .trk-tal.new { background: color-mix(in srgb, #1478c2 18%, var(--card)); color: var(--blue); }
+.trk-talent { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); } .trk-talent p { margin: 0; flex: 1; min-width: 220px; }
+.trk-cls .row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--row); } .trk-cls .row:last-child { border-bottom: 0; } .trk-cls .row.me { background: color-mix(in srgb, var(--blue) 10%, transparent); border-radius: 8px; padding-left: 6px; }
+.trk-cls .row .n { font-family: var(--mono); font-weight: 800; color: var(--muted); text-align: right; } .trk-cls .row small { display: block; color: var(--muted); font-size: .78rem; } .trk-cls b[data-player] { cursor: pointer; }
+.trk-ch { display: grid; gap: 10px; } .trk-ch .r { display: grid; grid-template-columns: 90px minmax(0, 1fr) 52px; gap: 10px; align-items: center; } .trk-ch .bar { height: 10px; border-radius: 5px; background: var(--soft); overflow: hidden; } .trk-ch .bar i { display: block; height: 100%; background: linear-gradient(90deg, #1478c2, #2a9d5c); border-radius: 5px; } .trk-ch b { text-align: right; font-family: var(--mono); }
+.trk-like .head { background: var(--soft); border-radius: 12px; padding: 12px 14px; margin: 10px 0; } .trk-like .head b[data-player] { cursor: pointer; text-decoration: underline; text-decoration-color: var(--line); }
+.trk-like .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--row); } .trk-like .row:last-child { border-bottom: 0; } .trk-like .up { color: #2a9d5c; font-weight: 800; } .trk-like .down { color: #d9505c; font-weight: 800; } .trk-like b[data-player] { cursor: pointer; }
+.trk-like h4 { margin: 16px 0 0; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.trk-acc p { margin: 6px 0; } .trk-acc ul { margin: 6px 0 0 18px; padding: 0; } .trk-acc li { margin: 4px 0; color: var(--muted); }
 .testbar { background: #f0b429; color: #222; text-align: center; font-weight: 700; padding: 8px 12px; font-size: .9rem; }
 .fline.rec { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
 .fline .pic { width: 52px; height: 34px; border-radius: 6px; overflow: hidden; background: var(--soft); }
@@ -778,7 +789,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // ---- Time improvement (from the "Time history" tab) ----
   var timp = {}, tweeks = [];
   function loadTime(rows) {
-    timp = {}; tweeks = []; var seen = {};
+    timp = {}; tweeks = []; var seen = {}; SIM = null; TAL = null; BT = null;
     if (!header(rows, "week", "name")) return;
     rows.slice(1).forEach(function (r) {
       var w = String(r[0]).trim(), n = canon(r[1]).toLowerCase(), s = parseFloat(r[2]), c = parseInt(r[3], 10) || 0;
@@ -803,7 +814,10 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var top = list.length ? list[0].s : 1;
     var lw = tweeks[tweeks.length - 1], prevW = tweeks[tweeks.length - 2];
     var when = r[0] === "1w" && prevW ? niceDate(prevW) + " → " + niceDate(lw) : r[2] ? "since " + niceDate(cut) : "since " + niceDate(tweeks[0]);
-    $("improved-body").innerHTML = head +
+    var tl = players.filter(function (o) { var t = talOf(o); return t.tag[1] === "gen" || t.tag[1] === "star"; }).sort(function (a, b) { return talOf(b).score - talOf(a).score; }).slice(0, 10);
+    var watch = tl.length ? '<div class="card tal-list trk-cls" style="margin-bottom:16px"><h3>🌟 Talents to watch</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Players climbing the fastest right now and still setting PBs most weeks.</p>' +
+      tl.map(function (o, i) { var t = talOf(o); return '<div class="row"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(o.name) + '">' + flag(o.country) + " " + esc(o.name) + "</b><small>#" + t.then + " → #" + o.place + " in " + t.span + " weeks · " + clsName(t.cls) + '</small></div><span class="trk-tal ' + t.tag[1] + '">' + t.tag[0] + "</span></div>"; }).join("") + "</div>" : "";
+    $("improved-body").innerHTML = watch + head +
       '<p class="muted imp-note">Seconds taken off their total time, ' + when + '. Only maps a player already had a time on are counted, so new maps never count against anyone.</p>' +
       '<div class="card imp-list">' + (list.length ? list.map(function (x, i) {
         return '<div class="fline"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(x.p.name) + '" tabindex="0" role="link">' + flag(x.p.country) + " " + esc(x.p.name) + "</b><small>#" + x.p.place + " in Oceania · " + x.c + (x.c === 1 ? " new PB" : " new PBs") + '</small><div class="imp-bar"><i style="width:' + Math.max(3, Math.round(100 * x.s / top)) + '%"></i></div></div><div class="v imp-v">' + secs(x.s) + "</div></div>";
@@ -951,23 +965,146 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       }).join("") + "</div></div>";
   }
 
-  // 5. Players like you
+  // ---- Chances: simulate the next 52 weeks many times, each player drawing PB weeks from their own recent history ----
+  var SIM = null, SIM_N = 400, SIM_W = 52, TIERS = [1, 3, 5, 10, 25, 50, 100];
+  function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function samplesOf(p) { var W = weeklyOf(p).slice(-26).map(function (x) { return x.s; }); while (W.length < 8) W.push(0); return W; }
+  function floorT() { return OR && OR.total ? OR.total : Math.min.apply(null, players.map(function (p) { return p.total; })) * 0.95; }
+  function stepT(cur, start, g, fl) { if (!(g > 0)) return cur; var room = (cur - fl) / Math.max(start - fl, 1); return cur - g * Math.max(0, Math.min(1, room)); } // gains shrink as you get closer to record pace
+  function runSim() {
+    if (SIM) return SIM;
+    var n = players.length, R = rng(20261019), fl = floorT(), samp = players.map(samplesOf);
+    var first = players.map(function () { return TIERS.map(function () { var a = new Int16Array(SIM_N); a.fill(-1); return a; }); });
+    var tot = new Float64Array(n), idx = []; for (var i = 0; i < n; i++) idx.push(i);
+    for (var s = 0; s < SIM_N; s++) {
+      for (i = 0; i < n; i++) tot[i] = players[i].total;
+      for (var w = 1; w <= SIM_W; w++) {
+        for (i = 0; i < n; i++) { var a = samp[i]; tot[i] = stepT(tot[i], players[i].total, a[(R() * a.length) | 0], fl); }
+        idx.sort(function (x, y) { return tot[x] - tot[y]; });
+        for (var r = 0; r < Math.min(n, 100); r++) { var F = first[idx[r]]; for (var t = 0; t < TIERS.length; t++) if (r < TIERS[t] && F[t][s] < 0) F[t][s] = w; }
+      }
+    }
+    SIM = { first: first };
+    return SIM;
+  }
+  function pairSim(a, b) { // weeks until a's total drops below b's, in each simulation (-1 = not within a year)
+    var R = rng(7 + a.place * 131 + b.place), fl = floorT(), sa = samplesOf(a), sb = samplesOf(b), out = [];
+    for (var s = 0; s < SIM_N; s++) {
+      var ta = a.total, tb = b.total, hit = -1;
+      for (var w = 1; w <= SIM_W && hit < 0; w++) { ta = stepT(ta, a.total, sa[(R() * sa.length) | 0], fl); tb = stepT(tb, b.total, sb[(R() * sb.length) | 0], fl); if (ta < tb) hit = w; }
+      out.push(hit);
+    }
+    return out;
+  }
+  function summarize(arr) {
+    var hits = Array.prototype.filter.call(arr, function (w) { return w >= 0; }).sort(function (x, y) { return x - y; });
+    var q = function (f) { return hits[Math.min(hits.length - 1, Math.floor(f * hits.length))]; };
+    return { pct: Math.round(100 * hits.length / arr.length), med: hits.length ? q(0.5) : null, lo: hits.length ? q(0.25) : null, hi: hits.length ? q(0.75) : null };
+  }
+  function tierChance(p, n) { var i = players.indexOf(p), t = TIERS.indexOf(n); if (i < 0 || t < 0) return null; return summarize(runSim().first[i][t]); }
+  function wkDate(w) { var d = new Date(); d.setDate(d.getDate() + w * 7); return d.getDate() + " " + MON[d.getMonth()] + (d.getFullYear() !== new Date().getFullYear() ? " " + d.getFullYear() : ""); }
+  function pctTxt(x) { return x.pct >= 99 ? "99%+" : x.pct < 1 ? "under 1%" : x.pct + "%"; }
+  function goalChance(p, G) {
+    if (G.n) return tierChance(p, G.n);
+    return G.defend ? summarize(pairSim(G.who, p)) : summarize(pairSim(p, G.who));
+  }
+  function chanceLine(p, G, gap) {
+    if (!G.defend && gap <= 0) return "";
+    var c = goalChance(p, G); if (!c) return "";
+    if (G.defend) return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> " + esc(G.who.name) + " passes you in the next 12 months" + (c.pct >= 10 && c.med ? ". If it happens, most likely around <b>" + wkDate(c.med) + "</b>." : ".") + "</p>";
+    if (c.pct < 1) return '<p class="trk-chance">🎲 <b>Under 1% chance</b> in the next 12 months at the current pace.</p>';
+    var when = c.med ? (c.pct >= 50 ? " · most likely around <b>" + wkDate(c.med) + "</b>" : " · if it happens, most likely around <b>" + wkDate(c.med) + "</b>") + (c.lo !== c.hi ? " (half the simulations land between " + wkDate(c.lo) + " and " + wkDate(c.hi) + ")" : "") : "";
+    return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> in the next 12 months" + when + ".</p>";
+  }
+  function chancesHTML(p) {
+    var tiers = TIERS.filter(function (n) { return n < p.place || (n === 1 && p.place === 1); });
+    if (!tiers.length) return "";
+    var rows = tiers.map(function (n) { var c = tierChance(p, n); return '<div class="r"><span>' + (n === 1 ? "#1" : "Top " + n) + '</span><div class="bar"><i style="width:' + Math.max(c.pct, 1) + '%"></i></div><b>' + (c.pct >= 99 ? "99%" : c.pct < 1 ? "<1%" : c.pct + "%") + "</b></div>"; }).join("");
+    return '<div class="card"><h3>Your chances</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Chance of reaching each spot at some point in the next 12 months. Worked out by playing out the next year ' + SIM_N + " times, with every player setting PBs like they have recently.</p>" + '<div class="trk-ch">' + rows + "</div></div>";
+  }
+
+  // ---- Talent tiers and classes (the year a player first appeared in the rankings) ----
+  var TAL = null;
+  function talents() {
+    if (TAL) return TAL; TAL = {};
+    var lw = weeks.length - 1;
+    players.forEach(function (p) {
+      var k = p.name.toLowerCase(), first = -1;
+      for (var i = 0; i < weeks.length; i++) if (hist[weeks[i]][k] != null) { first = i; break; }
+      if (first < 0) first = lw;
+      var back = Math.max(first, lw - 26), then = (hist[weeks[back]] || {})[k] || p.place;
+      var W = weeklyOf(p).slice(-8), act = W.filter(function (x) { return x.s > 0.0005; }).length;
+      var rise = Math.log(Math.max(then, 1) / p.place) / Math.LN2, score = rise * (0.4 + 0.6 * act / 8);
+      TAL[k] = { joined: weeks[first], cls: +weeks[first].slice(0, 4), wks: lw - first, then: then, span: lw - back, act: act, rise: rise, score: score };
+    });
+    players.forEach(function (p) {
+      var t = TAL[p.name.toLowerCase()], tag;
+      if (t.wks < 6) tag = ["🆕 New", "new", "Joined the rankings " + niceDate(t.joined) + ". Talent shows up after 6 weeks."];
+      else if (t.score >= 1.5 && p.place <= 30 && t.act >= 4) tag = ["🌟 Generational talent", "gen", "Climbed from #" + t.then + " to #" + p.place + " in " + t.span + " weeks and still setting PBs in " + t.act + " of the last 8 weeks."];
+      else if (t.score >= 0.7 && t.act >= 3) tag = ["🚀 Rising star", "star", "Climbed from #" + t.then + " to #" + p.place + " in " + t.span + " weeks, with PBs in " + t.act + " of the last 8 weeks."];
+      else if (p.place <= 5) tag = ["👑 Elite", "elite", "Already at the very top of Oceania."];
+      else if (t.act >= 2) tag = ["📈 Steady improver", "steady", "PBs in " + t.act + " of the last 8 weeks."];
+      else if (t.act === 0) tag = ["💤 Quiet", "quiet", "No PBs in the last 8 weeks."];
+      else tag = ["➖ Cruising", "quiet", "A PB here and there lately."];
+      t.tag = tag;
+    });
+    return TAL;
+  }
+  function talOf(p) { return talents()[p.name.toLowerCase()]; }
+  function clsName(y) { return y <= 2024 ? "Class of 2024 (originals)" : "Class of " + y; }
+  function talentHTML(p) { var t = talOf(p); return '<div class="trk-talent"><span class="trk-tal ' + t.tag[1] + '">' + t.tag[0] + "</span><p class=\"muted\">" + t.tag[2] + " · " + clsName(t.cls) + "</p></div>"; }
+  function classHTML(p) {
+    var t = talOf(p), mates = players.filter(function (o) { return talOf(o).cls === t.cls; }).sort(function (a, b) { return a.place - b.place; });
+    var me = mates.indexOf(p), show = mates.slice(0, 8); if (me >= 8) show.push(p);
+    return '<div class="card trk-cls"><h3>' + clsName(t.cls) + "</h3><p class=\"muted\" style=\"font-size:.85rem;margin:4px 0 10px\">" + (t.cls <= 2024 ? "Players already ranked when the history starts (Sep 2024)." : "Players who first joined the rankings in " + t.cls + ".") + " You're <b>" + ordinal(me + 1) + "</b> of " + mates.length + " in your class.</p>" +
+      show.map(function (o) { var ot = talOf(o); return '<div class="row' + (o === p ? " me" : "") + '"><span class="n">' + (mates.indexOf(o) + 1) + "</span><div><b data-player=\"" + esc(o.name) + "\">" + flag(o.country) + " " + esc(o.name) + "</b><small>#" + o.place + " in Oceania · joined " + niceDate(ot.joined) + '</small></div><span class="trk-tal ' + ot.tag[1] + '">' + ot.tag[0] + "</span></div>"; }).join("") + "</div>";
+  }
+
+  // 5. Players like you: who was at your rank back then, and where they are now
   function likeYouHTML(p) {
     var lc = lcPlayers(), parts = [];
-    [[26, "6 months ago"], [52, "A year ago"]].forEach(function (x) {
+    [[52, "A year ago"], [26, "6 months ago"]].forEach(function (x) {
       var w = weeks[weeks.length - 1 - x[0]]; if (!w) return;
-      var grp = Object.keys(hist[w]).filter(function (k) { return Math.abs(hist[w][k] - p.place) <= 5 && k !== p.name.toLowerCase(); });
-      if (grp.length < 3) return;
-      var now = grp.map(function (k) { return { k: k, then: hist[w][k], o: lc[k] }; }), still = now.filter(function (q) { return q.o; });
-      if (!still.length) return;
-      var avg = Math.round(still.reduce(function (a, q) { return a + q.o.place; }, 0) / still.length);
-      var up = still.filter(function (q) { return q.o.place < q.then; }).length, top = still.slice().sort(function (a, b) { return a.o.place - b.o.place; })[0];
-      parts.push('<div class="trk-kv"><div><span>' + x[1] + " (players ranked #" + Math.max(1, p.place - 5) + "–" + (p.place + 5) + ')</span><b>' + grp.length + " players</b></div>" +
-        "<div><span>Where they are now</span><b>#" + avg + " on average</b></div>" +
-        "<div><span>Climbed the rankings</span><b>" + Math.round(100 * up / still.length) + "%</b></div>" +
-        "<div><span>Biggest climber</span><b>" + esc(top.o.name) + ": #" + top.then + " → #" + top.o.place + "</b></div></div>");
+      var grp = Object.keys(hist[w]).filter(function (k) { return Math.abs(hist[w][k] - p.place) <= 3 && k !== p.name.toLowerCase() && lc[k]; })
+        .map(function (k) { return { o: lc[k], then: hist[w][k] }; }).sort(function (a, b) { return Math.abs(a.then - p.place) - Math.abs(b.then - p.place) || a.o.place - b.o.place; });
+      if (!grp.length) return;
+      var h = grp[0], d = h.then - h.o.place;
+      var line = function (q) { var dd = q.then - q.o.place; return '<div class="row"><span><b data-player="' + esc(q.o.name) + '">' + flag(q.o.country) + " " + esc(q.o.name) + "</b> <span class=\"muted\">was #" + q.then + "</span></span><span>now <b>#" + q.o.place + '</b> <span class="' + (dd > 0 ? "up" : dd < 0 ? "down" : "") + '">' + (dd > 0 ? "↑" + dd : dd < 0 ? "↓" + (-dd) : "=") + "</span></span></div>"; };
+      parts.push("<h4>" + x[1] + " (" + niceDate(w) + ")</h4>" +
+        '<div class="head"><b data-player="' + esc(h.o.name) + '">' + esc(h.o.name) + "</b> was <b>#" + h.then + "</b> " + x[1].toLowerCase() + (h.then === p.place ? ", exactly where you are now" : ", right around where you are now (#" + p.place + ")") + ". Now they're <b>#" + h.o.place + "</b>" + (d > 0 ? " (up " + d + " places)." : d < 0 ? " (down " + (-d) + ")." : ".") + "</div>" +
+        grp.slice(1, 6).map(line).join(""));
     });
-    return '<div class="card"><h3>Players like you</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">What happened to players who were where you are now.</p>' + (parts.length ? parts.join('<hr style="border:0;border-top:1px solid var(--line);margin:12px 0 0">') : '<p class="muted">Not enough history at this rank yet.</p>') + "</div>";
+    return '<div class="card trk-like"><h3>Players like you</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">Players who were at your rank (#' + p.place + ") before, and where they are today.</p>" + (parts.length ? parts.join("") : '<p class="muted">Not enough history at this rank yet.</p>') + "</div>";
+  }
+
+  // ---- How accurate is this? Test the pace prediction on the past ----
+  var BT = null;
+  function backtest() {
+    if (BT !== null) return BT; BT = false;
+    var h = 12; if (tweeks.length < h + 10) return BT;
+    var W0 = tweeks[tweeks.length - 1 - h], Wb = tweeks[tweeks.length - 1 - h - 8], hw = hist[W0]; if (!hw) return BT;
+    var rows = [];
+    players.forEach(function (p) {
+      var k = p.name.toLowerCase(); if (hw[k] == null) return;
+      var L = timp[k] || [], since = 0, before = 0, st = L.length ? L[0].w : W0;
+      L.forEach(function (e, i) { if (!i) return; if (e.w > W0) since += e.s; else if (e.w > Wb) before += e.s; });
+      var span = Math.min(8, tweeks.indexOf(W0) - tweeks.indexOf(st)), pace = span >= 1 ? before / Math.max(span, 4) : 0;
+      var then = p.total + since; rows.push({ then: then, pred: then - pace * h, now: p.total });
+    });
+    if (rows.length < 20) return BT;
+    var rk = function (key) { var s = rows.slice().sort(function (a, b) { return a[key] - b[key]; }); s.forEach(function (r, i) { r[key + "R"] = i + 1; }); };
+    rk("then"); rk("pred"); rk("now");
+    var err = function (key) { var e = rows.map(function (r) { return Math.abs(r[key + "R"] - r.nowR); }).sort(function (a, b) { return a - b; }); return { med: e[Math.floor(e.length / 2)], w3: Math.round(100 * e.filter(function (x) { return x <= 3; }).length / e.length), w10: Math.round(100 * e.filter(function (x) { return x <= 10; }).length / e.length) }; };
+    BT = { n: rows.length, h: h, from: W0, pred: err("pred"), naive: err("then") };
+    return BT;
+  }
+  function accuracyHTML() {
+    var b = backtest();
+    return '<div class="card trk-acc trk-tabs-card"><h3>How accurate is this?</h3>' +
+      (b ? "<p>We tested the predictions on the past: starting from " + niceDate(b.from) + " and predicting " + b.h + " weeks ahead for " + b.n + " players, the predicted rank was within <b>3 places for " + b.pred.w3 + "%</b> and within <b>10 places for " + b.pred.w10 + "%</b> of players (typical miss: " + b.pred.med + (b.pred.med === 1 ? " place" : " places") + "). Just guessing nobody moves got " + b.naive.w3 + "% within 3 places.</p>" : "") +
+      "<ul><li>Past numbers (PBs, pace, map trends) come straight from saved versions of the rankings sheet each Monday, so they're as accurate as the sheet was.</li>" +
+      "<li>Predictions and chances assume you keep improving like you have recently. A new strat, a break or a new map can change things fast.</li>" +
+      "<li>Filling in a missing map (60s) drops your total straight away but isn't counted as pace.</li></ul></div>";
   }
 
   // 6. Personal records
@@ -1044,7 +1181,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       var tx = 60 + i * 275; x.fillStyle = "rgba(255,255,255,.1)"; x.beginPath(); if (x.roundRect) x.roundRect(tx, 360, 255, 130, 16); else x.rect(tx, 360, 255, 130); x.fill();
       x.fillStyle = "#9fd0f5"; x.font = "700 20px " + F; x.fillText(t[0], tx + 22, 400); x.fillStyle = "#fff"; x.font = "800 40px " + F; x.fillText(t[1], tx + 22, 456);
     });
-    x.fillStyle = "#cfe6f7"; x.font = "600 24px " + F; x.fillText("Goal: " + T.goal + (T.rival ? "   ·   Rival: " + T.rival : ""), 60, 545);
+    x.fillStyle = "#cfe6f7"; x.font = "600 24px " + F; x.fillText(T.talent + "   ·   Goal: " + T.goal + (T.rival ? "   ·   Rival: " + T.rival : ""), 60, 545);
     x.fillStyle = "#9fd0f5"; x.font = "600 22px " + F; x.fillText("goat-ninja-au.github.io/Oceania-Lolbeans-Official", 60, 590);
     c.toBlob(function (blob) {
       var url = URL.createObjectURL(blob), file = new File([blob], "tracking-" + T.name.replace(/[^\w-]+/g, "_") + ".png", { type: "image/png" });
@@ -1087,7 +1224,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       "<div><span>Your pace</span><b>" + (my ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, last " + PACE_WEEKS + " weeks</small></div>" +
       "<div><span>" + (G.n ? "Top-" + G.n + " pace" : "Their pace") + "</span><b>" + (gp ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>per week, last " + PACE_WEEKS + " weeks</small></div></div>";
     if (tracked && wksTracked < 4) txt += " Based on only " + wksTracked + (wksTracked === 1 ? " week" : " weeks") + " of history, so it's a rough guess for now.";
-    var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + nums + "</div>";
+    var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + (tracked ? chanceLine(p, G, gap) : "") + nums + talentHTML(p) + "</div>";
 
     // projection chart: last 8 weeks (estimated) + future
     var past = pastTotals(p, PACE_WEEKS + 1), gpast = pastTotals(G.who, PACE_WEEKS + 1);
@@ -1126,12 +1263,12 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       "<div><span>Now</span><b>#" + p.place + "</b></div>" + [4, 12, 26].map(function (w) { var r = predictRank(p, w), d = p.place - r; return "<div><span>In " + w + " weeks</span><b>#" + r + "</b><small>" + (d > 0 ? "↑ " + d : d < 0 ? "↓ " + (-d) : "no change") + "</small></div>"; }).join("") + "</div></div>";
 
     var F = formInfo(p), RV = rivalFor(p);
-    S.trk = { name: p.name, place: p.place, total: p.total, big: big, my: my, gap: gap, defend: !!G.defend, goal: G.label, who: G.who.name, p12: predictRank(p, 12), form: F, rival: RV ? RV.o.name : "", country: p.country };
+    S.trk = { name: p.name, place: p.place, total: p.total, big: big, my: my, gap: gap, defend: !!G.defend, goal: G.label, who: G.who.name, p12: predictRank(p, 12), form: F, rival: RV ? RV.o.name : "", country: p.country, talent: talOf(p).tag[0] };
     return sel + status +
       '<div class="trk-grid">' + formHTML(p, F) + rivalHTML(p, RV) + "</div>" +
       chart + milestonesHTML(p) + maps + strengthsHTML(p) +
       '<div class="card trk-tabs-card" id="trk-trends"><h3>Map trends</h3><p class="muted">Loading map history…</p></div>' +
-      '<div class="trk-grid">' + pred + likeYouHTML(p) + "</div>" + recordsHTML(p) +
+      '<div class="trk-grid">' + pred + chancesHTML(p) + "</div>" + likeYouHTML(p) + classHTML(p) + recordsHTML(p) + accuracyHTML() +
       '<p class="muted" style="font-size:.8rem;margin-top:10px">Pace only counts PBs on maps you already had a time on. Filling in a missing map drops your total straight away but isn\'t counted as pace.</p>';
   }
   function impCard(p) {
@@ -1752,7 +1889,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     if (t.closest("[data-sharex]")) { window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(S.player + " on the Oceania LOLBeans rankings") + "&url=" + encodeURIComponent(location.origin + urlFor()), "_blank", "noopener"); return; }
     if (t.closest("#trk-share")) { shareCard(); return; }
     var ir = t.closest("[data-irange]"); if (ir) { S.irange = ir.dataset.irange; renderImproved(); return; }
-    var ipl = t.closest(".imp-list [data-player]"); if (ipl) { openPlayer(ipl.dataset.player); return; }
+    var ipl = t.closest(".imp-list [data-player], .trk-cls [data-player], .trk-like [data-player], .tal-list [data-player]"); if (ipl) { openPlayer(ipl.dataset.player); return; }
     var pt = t.closest("[data-ptab]"); if (pt) { S.ptab = pt.dataset.ptab; renderProfile(); syncUrl(); if (S.ptab === "h2h" && $("p-vs")) $("p-vs").focus(); return; }
     var fill = t.closest("[data-fill]"); if (fill) { var m = +fill.dataset.fill; S.sim[m] = OR.t[m]; var inp = $("sim-" + m); inp.value = OR.t[m].toFixed(3); inp.classList.add("changed"); updateSim(); return; }
     var pl0 = t.closest("[data-player]"); if (pl0 && t.closest(".rec-t, .rec-sum")) { e.preventDefault(); openPlayer(pl0.dataset.player); return; }
