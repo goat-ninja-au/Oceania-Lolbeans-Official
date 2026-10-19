@@ -352,6 +352,27 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .trk-maps .row.miss .v, .trk-maps .row.miss .bar i { color: #e0a526; background: #e0a526; } .trk-maps .row.miss .v { background: none; }
 .trk-pred { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; } .trk-pred div { background: var(--soft); border-radius: 10px; padding: 12px; text-align: center; } .trk-pred span { display: block; font-size: .78rem; color: var(--muted); font-weight: 700; } .trk-pred b { font-size: 1.6rem; } .trk-pred small { display: block; font-size: .78rem; color: var(--muted); }
 .graph .ln.you { stroke: var(--blue); } .graph .ln.goal { stroke: #8a96a3; } .graph .ln.fut { stroke-dasharray: 6 6; } .graph .eta { fill: #2a9d5c; } .graph .lg { font-size: 12px; font-weight: 700; }
+.trk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 16px; margin-bottom: 16px; } .trk-grid > .card { margin: 0; }
+.trk-tabs-card { margin-bottom: 16px; }
+.trk-share { margin-left: auto; }
+.trk-badge { display: inline-block; font-weight: 800; padding: 4px 12px; border-radius: 999px; font-size: .95rem; } .trk-badge.hot { background: color-mix(in srgb, #e8590c 18%, var(--card)); color: #e8590c; } .trk-badge.steady { background: color-mix(in srgb, #1478c2 15%, var(--card)); color: var(--blue); } .trk-badge.cold { background: color-mix(in srgb, #4dabf7 15%, var(--card)); color: #4dabf7; }
+.trk-kv { display: grid; gap: 8px; margin-top: 12px; } .trk-kv div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--row); padding-bottom: 7px; } .trk-kv div:last-child { border-bottom: 0; } .trk-kv span { color: var(--muted); } .trk-kv b { text-align: right; }
+.trk-bars { display: flex; align-items: flex-end; gap: 4px; height: 70px; margin-top: 14px; } .trk-bars i { flex: 1; background: #2a9d5c; border-radius: 3px 3px 0 0; min-height: 2px; opacity: .9; } .trk-bars i.z { background: var(--soft); }
+.trk-bars-l { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-top: 4px; }
+.trk-vs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; text-align: center; margin: 10px 0; } .trk-vs b { display: block; font-size: 1.05rem; } .trk-vs small { color: var(--muted); } .trk-vs .x { font-weight: 800; color: var(--muted); }
+.trk-ms { display: grid; gap: 10px; } .trk-ms .m { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--row); } .trk-ms .m:last-child { border-bottom: 0; }
+.trk-ms .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-size: 1rem; } .trk-ms .m.done .ic { background: color-mix(in srgb, #2a9d5c 20%, var(--card)); }
+.trk-ms small { display: block; color: var(--muted); font-size: .8rem; } .trk-ms .v { font-family: var(--mono); font-weight: 800; text-align: right; } .trk-ms .m.done .v { color: #2a9d5c; font-family: var(--font); font-size: .82rem; }
+.trk-ms h4 { margin: 14px 0 2px; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.trk-str { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 4px 22px; } .trk-str .r { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 8px; padding: 6px 0; }
+.trk-str .r small { color: var(--muted); font-family: var(--mono); font-size: .8rem; } .trk-str .bar { grid-column: 1 / -1; height: 7px; background: var(--soft); border-radius: 4px; overflow: hidden; } .trk-str .bar i { display: block; height: 100%; border-radius: 4px; }
+.trk-str .e i { background: #2a9d5c; } .trk-str .g i { background: var(--blue); } .trk-str .m i { background: #e0a526; } .trk-str .w i { background: #d9505c; } .trk-str .n small { color: #e0a526; }
+.trk-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .78rem; color: var(--muted); margin: 6px 0 10px; } .trk-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; background: var(--c); }
+.trk-tr { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 10px; } .trk-tr .t { background: var(--soft); border-radius: 10px; padding: 10px 12px; }
+.trk-tr .t b { display: block; font-size: .9rem; } .trk-tr .t .d { font-family: var(--mono); font-weight: 800; color: #2a9d5c; } .trk-tr .t .d.z { color: var(--muted); } .trk-tr .t small { display: block; color: var(--muted); font-size: .76rem; } .trk-tr svg { width: 100%; height: 38px; display: block; margin: 6px 0 2px; } .trk-tr svg path { fill: none; stroke: #2a9d5c; stroke-width: 2; } .trk-tr svg circle { fill: #2a9d5c; }
+.trk-rec { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 10px; } .trk-rec div { background: var(--soft); border-radius: 10px; padding: 12px; } .trk-rec span { display: block; font-size: .74rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; } .trk-rec b { display: block; font-size: 1.15rem; margin: 2px 0; } .trk-rec small { color: var(--muted); font-size: .78rem; }
+.trk-modal { position: fixed; inset: 0; z-index: 9999; background: rgba(4, 12, 22, .72); display: grid; place-items: center; padding: 16px; } .trk-modal .box { background: var(--card); border-radius: 16px; padding: 16px; width: min(640px, 100%); max-height: 100%; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+.trk-modal img { width: 100%; border-radius: 10px; display: block; } .trk-modal .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; justify-content: flex-end; } .trk-modal h3 { margin: 0 0 10px; }
 .testbar { background: #f0b429; color: #222; text-align: center; font-weight: 700; padding: 8px 12px; font-size: .9rem; }
 .fline.rec { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
 .fline .pic { width: 52px; height: 34px; border-radius: 6px; overflow: hidden; background: var(--soft); }
@@ -829,13 +850,225 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     players.forEach(function (o) { if (o !== p && o.total - paceOf(o.name) * weeks < me) better++; });
     return better + 1;
   }
+  function lcPlayers() { var o = {}; players.forEach(function (x) { o[x.name.toLowerCase()] = x; }); return o; }
+  function weeklyOf(p) { // one entry per week since tracking began (0 when no PB that week)
+    var L = timp[p.name.toLowerCase()] || [], by = {}; if (!L.length) return [];
+    L.forEach(function (e, i) { if (i) by[e.w] = e; });
+    return tweeks.filter(function (w) { return w > L[0].w; }).map(function (w) { var e = by[w]; return { w: w, s: e ? e.s : 0, c: e ? e.c : 0 }; });
+  }
+  function weeksAgoTxt(n) { return n === 0 ? "this week" : n === 1 ? "last week" : n + " weeks ago"; }
+
+  // 1. Form and momentum
+  function formInfo(p) {
+    var W = weeklyOf(p), streak = 0, i, lastI = -1, best = 0, run = 0;
+    for (i = W.length - 1; i >= 0 && W[i].s > 0.0005; i--) streak++;
+    for (i = W.length - 1; i >= 0; i--) if (W[i].s > 0.0005) { lastI = i; break; }
+    W.forEach(function (x) { run = x.s > 0.0005 ? run + 1 : 0; if (run > best) best = run; });
+    var pbWeeks = W.slice(-4).filter(function (x) { return x.s > 0.0005; }).length;
+    var badge = !W.length ? ["New", "steady"] : pbWeeks >= 3 ? ["🔥 Hot", "hot"] : pbWeeks >= 1 ? ["➖ Steady", "steady"] : ["🧊 Cold", "cold"];
+    var cut = tcut(4), mine = impSum(p.name.toLowerCase(), cut).s, below = 0;
+    players.forEach(function (o) { if (o !== p && impSum(o.name.toLowerCase(), cut).s < mine - 1e-9) below++; });
+    return { W: W, streak: streak, bestStreak: best, last: lastI < 0 ? null : { ago: W.length - 1 - lastI, w: W[lastI].w }, badge: badge, month: mine, pct: Math.round(100 * below / Math.max(players.length - 1, 1)) };
+  }
+  function formHTML(p, F) {
+    var body;
+    if (!F.W.length) body = '<p class="muted">Form shows up after a couple of Mondays of history.</p>';
+    else {
+      var last = F.W.slice(-12), mx = Math.max.apply(null, last.map(function (x) { return x.s; }).concat([0.001]));
+      body = '<span class="trk-badge ' + F.badge[1] + '">' + F.badge[0] + "</span>" +
+        '<div class="trk-kv"><div><span>PB streak</span><b>' + (F.streak ? F.streak + (F.streak === 1 ? " week" : " weeks") + " in a row" : "–") + "</b></div>" +
+        "<div><span>Last PB</span><b>" + (F.last ? weeksAgoTxt(F.last.ago) + (F.last.ago > 1 ? " (" + niceDate(F.last.w) + ")" : "") : "None yet") + "</b></div>" +
+        "<div><span>This month</span><b>" + (F.month > 0.0005 ? "Faster than " + F.pct + "% of Oceania" : "No PBs in 4 weeks") + "</b></div></div>" +
+        '<div class="trk-bars" role="img" aria-label="Seconds taken off each week, last ' + last.length + ' weeks">' + last.map(function (x) { return '<i class="' + (x.s > 0.0005 ? "" : "z") + '" style="height:' + Math.max(3, Math.round(100 * x.s / mx)) + '%" title="Week of ' + niceDate(x.w) + ": " + (x.s > 0.0005 ? "−" + x.s.toFixed(3) + "s" : "no PB") + '"></i>'; }).join("") + "</div>" +
+        '<div class="trk-bars-l"><span>' + last.length + " weeks ago</span><span>This week</span></div>";
+    }
+    return '<div class="card"><h3>Form</h3>' + body + "</div>";
+  }
+
+  // 2. Rival
+  function rivalFor(p) {
+    var near = players.filter(function (o) { return o !== p && Math.abs(o.place - p.place) <= 10; });
+    if (S.rival && byName[S.rival] && byName[S.rival] !== p) return { o: byName[S.rival], near: near };
+    var my = paceOf(p.name), best = null, bs = 1e9;
+    near.forEach(function (o) { if (Math.abs(o.place - p.place) > 6) return; var sc = Math.abs(o.total - p.total) + 4 * Math.abs(paceOf(o.name) - my); if (sc < bs) { bs = sc; best = o; } });
+    return best ? { o: best, near: near } : null;
+  }
+  function rivalHTML(p, RV) {
+    if (!RV) return '<div class="card"><h3>Rival</h3><p class="muted">No one close enough yet.</p></div>';
+    var o = RV.o, my = paceOf(p.name), op = paceOf(o.name), gap = p.total - o.total, d = my - op;
+    var m4 = impSum(p.name.toLowerCase(), tcut(4)).s, o4 = impSum(o.name.toLowerCase(), tcut(4)).s;
+    var who = gap > 0 ? "You're " + gap.toFixed(3) + "s behind" : "You're " + (-gap).toFixed(3) + "s ahead";
+    var trend = Math.abs(d) < 0.05 ? "Neck and neck on pace" : d > 0 ? (gap > 0 ? "You're catching them: " : "You're pulling away: ") + d.toFixed(2) + "s a week" : (gap > 0 ? "They're pulling away: " : "They're catching you: ") + (-d).toFixed(2) + "s a week";
+    var selR = '<select class="gsel" id="rival" aria-label="Choose a rival" style="max-width:100%">' + RV.near.map(function (x) { return '<option value="' + esc(x.name) + '"' + (x === o ? " selected" : "") + ">#" + x.place + " " + esc(x.name) + "</option>"; }).join("") + "</select>";
+    return '<div class="card"><div class="ip-head"><h3>Rival</h3>' + selR + "</div>" +
+      '<div class="trk-vs"><div><b>' + flag(p.country) + " " + esc(p.name) + "</b><small>#" + p.place + " · " + fmt(p.total) + '</small></div><div class="x">VS</div><div><b>' + flag(o.country) + " " + esc(o.name) + "</b><small>#" + o.place + " · " + fmt(o.total) + "</small></div></div>" +
+      '<div class="trk-kv"><div><span>Gap</span><b>' + who + "</b></div><div><span>Pace</span><b>" + trend + "</b></div>" +
+      "<div><span>Last 4 weeks</span><b>You −" + m4.toFixed(2) + "s · them −" + o4.toFixed(2) + "s</b></div></div>" +
+      '<p style="margin:12px 0 0"><button type="button" class="ip-link" data-vs="' + esc(o.name) + '">Full head to head ›</button></p></div>';
+  }
+
+  // 3. Milestones
+  function milestonesHTML(p) {
+    var next = [], done = [], my = paceOf(p.name), k = p.name.toLowerCase();
+    var eta = function (g) { return my > 0.05 ? " · about " + Math.ceil(g / my) + (Math.ceil(g / my) === 1 ? " week" : " weeks") + " at your pace" : ""; };
+    var round = Math.floor((p.total - 0.0005) / 10) * 10;
+    next.push(["⏱️", "Sub-" + round + "s total", "Your total is " + fmt(p.total) + eta(p.total - round), (p.total - round).toFixed(3) + "s"]);
+    var tier = [100, 50, 25, 10, 5, 3, 1].filter(function (n) { return n < p.place && players[n - 1]; })[0];
+    if (tier) { var tg = p.total - players[tier - 1].total; next.push(["🏅", tier === 1 ? "Oceania #1" : "Top " + tier + " in Oceania", "Pass #" + tier + " " + esc(players[tier - 1].name) + "'s total (if they don't improve)", tg.toFixed(3) + "s"]); }
+    if (OR) {
+      var orGap = MAPS.map(function (n, m) { return p.t[m] != null && OR.t[m] ? { m: m, g: p.t[m] - OR.t[m] } : null; }).filter(function (x) { return x && x.g > 0.0005; }).sort(function (a, b) { return a.g - b.g; })[0];
+      if (orGap) next.push(["🏆", (p.orN ? "Another" : "Your first") + " Oceania record", esc(MAPS[orGap.m]) + " is your closest: " + fmt(p.t[orGap.m]) + " vs " + fmt(OR.t[orGap.m]), orGap.g.toFixed(3) + "s"]);
+    }
+    var t10 = MAPS.map(function (n, m) { var a = sorted[m]; return p.t[m] != null && a.length >= 10 && p.t[m] > a[9] + 1e-9 ? { m: m, g: p.t[m] - a[9] } : null; }).filter(Boolean).sort(function (a, b) { return a.g - b.g; })[0];
+    var in10 = MAPS.filter(function (n, m) { return p.t[m] != null && mapRank(m, p.t[m]) <= 10; }).length;
+    if (t10) next.push(["🎯", "Top 10 on " + (in10 ? "another map" : "a map"), esc(MAPS[t10.m]) + " is your closest (#10 there is " + fmt(sorted[t10.m][9]) + ")", t10.g.toFixed(3) + "s"]);
+    var miss = MAPS.length - p.t.filter(function (v) { return v != null; }).length;
+    if (miss) next.push(["🗺️", "A time on every map", miss + (miss === 1 ? " map" : " maps") + " still at 60s", miss + " left"]);
+    // achieved: first week in each rank tier, from the ranking history
+    var firstIn = {};
+    weeks.forEach(function (w) { var r = hist[w][k]; if (r == null) return; [100, 50, 25, 10, 5, 3, 1].forEach(function (n) { if (r <= n && !firstIn[n]) firstIn[n] = w; }); });
+    [1, 3, 5, 10, 25, 50, 100].forEach(function (n) { if (firstIn[n]) done.push(["✅", n === 1 ? "Reached #1" : "Reached the top " + n, "", niceDate(firstIn[n])]); });
+    if (p.orN) done.push(["🏆", "Holds " + p.orN + " Oceania record" + (p.orN === 1 ? "" : "s"), "", "Now"]);
+    if (in10) done.push(["🎯", "Top 10 on " + in10 + " map" + (in10 === 1 ? "" : "s"), "", "Now"]);
+    if (!miss) done.push(["🗺️", "A time on every map", "", "Done"]);
+    var row = function (x, isDone) { return '<div class="m' + (isDone ? " done" : "") + '"><span class="ic">' + x[0] + "</span><div><b>" + x[1] + "</b>" + (x[2] ? "<small>" + x[2] + "</small>" : "") + '</div><span class="v">' + x[3] + "</span></div>"; };
+    return '<div class="card trk-tabs-card"><h3>Milestones</h3><div class="trk-ms"><h4>Next up</h4>' + next.map(function (x) { return row(x, false); }).join("") +
+      (done.length ? "<h4>Achieved</h4>" + done.slice(0, 6).map(function (x) { return row(x, true); }).join("") : "") + "</div></div>";
+  }
+
+  // 4. Map strengths
+  function strengthsHTML(p) {
+    var rows = MAPS.map(function (n, m) {
+      if (p.t[m] == null) return { m: m, n: n, miss: true, pct: -1 };
+      var r = mapRank(m, p.t[m]), tot = sorted[m].length; return { m: m, n: n, r: r, tot: tot, pct: tot > 1 ? 1 - (r - 1) / (tot - 1) : 1 };
+    }).sort(function (a, b) { return b.pct - a.pct; });
+    var cls = function (x) { return x.miss ? "n" : x.pct >= 0.9 ? "e" : x.pct >= 0.65 ? "g" : x.pct >= 0.35 ? "m" : "w"; };
+    var have = rows.filter(function (x) { return !x.miss; }), best = have[0], worst = have[have.length - 1];
+    return '<div class="card trk-tabs-card"><h3>Map strengths</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">Where you rank in Oceania on each map' + (best ? ". Best: " + esc(best.n) + " (" + ordinal(best.r) + "). Weakest: " + esc(worst.n) + " (" + ordinal(worst.r) + ")." : ".") + "</p>" +
+      '<div class="trk-legend"><span style="--c:#2a9d5c">Top 10%</span><span style="--c:var(--blue)">Strong</span><span style="--c:#e0a526">Middle</span><span style="--c:#d9505c">Weak</span></div>' +
+      '<div class="trk-str">' + rows.map(function (x) {
+        return '<div class="r ' + cls(x) + '"><b>' + esc(x.n) + "</b><small>" + (x.miss ? "no time" : ordinal(x.r) + " of " + x.tot) + '</small><div class="bar"><i style="width:' + (x.miss ? 0 : Math.max(3, Math.round(100 * x.pct))) + '%"></i></div></div>';
+      }).join("") + "</div></div>";
+  }
+
+  // 5. Players like you
+  function likeYouHTML(p) {
+    var lc = lcPlayers(), parts = [];
+    [[26, "6 months ago"], [52, "A year ago"]].forEach(function (x) {
+      var w = weeks[weeks.length - 1 - x[0]]; if (!w) return;
+      var grp = Object.keys(hist[w]).filter(function (k) { return Math.abs(hist[w][k] - p.place) <= 5 && k !== p.name.toLowerCase(); });
+      if (grp.length < 3) return;
+      var now = grp.map(function (k) { return { k: k, then: hist[w][k], o: lc[k] }; }), still = now.filter(function (q) { return q.o; });
+      if (!still.length) return;
+      var avg = Math.round(still.reduce(function (a, q) { return a + q.o.place; }, 0) / still.length);
+      var up = still.filter(function (q) { return q.o.place < q.then; }).length, top = still.slice().sort(function (a, b) { return a.o.place - b.o.place; })[0];
+      parts.push('<div class="trk-kv"><div><span>' + x[1] + " (players ranked #" + Math.max(1, p.place - 5) + "–" + (p.place + 5) + ')</span><b>' + grp.length + " players</b></div>" +
+        "<div><span>Where they are now</span><b>#" + avg + " on average</b></div>" +
+        "<div><span>Climbed the rankings</span><b>" + Math.round(100 * up / still.length) + "%</b></div>" +
+        "<div><span>Biggest climber</span><b>" + esc(top.o.name) + ": #" + top.then + " → #" + top.o.place + "</b></div></div>");
+    });
+    return '<div class="card"><h3>Players like you</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">What happened to players who were where you are now.</p>' + (parts.length ? parts.join('<hr style="border:0;border-top:1px solid var(--line);margin:12px 0 0">') : '<p class="muted">Not enough history at this rank yet.</p>') + "</div>";
+  }
+
+  // 6. Personal records
+  function recordsHTML(p) {
+    var W = weeklyOf(p), F = formInfo(p);
+    if (!W.length) return "";
+    var bw = W.reduce(function (a, x) { return x.s > a.s ? x : a; }, W[0]), mp = W.reduce(function (a, x) { return x.c > a.c ? x : a; }, W[0]);
+    var byM = {}; W.forEach(function (x) { var k = x.w.slice(0, 7); byM[k] = (byM[k] || 0) + x.s; });
+    var bm = Object.keys(byM).sort(function (a, b) { return byM[b] - byM[a]; })[0];
+    var all = W.reduce(function (a, x) { return a + x.s; }, 0);
+    var cell = function (l, v, s) { return "<div><span>" + l + "</span><b>" + v + "</b><small>" + s + "</small></div>"; };
+    return '<div class="card trk-tabs-card"><h3>Personal records</h3><div class="trk-rec">' +
+      cell("Best week", bw.s > 0.0005 ? "−" + bw.s.toFixed(3) + "s" : "–", bw.s > 0.0005 ? "Week of " + niceDate(bw.w) : "No PBs yet") +
+      cell("Most PBs in a week", mp.c || "–", mp.c ? "Week of " + niceDate(mp.w) : "") +
+      cell("Best month", bm && byM[bm] > 0.0005 ? "−" + byM[bm].toFixed(3) + "s" : "–", bm ? MONTHS[+bm.slice(5) - 1] + " " + bm.slice(0, 4) : "") +
+      cell("Longest PB streak", F.bestStreak ? F.bestStreak + (F.bestStreak === 1 ? " week" : " weeks") : "–", "Weeks in a row with a PB") +
+      cell("Career-high rank", "#" + p.high, niceDate(p.highDate) ? niceDate(p.highDate) : p.high === p.place ? "Right now" : "") +
+      cell("Total taken off", "−" + all.toFixed(3) + "s", "Since " + niceDate((timp[p.name.toLowerCase()] || [{ w: tweeks[0] }])[0].w)) +
+      "</div></div>";
+  }
+
+  // 7. Map trends (loaded per player from the "Map history" tab)
+  var MT = {};
+  function loadTrends(p) {
+    var box = $("trk-trends"); if (!box || !p) return;
+    if (MT[p.name]) { box.innerHTML = trendsHTML(p, MT[p.name]); return; }
+    var nm = p.name, q = nm.indexOf("'") < 0 ? "'" + nm + "'" : '"' + nm + '"';
+    var names = [nm].concat(Object.keys(ALIAS).filter(function (o) { return ALIAS[o] === nm; })), where = names.filter(function (x) { return x.indexOf("'") < 0 || x.indexOf('"') < 0; }).map(function (x) { return "B = " + (x.indexOf("'") < 0 ? "'" + x + "'" : '"' + x + '"'); }).join(" or ");
+    get(DATA + "&sheet=" + encodeURIComponent("Map history") + "&tq=" + encodeURIComponent("select * where " + where)).then(function (t) {
+      var rows = parseCSV(t); MT[nm] = header(rows, "week", "name") ? rows.slice(1) : [];
+      if (S.player === nm && S.ptab === "tracking") { var b2 = $("trk-trends"); if (b2) b2.innerHTML = trendsHTML(p, MT[nm]); }
+    }, function () { var b2 = $("trk-trends"); if (b2) b2.innerHTML = "<h3>Map trends</h3><p class=\"muted\">Couldn't load map history right now.</p>"; });
+  }
+  function trendsHTML(p, rows) {
+    var by = {};
+    rows.forEach(function (r) { var m = MAPS.indexOf(String(r[2]).trim()), t = parseFloat(r[3]), w = String(r[0]).trim(); if (m < 0 || isNaN(t) || !/^\d{4}-/.test(w)) return; (by[m] = by[m] || []).push({ w: w, t: t }); });
+    var cut3 = tcut(13) || "", list = Object.keys(by).map(function (m) {
+      var a = by[m].sort(function (x, y) { return x.w < y.w ? -1 : 1; }); m = +m;
+      var cur = p.t[m] != null ? p.t[m] : a[a.length - 1].t;
+      var before3 = a.filter(function (x) { return x.w < cut3; }).pop(), d3 = before3 ? before3.t - cur : 0;
+      return { m: m, a: a, cur: cur, first: a[0], d3: d3, all: a[0].t - cur, pbs: a.length - 1 };
+    }).sort(function (x, y) { return y.d3 - x.d3 || y.all - x.all; });
+    if (!list.length) return '<h3>Map trends</h3><p class="muted">Map history is still being collected. It goes back to 2024 once it finishes, and adds a new week every Monday.</p>';
+    var spark = function (a, cur) {
+      var pts = a.map(function (x) { return x.t; }); pts.push(cur);
+      var mn = Math.min.apply(null, pts), mx = Math.max.apply(null, pts), n = pts.length, w = 200, h = 38;
+      if (n < 2 || mx - mn < 1e-6) return '<svg viewBox="0 0 200 38" aria-hidden="true"><path d="M0 19H200"/></svg>';
+      var X = function (i) { return (i / (n - 1)) * (w - 6) + 3; }, Y = function (v) { return 4 + (v - mn) / (mx - mn) * (h - 8); }, d = "";
+      pts.forEach(function (v, i) { d += (i ? "H" + X(i).toFixed(1) + "V" : "M" + X(i).toFixed(1) + " ") + Y(v).toFixed(1); });
+      return '<svg viewBox="0 0 200 38" aria-hidden="true"><path d="' + d + '"/><circle cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(cur).toFixed(1) + '" r="3"/></svg>';
+    };
+    return '<h3>Map trends</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Your time on each map over time, most improved in the last 3 months first. Lower is faster.</p><div class="trk-tr">' +
+      list.map(function (x) {
+        return '<div class="t"><b>' + esc(MAPS[x.m]) + '</b><span class="d' + (x.d3 > 0.0005 ? "" : " z") + '">' + (x.d3 > 0.0005 ? "−" + x.d3.toFixed(3) + "s" : "no change") + '</span> <small style="display:inline">last 3 months</small>' + spark(x.a, x.cur) +
+          "<small>" + fmt(x.first.t) + " → " + fmt(x.cur) + " since " + niceDate(x.first.w) + " · " + x.pbs + (x.pbs === 1 ? " PB" : " PBs") + "</small></div>";
+      }).join("") + "</div>";
+  }
+
+  // 8. Share card (image for Discord etc.)
+  function shareCard() {
+    var T = S.trk; if (!T) return;
+    var W = 1200, H = 630, c = document.createElement("canvas"); c.width = W; c.height = H; var x = c.getContext("2d");
+    var g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, "#0c2a43"); g.addColorStop(1, "#1478c2"); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.fillStyle = "rgba(255,255,255,.06)"; x.beginPath(); x.arc(W - 120, 90, 260, 0, 7); x.fill();
+    var F = "system-ui, -apple-system, 'Segoe UI', Arial, sans-serif";
+    x.fillStyle = "#9fd0f5"; x.font = "700 26px " + F; x.fillText("OCEANIA LOLBEANS · TRACKING", 60, 74);
+    x.fillStyle = "#fff"; x.font = "800 68px " + F; x.fillText((T.country === "AUS" ? "🇦🇺 " : T.country === "NZ" ? "🇳🇿 " : "") + T.name, 60, 160);
+    x.font = "700 30px " + F; x.fillStyle = "#cfe6f7"; x.fillText("#" + T.place + " in Oceania  ·  " + T.total.toFixed(3) + "s total", 60, 210);
+    x.fillStyle = "rgba(255,255,255,.12)"; x.beginPath(); if (x.roundRect) x.roundRect(60, 245, W - 120, 84, 18); else x.rect(60, 245, W - 120, 84); x.fill();
+    x.fillStyle = "#fff"; x.font = "800 36px " + F; var dec = function (h) { var ta = document.createElement("textarea"); ta.innerHTML = String(h).replace(/<[^>]+>/g, ""); return ta.value; };
+    x.fillText(dec(T.big), 84, 300);
+    var tiles = [["PACE", T.my > 0.0005 ? "−" + T.my.toFixed(2) + "s/wk" : "0.00s/wk"], [T.defend ? "LEAD" : "GAP TO GOAL", Math.abs(T.gap).toFixed(2) + "s"], ["IN 12 WEEKS", "#" + T.p12], ["FORM", T.form.badge[0]]];
+    tiles.forEach(function (t, i) {
+      var tx = 60 + i * 275; x.fillStyle = "rgba(255,255,255,.1)"; x.beginPath(); if (x.roundRect) x.roundRect(tx, 360, 255, 130, 16); else x.rect(tx, 360, 255, 130); x.fill();
+      x.fillStyle = "#9fd0f5"; x.font = "700 20px " + F; x.fillText(t[0], tx + 22, 400); x.fillStyle = "#fff"; x.font = "800 40px " + F; x.fillText(t[1], tx + 22, 456);
+    });
+    x.fillStyle = "#cfe6f7"; x.font = "600 24px " + F; x.fillText("Goal: " + T.goal + (T.rival ? "   ·   Rival: " + T.rival : ""), 60, 545);
+    x.fillStyle = "#9fd0f5"; x.font = "600 22px " + F; x.fillText("goat-ninja-au.github.io/Oceania-Lolbeans-Official", 60, 590);
+    c.toBlob(function (blob) {
+      var url = URL.createObjectURL(blob), file = new File([blob], "tracking-" + T.name.replace(/[^\w-]+/g, "_") + ".png", { type: "image/png" });
+      var m = document.createElement("div"); m.className = "trk-modal"; m.setAttribute("role", "dialog"); m.setAttribute("aria-label", "Share your tracking");
+      m.innerHTML = '<div class="box"><h3>Share your tracking</h3><img alt="Tracking card for ' + esc(T.name) + '" src="' + url + '"><div class="row">' +
+        (navigator.canShare && navigator.canShare({ files: [file] }) ? '<button type="button" class="btn" data-sh="share">Share</button>' : "") +
+        (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write ? '<button type="button" class="btn" data-sh="copy">Copy image</button>' : "") +
+        '<a class="btn" download="' + esc(file.name) + '" href="' + url + '">Download</a><button type="button" class="btn" data-sh="close">Close</button></div></div>';
+      document.body.appendChild(m);
+      m.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-sh]"); if (e.target === m || (b && b.dataset.sh === "close")) { m.remove(); URL.revokeObjectURL(url); return; }
+        if (!b) return;
+        if (b.dataset.sh === "share") navigator.share({ files: [file], title: T.name + " · Oceania LOLBeans tracking" }).catch(function () {});
+        if (b.dataset.sh === "copy") navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]).then(function () { toast("Image copied. Paste it in Discord!"); }, function () { toast("Couldn't copy. Use Download instead."); });
+      });
+    }, "image/png");
+  }
   function trackingHTML(p) {
     if (!tweeks.length) return '<div class="card"><p class="muted">Tracking needs the time history, which is still loading. Try again in a minute.</p></div>';
     var G = pickGoal(p);
     if (!G) return '<div class="card"><p class="muted">No goal to track yet.</p></div>';
     var opts = goalsFor(p), isCustom = G.id.indexOf("p:") === 0;
     var sel = '<div class="trk-goal"><label for="goal">Goal</label><select class="gsel" id="goal">' + opts.map(function (o) { return '<option value="' + o.id + '"' + (o.id === G.id ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") +
-      '<optgroup label="Catch a player">' + players.filter(function (o) { return o.place < p.place && o.place >= Math.max(1, p.place - 40); }).map(function (o) { var id = "p:" + o.name; return '<option value="' + esc(id) + '"' + (id === G.id ? " selected" : "") + ">#" + o.place + " " + esc(o.name) + "</option>"; }).join("") + "</optgroup></select></div>";
+      '<optgroup label="Catch a player">' + players.filter(function (o) { return o.place < p.place && o.place >= Math.max(1, p.place - 40); }).map(function (o) { var id = "p:" + o.name; return '<option value="' + esc(id) + '"' + (id === G.id ? " selected" : "") + ">#" + o.place + " " + esc(o.name) + "</option>"; }).join("") + "</optgroup></select><button type=\"button\" class=\"btn trk-share\" id=\"trk-share\">📤 Share my tracking</button></div>";
     var my = paceOf(p.name), gp = G.pace, myL = timp[p.name.toLowerCase()] || [], tracked = myL.length >= 2;
     var wksTracked = myL.length ? tweeks.length - 1 - tweeks.indexOf(myL[0].w) : 0;
     var gap = G.defend ? G.who.total - p.total : p.total - G.who.total; // defend: your lead; otherwise: how far behind
@@ -892,7 +1125,14 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var pred = '<div class="card"><h3>Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their pace from the last ' + PACE_WEEKS + " weeks.</p><div class=\"trk-pred\">" +
       "<div><span>Now</span><b>#" + p.place + "</b></div>" + [4, 12, 26].map(function (w) { var r = predictRank(p, w), d = p.place - r; return "<div><span>In " + w + " weeks</span><b>#" + r + "</b><small>" + (d > 0 ? "↑ " + d : d < 0 ? "↓ " + (-d) : "no change") + "</small></div>"; }).join("") + "</div></div>";
 
-    return sel + status + chart + maps + pred + '<p class="muted" style="font-size:.8rem;margin-top:10px">Pace only counts PBs on maps you already had a time on. Filling in a missing map drops your total straight away but isn\'t counted as pace.</p>';
+    var F = formInfo(p), RV = rivalFor(p);
+    S.trk = { name: p.name, place: p.place, total: p.total, big: big, my: my, gap: gap, defend: !!G.defend, goal: G.label, who: G.who.name, p12: predictRank(p, 12), form: F, rival: RV ? RV.o.name : "", country: p.country };
+    return sel + status +
+      '<div class="trk-grid">' + formHTML(p, F) + rivalHTML(p, RV) + "</div>" +
+      chart + milestonesHTML(p) + maps + strengthsHTML(p) +
+      '<div class="card trk-tabs-card" id="trk-trends"><h3>Map trends</h3><p class="muted">Loading map history…</p></div>' +
+      '<div class="trk-grid">' + pred + likeYouHTML(p) + "</div>" + recordsHTML(p) +
+      '<p class="muted" style="font-size:.8rem;margin-top:10px">Pace only counts PBs on maps you already had a time on. Filling in a missing map drops your total straight away but isn\'t counted as pace.</p>';
   }
   function impCard(p) {
     var k = p.name.toLowerCase(), L = timp[k] || [];
@@ -1042,7 +1282,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     ["rankings", "records", "halloffame"].forEach(function (k) { var a = document.getElementById("nav-" + k); if (a) { if (k === navSec) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); } });
     syncUrl();
   }
-  function openPlayer(name, tab) { if (!byName[name]) return; S.player = name; S.ptab = tab || "overview"; S.sim = {}; S.vs = null; route(); window.scrollTo(0, 0); }
+  function openPlayer(name, tab) { if (!byName[name]) return; S.rival = null; if (S.goal && S.goal.indexOf("p:") === 0) S.goal = null; S.player = name; S.ptab = tab || "overview"; S.sim = {}; S.vs = null; route(); window.scrollTo(0, 0); }
 
   // ======================= RANKINGS LIST =======================
   var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1334,6 +1574,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     }
     $("pbody").innerHTML = (S.ptab === "overview" || S.ptab === "matchups" ? "" : title) + body;
     if (S.ptab === "target") updateSim();
+    if (S.ptab === "tracking") loadTrends(byName[S.player]);
     countUp($("v-profile"));
     animateGauge();
     requestAnimationFrame(function () { document.querySelectorAll(".ip-bar i").forEach(function (i) { i.style.width = i.dataset.w + "%"; }); });
@@ -1509,6 +1750,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var gm = t.closest("[data-gmode]"); if (gm) { S.gmode = gm.dataset.gmode; var gw = document.querySelector(".ip-gauge"); var p0 = byName[S.player]; if (gw && p0) { gw.querySelector("svg").outerHTML = gaugeSVG(p0, S.gmode); gw.querySelectorAll("[data-gmode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.gmode === S.gmode)); }); countUp(gw); animateGauge(); } return; }
     if (t.closest("#ye-more")) { S.yeOpen = !S.yeOpen; document.querySelectorAll(".ip-ye tbody tr").forEach(function (r, i) { if (i > 0) r.hidden = !S.yeOpen; }); $("ye-more").setAttribute("aria-expanded", String(!!S.yeOpen)); return; }
     if (t.closest("[data-sharex]")) { window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(S.player + " on the Oceania LOLBeans rankings") + "&url=" + encodeURIComponent(location.origin + urlFor()), "_blank", "noopener"); return; }
+    if (t.closest("#trk-share")) { shareCard(); return; }
     var ir = t.closest("[data-irange]"); if (ir) { S.irange = ir.dataset.irange; renderImproved(); return; }
     var ipl = t.closest(".imp-list [data-player]"); if (ipl) { openPlayer(ipl.dataset.player); return; }
     var pt = t.closest("[data-ptab]"); if (pt) { S.ptab = pt.dataset.ptab; renderProfile(); syncUrl(); if (S.ptab === "h2h" && $("p-vs")) $("p-vs").focus(); return; }
@@ -1522,7 +1764,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-player][tabindex]")) { e.preventDefault(); openPlayer(e.target.dataset.player); }
     if (e.key === "Enter" && e.target.id === "p-vs") { var hit = findPlayer(e.target.value); if (hit) { S.vs = hit.name; renderProfile(); syncUrl(); } }
   });
-  document.addEventListener("change", function (e) { if (e.target.id === "rsort") { S.rsort = e.target.value; renderRecords(); return; } if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } if (e.target.id === "trange") { S.trange = e.target.value; renderProfile(); } if (e.target.id === "goal") { S.goal = e.target.value; renderProfile(); } });
+  document.addEventListener("change", function (e) { if (e.target.id === "rsort") { S.rsort = e.target.value; renderRecords(); return; } if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } if (e.target.id === "trange") { S.trange = e.target.value; renderProfile(); } if (e.target.id === "goal") { S.goal = e.target.value; renderProfile(); } if (e.target.id === "rival") { S.rival = e.target.value; renderProfile(); } });
   document.addEventListener("input", function (e) {
     if (e.target.id === "p-vs") { var v = e.target.value.trim(); if (byName[v]) { S.vs = v; renderProfile(); syncUrl(); } return; }
     if (!e.target.dataset || e.target.dataset.sim == null) return;
