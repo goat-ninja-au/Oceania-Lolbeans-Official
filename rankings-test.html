@@ -835,13 +835,16 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       }).join("") : '<p class="muted">Nobody improved a time in this period.</p>') + "</div>";
   }
   // ======================= TRACKING =======================
-  var PACE_WEEKS = 26, PACE_K = 0.3, GRAPH_WEEKS = 8; // expected pace = 30% of your 26-week average: this matched what really happened best when tested on past weeks
+  var PACE_WEEKS = 26, PACE_K = 0.3, GRAPH_WEEKS = 8; // expected pace = 20-40% of your 26-week average depending on how steadily you PB (see kFor); tested on past weeks
   function paceOf(name) {
     var k = String(name).toLowerCase(), L = timp[k] || [];
     if (L.length < 2 || !tweeks.length) return 0;
     var span = Math.min(PACE_WEEKS, tweeks.length - 1 - tweeks.indexOf(L[0].w));
-    return span >= 1 ? PACE_K * impSum(k, tcut(PACE_WEEKS)).s / Math.max(span, 8) : 0; // at least 8 weeks, so one big week isn't treated as a trend
+    return span >= 1 ? kFor(pbWeeks(k, tcut(PACE_WEEKS))) * impSum(k, tcut(PACE_WEEKS)).s / Math.max(span, 8) : 0; // at least 8 weeks, so one big week isn't treated as a trend
   }
+  // how much of your raw pace carries on, by how steadily you PB (tested on past weeks: steady grinders keep more of it)
+  function kFor(n) { return n >= 8 ? 0.4 : n >= 4 ? 0.3 : 0.2; }
+  function pbWeeks(k, cut, upto) { var n = 0; (timp[k] || []).forEach(function (e, i) { if (i && e.w >= cut && (!upto || e.w <= upto) && e.s > 0.0005) n++; }); return n; }
   function tv(p, m) { return p.t[m] == null ? MISSING : p.t[m]; }
   function goalsFor(p) {
     var g = [];
@@ -979,7 +982,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // ---- Chances: simulate the next 52 weeks many times, each player drawing PB weeks from their own recent history ----
   var SIM = null, SIM_N = 1000, SIM_W = 52, TIERS = [1, 3, 5, 10, 25, 50, 100];
   function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  function samplesOf(p) { var W = weeklyOf(p).slice(-PACE_WEEKS).map(function (x) { return x.s * PACE_K; }); while (W.length < 8) W.push(0); return W; }
+  function samplesOf(p) { var kk = kFor(pbWeeks(p.name.toLowerCase(), tcut(PACE_WEEKS))), W = weeklyOf(p).slice(-PACE_WEEKS).map(function (x) { return x.s * kk; }); while (W.length < 8) W.push(0); return W; }
   function floorT() { return OR && OR.total ? OR.total : Math.min.apply(null, players.map(function (p) { return p.total; })) * 0.95; }
   function stepT(cur, start, g, fl) { if (!(g > 0)) return cur; var room = (cur - fl) / Math.max(start - fl, 1); return cur - g * Math.max(0, Math.min(1, room)); } // gains shrink as you get closer to record pace
   function runSim() {
@@ -1118,8 +1121,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     players.forEach(function (p) {
       var k = p.name.toLowerCase(); if (hw[k] == null) return;
       var L = timp[k] || [], since = 0, before = 0, st = L.length ? L[0].w : W0;
-      L.forEach(function (e, i) { if (!i) return; if (e.w > W0) since += e.s; else if (e.w > Wb) before += e.s; });
-      var span = Math.min(PACE_WEEKS, tweeks.indexOf(W0) - tweeks.indexOf(st)), pace = span >= 1 ? PACE_K * before / Math.max(span, 8) : 0;
+      var nb = 0; L.forEach(function (e, i) { if (!i) return; if (e.w > W0) since += e.s; else if (e.w > Wb) { before += e.s; if (e.s > 0.0005) nb++; } });
+      var span = Math.min(PACE_WEEKS, tweeks.indexOf(W0) - tweeks.indexOf(st)), pace = span >= 1 ? kFor(nb) * before / Math.max(span, 8) : 0;
       var then = p.total + since; rows.push({ then: then, pred: then - pace * h, now: p.total });
     });
     if (rows.length < 20) return BT;
@@ -1135,6 +1138,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       (b ? "<p>We tested the predictions on the past: starting from " + niceDate(b.from) + " and predicting " + b.h + " weeks ahead for " + b.n + " players, the predicted rank was within <b>3 places for " + b.pred.w3 + "%</b> and within <b>10 places for " + b.pred.w10 + "%</b> of players (typical miss: " + b.pred.med + (b.pred.med === 1 ? " place" : " places") + "). Just guessing nobody moves got " + b.naive.w3 + "% within 3 places.</p>" : "") +
       "<ul><li>Past numbers (PBs, pace, map trends) come straight from saved versions of the rankings sheet each Monday, so they're as accurate as the sheet was.</li>" +
       "<li>For players who are still setting PBs, predictions also expect them to grab the time they have on maps below their level, about 5% of what's left each week (roughly what active players actually did in the history). The level comes from players around the world with a similar total.</li>" +
+      "<li>Expected pace keeps 40% of your raw 6-month pace if you PB most weeks, 30% if you PB on and off, and 20% if your PBs come in rare bursts. Those numbers matched what really happened when tested on past weeks.</li>" +
       "<li>Predictions and chances assume you keep improving like you have recently. A new strat, a break or a new map can change things fast.</li>" +
       "<li>Filling in a missing map (60s) drops your total straight away but isn't counted as pace.</li></ul></div>";
   }
