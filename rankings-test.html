@@ -812,7 +812,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     Object.keys(timp).forEach(function (k) { timp[k].sort(function (a, b) { return a.w < b.w ? -1 : 1; }); });
   }
   var IRANGES = [["1w", "Last week", 1], ["4w", "Last 4 weeks", 4], ["3m", "Last 3 months", 13], ["1y", "Last 12 months", 52], ["all", "All time", 0]];
-  function tcut(n) { return !n || !tweeks.length ? "" : tweeks[Math.max(tweeks.length - n, 0)]; }
+  function tcut(n) { if (!n || !tweeks.length) return ""; var d = new Date(dnum(tweeks[tweeks.length - 1]) - (n - 1) * 6048e5); return ymd(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); } // n calendar weeks back from the latest week
   // seconds taken off in the weeks from `cut` onwards (the first tracked week only marks the start, so it never counts)
   function impSum(k, cut) { var s = 0, c = 0, L = timp[k] || []; L.forEach(function (e, i) { if (i && e.w >= cut) { s += e.s; c += e.c; } }); return { s: s, c: c }; }
   function secs(v) { return (v >= 0.0005 ? "−" : "") + v.toFixed(3) + "s"; }
@@ -1345,7 +1345,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var sel = '<div class="trk-goal"><label for="goal">Goal</label><select class="gsel" id="goal">' + opts.map(function (o) { return '<option value="' + o.id + '"' + (o.id === G.id ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") +
       '<optgroup label="Catch a player">' + players.filter(function (o) { return o.place < p.place && o.place >= Math.max(1, p.place - 40); }).map(function (o) { var id = "p:" + o.name; return '<option value="' + esc(id) + '"' + (id === G.id ? " selected" : "") + ">#" + o.place + " " + esc(o.name) + "</option>"; }).join("") + "</optgroup></select><button type=\"button\" class=\"btn trk-share\" id=\"trk-share\">📤 Share my tracking</button></div>";
     var my = weeklyGain(p), myL = timp[p.name.toLowerCase()] || [], tracked = myL.length >= 2;
-    var aroundG = G.n ? players.filter(function (o) { return Math.abs(o.place - G.n) <= 2 && o !== p; }) : [G.who];
+    var aroundG = G.n && G.n > 3 ? players.filter(function (o) { return Math.abs(o.place - G.n) <= 2 && o !== p; }) : [G.who];
     var gp = aroundG.reduce(function (a, o) { return a + weeklyGain(o); }, 0) / Math.max(aroundG.length, 1);
     var wksTracked = myL.length ? tweeks.length - 1 - tweeks.indexOf(myL[0].w) : 0;
     var gap = G.defend ? G.who.total - p.total : p.total - G.who.total; // defend: your lead; otherwise: how far behind
