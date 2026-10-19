@@ -279,9 +279,11 @@ function timesOf(r) { return MAPS.map((_, m) => { const n = parseFloat(r[3 + m])
 async function loadRankings() {
   try {
     S.players = []; const rows = parseCSV(await fetch(RANK_CSV + "&n=" + Date.now()).then(r => r.text()));
-    rows.forEach(r => { const name = String(r[2] || "").trim(), place = String(r[1] || "").trim();
+    let started = false;
+    for (const r of rows) { const name = String(r[2] || "").trim(), place = String(r[1] || "").trim();
       if (/oceania record times/i.test(name)) S.OR = timesOf(r); else if (/world record times/i.test(name)) S.WR = timesOf(r);
-      else if (/^\d+$/.test(place) && name) S.players.push({ place: +place, name, t: timesOf(r) }); });
+      else if (/^\d+$/.test(place) && name) { started = true; S.players.push({ place: +place, name, t: timesOf(r) }); }
+      else if (started && !name) break; }
     S.players.forEach(p => { p.total = p.t.reduce((a, v) => a + (v == null ? 60 : v), 0); });
   } catch (e) {}
 }

@@ -443,12 +443,14 @@ function timesOf(r) { return MAPS.map((_, m) => { const n = parseFloat(r[3 + m])
 async function loadRankings() {
   try {
     const rows = parseCSV(await fetch(RANK_CSV).then(r => r.text()));
-    rows.forEach(r => {
+    let started = false;
+    for (const r of rows) {
       const name = String(r[2] || "").trim(), place = String(r[1] || "").trim();
       if (/oceania record times/i.test(name)) S.OR = timesOf(r);
       else if (/world record times/i.test(name)) S.WR = timesOf(r);
-      else if (/^\d+$/.test(place) && name) S.players.push({ place: +place, name, country: String(r[0] || "").trim().toLowerCase(), t: timesOf(r) });
-    });
+      else if (/^\d+$/.test(place) && name) { started = true; S.players.push({ place: +place, name, country: String(r[0] || "").trim().toLowerCase(), t: timesOf(r) }); }
+      else if (started && !name) break; // the tables under the main list aren't ranked players
+    }
     S.players.forEach(p => { p.total = p.t.reduce((a, v) => a + (v == null ? 60 : v), 0); });
     $("st-players").textContent = S.players.length;
     $("players").innerHTML = S.players.map(p => '<option value="' + esc(p.name) + '">#' + p.place + "</option>").join("");
