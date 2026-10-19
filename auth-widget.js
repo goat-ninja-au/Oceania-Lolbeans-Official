@@ -14,6 +14,8 @@ const RANKINGS_CSV = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpj
 const PHOTOS_CSV = "https://docs.google.com/spreadsheets/d/12D4wvMVKNqAoot5Ytk2ttgE-CZPNSUCPfktiAiGIE6w/gviz/tq?tqx=out:csv&sheet=Photos";
 const BAD = ["fuck", "shit", "bitch", "cunt", "dick", "pussy", "nigger", "nigga", "faggot", "fag", "retard", "slut", "whore", "porn", "sex"];
 const ON_COMMUNITY = /community\.html$/.test(location.pathname);
+const ADMINS = ["shinobilolbean@gmail.com"];
+const APPS_API = "https://script.google.com/macros/s/AKfycbzZiPoG41opXscV4iuSYMgJPOcuP0NPYDiAUl3Kqpj0Jd3IWBQN2tGyLTPOXStdCYebQQ/exec";
 
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const COLORS = ["#1478c2", "#2f9e08", "#7a5cf0", "#d99a00", "#d9505c", "#0f9aa8", "#c27a3a", "#4b5bdc", "#b0479a"];
@@ -47,6 +49,8 @@ nav a.nav-app { display: none; }
 .olb-menu .who b { display: block; font-size: .95rem; }
 .olb-menu a, .olb-menu button { text-align: left; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: inherit; font: inherit; font-size: .92rem; font-weight: 600; background: none; border: 0; cursor: pointer; }
 .olb-menu a:hover, .olb-menu button:hover { background: var(--soft, rgba(20,120,194,.08)); }
+.olb-menu .olb-badge { display: inline-block; min-width: 20px; padding: 0 6px; margin-left: 6px; border-radius: 999px; background: #d9505c; color: #fff; font-size: .75rem; text-align: center; line-height: 20px; }
+.olb-acct .chip { position: relative; } .olb-acct .chip .olb-dot { position: absolute; top: 2px; left: 26px; width: 11px; height: 11px; border-radius: 50%; background: #d9505c; border: 2px solid var(--bg, #c3e1f4); }
 .olb-dlg-wrap { position: fixed; inset: 0; z-index: 90; background: rgba(7,17,28,.55); display: grid; place-items: center; padding: 16px; }
 .olb-dlg { position: relative; width: min(400px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; background: var(--panel, #fff); color: var(--text, #0c2a43); border: 1px solid var(--line, #98c5e2); border-radius: 16px; padding: 24px; display: grid; gap: 12px; font-family: inherit; box-shadow: 0 24px 60px rgba(7,17,28,.35); }
 .olb-dlg h2 { margin: 0; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
@@ -137,6 +141,7 @@ async function init(box) {
     try { const s = await L.getDoc(L.doc(db, "users", user.uid)); profile = s.exists() ? s.data() : null; } catch (e) {}
     if (!profile) { drawSignedOut(true); if (dlgOpen() || sessionStorage.getItem("olb-setup")) openDlg(stepSetup); return; }
     loadPhotos().then(() => drawChip(chipData()));
+    checkApps();
     drawChip(chipData()); save(chipData());
     if (dlgOpen()) stepDone();
   });
@@ -154,7 +159,17 @@ async function init(box) {
       : '<button class="ab login" type="button" data-a="login">Log in</button><button class="ab primary" type="button" data-a="signup">Sign up</button>';
   }
   function drawChip(d) {
-    box.innerHTML = '<button class="chip" type="button" data-a="menu" aria-haspopup="true" aria-expanded="false" title="Your account">' + av(d) + '<span class="n">' + esc(d.name) + '</span><span class="car">▾</span></button>';
+    box.innerHTML = '<button class="chip" type="button" data-a="menu" aria-haspopup="true" aria-expanded="false" title="' + (pendingApps ? pendingApps + " ranking application" + (pendingApps === 1 ? "" : "s") + " waiting" : "Your account") + '">' + av(d) + (pendingApps ? '<span class="olb-dot"></span>' : "") + '<span class="n">' + esc(d.name) + '</span><span class="car">▾</span></button>';
+  }
+  // admins: how many ranking applications are waiting
+  var pendingApps = 0; // var: drawChip can run (first paint) before this line
+  function isAdmin() { return user && user.emailVerified && ADMINS.indexOf(String(user.email || "").toLowerCase()) >= 0; }
+  async function checkApps() {
+    if (!isAdmin()) return;
+    try {
+      const r = await fetch(APPS_API, { method: "POST", body: JSON.stringify({ action: "count", idToken: await user.getIdToken() }) }).then(x => x.json());
+      if (r && r.ok) { pendingApps = r.pending || 0; if (profile) drawChip(chipData()); }
+    } catch (e) {}
   }
   function openMenu() {
     const old = box.querySelector(".olb-menu"); if (old) { old.remove(); box.querySelector(".chip").setAttribute("aria-expanded", "false"); return; }
@@ -165,6 +180,7 @@ async function init(box) {
       '<a href="app.html" class="m-app" role="menuitem">📱 Get the app</a>' +
       (d.player ? '<a href="rankings.html?player=' + encodeURIComponent(d.player) + '" role="menuitem">🏆 My ranking</a>' : "") +
       '<a href="community.html#profile" role="menuitem">✏️ Edit profile</a>' +
+      (isAdmin() ? '<a href="applications.html" role="menuitem">📝 Applications' + (pendingApps ? '<b class="olb-badge">' + pendingApps + "</b>" : "") + "</a>" : "") +
       '<button type="button" data-a="signout" role="menuitem">↪ Sign out</button>';
     box.appendChild(m); box.querySelector(".chip").setAttribute("aria-expanded", "true");
   }

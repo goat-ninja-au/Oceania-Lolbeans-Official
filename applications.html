@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ranking applications · Admin</title>
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0c2a43">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Oceania LOLBeans">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: clean light-blue site matching the recoloured Academy pages. Sticky header, left-aligned hero, simple stacked sections in a 1040px column. */
+:root {
+  --bg: #c3e1f4;
+  --panel: #ffffff;
+  --panel-2: #acd3ec;
+  --line: #98c5e2;
+  --text: #0c2a43;
+  --muted: #3a5a73;
+  --blue: #1478c2;
+  --blue-hover: #0f62a0;
+  --green: #3fb80a;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; line-height: 1.15; text-wrap: balance; font-weight: 800; }
+p { margin: 0; max-width: 62ch; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+
+/* Header */
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: rgba(195,225,244,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+header .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding-block: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; font-size: 1.05rem; }
+.brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.brand .mark { width: 40px; height: 40px; border-radius: 8px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .9rem; }
+nav { display: flex; flex-wrap: wrap; gap: 2px; }
+nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: .95rem; padding: 8px 12px; border-radius: 8px; }
+nav a:hover { color: var(--text); background: var(--panel-2); }
+
+/* Hero */
+.hero { padding-block: 88px 72px; border-bottom: 1px solid var(--line); background: radial-gradient(80% 120% at 100% 0%, rgba(20,120,194,.18), transparent 60%); }
+.hero .wrap { display: grid; gap: 22px; }
+.eyebrow { color: var(--blue); font-weight: 700; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; }
+.hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); max-width: 16ch; }
+.hero p { font-size: 1.15rem; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; font: 700 1rem var(--font); padding: 12px 20px; border-radius: 8px; text-decoration: none; border: 1px solid transparent; cursor: pointer; }
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: var(--blue-hover); }
+.btn-outline { border-color: var(--line); color: var(--text); background: transparent; }
+.btn-outline:hover { background: var(--panel-2); }
+
+/* Sections */
+section.block { padding-block: 72px; border-bottom: 1px solid var(--line); }
+.sec-head { display: grid; gap: 10px; margin-bottom: 32px; }
+.sec-head h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); }
+.sec-head p { color: var(--muted); }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 2px 8px rgba(12,42,67,.06); padding: 22px; display: grid; gap: 8px; align-content: start; }
+.card h3 { font-size: 1.1rem; }
+.card p { color: var(--muted); }
+
+.feature { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: clamp(22px, 4vw, 36px); display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+.feature .text { display: grid; gap: 10px; min-width: 0; }
+.feature h2 { font-size: clamp(1.5rem, 3.6vw, 2rem); }
+.feature p { color: var(--muted); }
+.feature.academy { border-left: 4px solid var(--green); }
+.feature.academy .eyebrow { color: var(--green); }
+.btn-green { background: var(--green); color: #0b1a02; }
+.btn-green:hover { filter: brightness(.92); }
+.note { font-size: .92rem; }
+.soon { font-weight: 800; padding: 10px 16px; border-radius: 8px; background: var(--panel-2); color: var(--muted); white-space: nowrap; }
+@media (max-width: 640px) { .feature { grid-template-columns: 1fr; } .feature .btn { justify-self: start; } }
+
+/* Join */
+.join-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; max-width: 520px; }
+.join-row .label { color: var(--muted); font-weight: 600; font-size: .9rem; }
+.join-row .name { font-weight: 800; font-size: 1.15rem; flex: 1; min-width: 0; overflow-wrap: anywhere; user-select: all; }
+.copy { font: 700 .9rem var(--font); padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); cursor: pointer; }
+.copy:hover { border-color: var(--blue); }
+
+footer .wrap { padding-block: 28px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .9rem; }
+
+/* Dark mode (toggle in the header, shared across the site) */
+:root[data-mode="dark"] { --bg: #0d1a26; --panel: #142636; --panel-2: #1c3346; --line: #27445c; --text: #e6f1f9; --muted: #9cb6c9; --blue: #4aa8f0; --blue-hover: #6bb9f5; color-scheme: dark; }
+header { background: color-mix(in srgb, var(--bg) 92%, transparent) !important; }
+.mode { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 1.05rem; cursor: pointer; }
+.head-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+nav a[aria-current] { color: var(--text); background: var(--panel); }
+
+/* Join page */
+.jp { padding-block: 48px 72px; display: grid; gap: 28px; }
+.dcard { background: #2b2d31; color: #f2f3f5; border-radius: 18px; overflow: hidden; max-width: 560px; box-shadow: 0 14px 40px rgba(12,42,67,.18); }
+.dcard .ban { height: 96px; background: linear-gradient(180deg, #3d8fe0, #8ed3f7); }
+.dcard .in { padding: 0 24px 24px; display: grid; gap: 10px; }
+.dcard .icon { width: 104px; height: 104px; border-radius: 26px; border: 6px solid #2b2d31; margin-top: -54px; background: #1e1f22; overflow: hidden; }
+.dcard .icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dcard h1 { font-size: clamp(1.5rem, 4.5vw, 1.9rem); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dcard .tag { font-size: .8rem; font-weight: 800; background: #3f4147; border-radius: 6px; padding: 2px 8px; color: #dbdee1; }
+.dcard .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: #b5bac1; font-size: .98rem; }
+.dcard .meta i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #80848e; margin-right: 6px; }
+.dcard .meta i.on { background: #23a55a; }
+.dcard p { color: #dbdee1; }
+.jp-head { display: grid; gap: 10px; }
+.jp-head h2 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); }
+.jp-head p { color: var(--muted); }
+.steps { display: grid; gap: 14px; counter-reset: s; max-width: 760px; padding: 0; margin: 0; list-style: none; }
+.steps li { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px 18px 66px; position: relative; display: grid; gap: 8px; }
+.steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 18px; top: 18px; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; }
+.steps h3 { font-size: 1.1rem; }
+.steps p { color: var(--muted); }
+.who { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.who .av { width: 42px; height: 42px; border-radius: 50%; background: #5865f2; color: #fff; display: grid; place-items: center; font-weight: 800; }
+.who b { display: block; font-size: 1.05rem; } .who small { color: var(--muted); font-size: .88rem; }
+.who .grow { flex: 1 1 150px; min-width: 0; }
+@media (max-width: 480px) { .steps li { padding-left: 58px; } .steps li::before { left: 14px; } .who .copy { width: 100%; } }
+.copy { font: 700 .9rem var(--font); padding: 9px 16px; border-radius: 8px; border: 0; background: #5865f2; color: #fff; cursor: pointer; }
+.copy:hover { filter: brightness(1.08); }
+
+/* ☰ menu on phones (shared across pages) */
+.menu-btn { display: none; color: var(--text); cursor: pointer; }
+/* top bar hides when you scroll down, comes back when you scroll up */
+.olb-top { transition: transform .25s ease; will-change: transform; }
+html.olb-hidden .olb-top { transform: translateY(calc(-100% - env(safe-area-inset-top, 0px) - 2px)); }
+html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
+.sim-sum { transition: top .25s ease; }
+@media (prefers-reduced-motion: reduce) { .olb-top, .sim-sum { transition: none; } }
+@media (max-width: 760px) {
+  .menu-btn { display: inline-grid; place-items: center; font-size: 1.2rem; }
+  .olb-top .wrap { flex-wrap: nowrap !important; gap: 8px !important; }
+  .olb-top .brand { flex: 1 1 0; min-width: 0; font-size: .95rem; line-height: 1.2; gap: 10px; margin-right: 0; }
+  .olb-top .head-right { flex-wrap: nowrap; }
+  .olb-top nav[aria-label="Main"] { display: none !important; position: absolute; left: 0; right: 0; top: 100%; z-index: 40; flex-direction: column; flex-wrap: nowrap; gap: 0; padding: 4px max(16px, env(safe-area-inset-left, 0px)) 12px; background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(7,17,28,.18); max-height: calc(100vh - 70px); overflow-y: auto; }
+  .olb-top.open nav[aria-label="Main"] { display: flex !important; }
+  .olb-top nav[aria-label="Main"] a { padding: 12px; border-radius: 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
+  .olb-top nav[aria-label="Main"] a:last-child { border-bottom: 0; }
+}
+
+/* ---------- Admin: applications ---------- */
+.adm { padding-bottom: 72px; }
+.adm-hero { color: #fff; padding-block: 44px 40px; background: radial-gradient(70% 140% at 90% 0%, rgba(74,168,240,.5), transparent 60%), linear-gradient(135deg, #0c2a43, #1478c2); margin-bottom: 20px; }
+.adm-hero .wrap { display: grid; gap: 8px; } .adm-hero .eyebrow { color: #9fd0f5; } .adm-hero h1 { font-size: clamp(1.9rem, 5vw, 2.8rem); } .adm-hero p { color: #cfe6f7; }
+.adm-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
+.adm-tabs button { font: inherit; font-weight: 700; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+.adm-tabs button[aria-selected="true"] { background: var(--blue); border-color: var(--blue); color: #fff; }
+.adm-tabs button b { background: rgba(0,0,0,.12); border-radius: 999px; padding: 0 8px; margin-left: 4px; }
+.adm-tabs .adm-refresh { margin-left: auto; }
+.adm-list { display: grid; gap: 16px; }
+.app { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px; box-shadow: 0 14px 34px rgba(12,42,67,.08); display: grid; gap: 14px; }
+.app-top { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.app-top .who { flex: 1; min-width: 200px; } .app-top .who b { font-size: 1.25rem; } .app-top .who small { display: block; color: var(--muted); }
+.tag { display: inline-block; font-size: .75rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: var(--panel-2); margin-left: 6px; vertical-align: middle; }
+.tag.new { background: color-mix(in srgb, var(--blue) 18%, var(--panel)); color: var(--blue); } .tag.update { background: color-mix(in srgb, #2a9d5c 18%, var(--panel)); color: #2a9d5c; }
+.app-rank { text-align: center; } .app-rank small { display: block; color: var(--muted); font-size: .75rem; font-weight: 700; text-transform: uppercase; } .app-rank b { font-size: 2rem; line-height: 1; }
+.app-flags { display: flex; flex-wrap: wrap; gap: 6px; } .flag { font-size: .8rem; font-weight: 700; padding: 4px 10px; border-radius: 10px; background: var(--bg); } .flag.warn { background: color-mix(in srgb, #e0a526 20%, var(--panel)); } .flag.bad { background: color-mix(in srgb, #d9505c 20%, var(--panel)); }
+.app details summary { cursor: pointer; font-weight: 700; color: var(--blue); }
+.app-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 2px 18px; margin-top: 10px; font-size: .88rem; }
+.app-times div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; border-bottom: 1px solid var(--line); padding: 4px 0; }
+.app-times b { font-family: ui-monospace, Menlo, Consolas, monospace; } .app-times small { color: var(--muted); font-family: ui-monospace, Menlo, Consolas, monospace; }
+.app-times .pb b { color: #2a9d5c; } .app-times .or b { color: #c68a00; } .app-times .wr b, .app-times .jump b { color: #d9505c; } .app-times .miss b { color: var(--muted); font-weight: 500; }
+.app-proof img { max-width: 100%; max-height: 420px; border-radius: 12px; display: block; margin-top: 10px; cursor: zoom-in; }
+.app-act { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.app-act textarea { flex: 1 1 260px; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; min-height: 42px; }
+.btn-ok { background: #2a9d5c; color: #fff; } .btn-ok:hover { filter: brightness(1.08); } .btn-no { background: transparent; border-color: #d9505c; color: #d9505c; }
+.app-res { font-weight: 700; padding: 10px 14px; border-radius: 12px; background: var(--bg); } .app-res.good { background: color-mix(in srgb, #2a9d5c 16%, var(--panel)); } .app-res.err { background: color-mix(in srgb, #d9505c 16%, var(--panel)); }
+.adm-empty { text-align: center; padding: 50px 20px; color: var(--muted); background: var(--panel); border-radius: 20px; border: 1px dashed var(--line); }
+
+</style>
+</head>
+<body style="margin:0">
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="logo.png" alt="" onerror="var s=document.createElement('span');s.className='mark';s.textContent='OL';this.replaceWith(s)">Oceania LOLBeans Official</a>
+    <div class="head-right">
+    <nav aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="rankings.html" id="nav-rankings">Rankings</a>
+      <a href="rankings.html?s=records" id="nav-records">Records</a>
+      <a href="rankings.html?s=fame" id="nav-halloffame">Hall of Fame</a>
+      <a href="news.html">News</a>
+      <a href="academy.html">Academy</a>
+      <a href="index.html#tournaments">Tournaments</a>
+      <a href="join.html">Join</a>
+      <a href="community.html">Community</a>
+      <a href="app.html" class="nav-app">📱 Get the app</a>
+    </nav>
+    <button class="mode menu-btn" type="button" id="menu" aria-label="Open menu" aria-expanded="false">☰</button>
+    <button class="mode" type="button" id="mode" aria-label="Switch to dark mode" title="Dark mode">☾</button>
+    </div>
+  </div>
+</header>
+
+<main class="adm">
+  <section class="adm-hero"><div class="wrap">
+    <span class="eyebrow">Admin</span>
+    <h1>📝 Ranking applications</h1>
+    <p id="adm-sub">Checking your admin account…</p>
+  </div></section>
+  <div class="wrap">
+    <div class="adm-tabs" role="tablist" id="tabs" hidden>
+      <button role="tab" data-f="pending" aria-selected="true">⏳ Waiting <b id="n-pending">0</b></button>
+      <button role="tab" data-f="approved" aria-selected="false">✅ Approved <b id="n-approved">0</b></button>
+      <button role="tab" data-f="declined" aria-selected="false">❌ Declined <b id="n-declined">0</b></button>
+      <button type="button" class="adm-refresh" id="refresh" title="Refresh">↻ Refresh</button>
+    </div>
+    <div id="list" class="adm-list"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Oceania LOLBeans Official</span>
+    <span>A fan community, not affiliated with the LOLBeans developers.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var b = document.getElementById("mode");
+  function setMode(dark) {
+    document.documentElement.setAttribute("data-mode", dark ? "dark" : "light");
+    b.textContent = dark ? "☀" : "☾"; b.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+    try { localStorage.setItem("olb-mode", dark ? "dark" : "light"); } catch (e) {}
+  }
+  b.addEventListener("click", function () { setMode(document.documentElement.getAttribute("data-mode") !== "dark"); });
+  try { if (localStorage.getItem("olb-mode") === "dark") setMode(true); } catch (e) {}
+})();
+</script>
+<script>
+// ☰ menu on phones
+(function () {
+  var mode = document.getElementById("mode"), btn = document.getElementById("menu");
+  if (!mode || !btn) return;
+  var top = mode.closest("header"); top.classList.add("olb-top");
+  function set(o) { top.classList.toggle("open", o); btn.setAttribute("aria-expanded", String(o)); btn.setAttribute("aria-label", o ? "Close menu" : "Open menu"); btn.textContent = o ? "✕" : "☰"; }
+  btn.addEventListener("click", function (e) { e.stopPropagation(); set(!top.classList.contains("open")); });
+  document.addEventListener("click", function (e) { if (top.classList.contains("open") && (!top.contains(e.target) || e.target.closest("nav a"))) set(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") set(false); });
+  // hide the top bar while scrolling down, show it again when scrolling up
+  var lastY = window.scrollY, root = document.documentElement, ticking = false;
+  function onScroll() {
+    var y = window.scrollY, dy = y - lastY;
+    if (top.classList.contains("open") || y < top.offsetHeight + 20) root.classList.remove("olb-hidden");
+    else if (dy > 6) root.classList.add("olb-hidden");
+    else if (dy < -6) root.classList.remove("olb-hidden");
+    if (Math.abs(dy) > 6 || y < 20) lastY = y;
+    ticking = false;
+  }
+  window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  top.addEventListener("focusin", function () { root.classList.remove("olb-hidden"); });
+})();
+</script>
+<script type="module">
+const API = "https://script.google.com/macros/s/AKfycbzZiPoG41opXscV4iuSYMgJPOcuP0NPYDiAUl3Kqpj0Jd3IWBQN2tGyLTPOXStdCYebQQ/exec";
+const RANK_CSV = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
+const FIREBASE = { apiKey: "AIzaSyBNKv8QM7kR4Y_yA0djMPo87y7fqw2jseA", authDomain: "oceania-lolbeans.firebaseapp.com", databaseURL: "https://oceania-lolbeans-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "oceania-lolbeans", appId: "1:186827295273:web:530769127fde65c829ea38" };
+const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
+const MAPS = ["Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup", "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze", "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light", "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash", "Tricky Traps", "Tumble Town", "UFO Attack"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = v => v == null ? "–" : (+v).toFixed(3);
+const S = { user: null, apps: [], f: "pending", players: [], OR: null, WR: null };
+
+function parseCSV(t) { const rows = []; let row = [], f = "", q = false; for (let i = 0; i < t.length; i++) { const c = t[i]; if (q) { if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; } else if (c === '"') q = true; else if (c === ",") { row.push(f); f = ""; } else if (c === "\n") { row.push(f); rows.push(row); row = []; f = ""; } else if (c !== "\r") f += c; } if (f || row.length) { row.push(f); rows.push(row); } return rows; }
+function timesOf(r) { return MAPS.map((_, m) => { const n = parseFloat(r[3 + m]); return isFinite(n) && n > 0 && n < 60 ? n : null; }); }
+async function loadRankings() {
+  try {
+    S.players = []; const rows = parseCSV(await fetch(RANK_CSV + "&n=" + Date.now()).then(r => r.text()));
+    rows.forEach(r => { const name = String(r[2] || "").trim(), place = String(r[1] || "").trim();
+      if (/oceania record times/i.test(name)) S.OR = timesOf(r); else if (/world record times/i.test(name)) S.WR = timesOf(r);
+      else if (/^\d+$/.test(place) && name) S.players.push({ place: +place, name, t: timesOf(r) }); });
+    S.players.forEach(p => { p.total = p.t.reduce((a, v) => a + (v == null ? 60 : v), 0); });
+  } catch (e) {}
+}
+async function api(body) { body.idToken = await S.user.getIdToken(); const r = await fetch(API, { method: "POST", body: JSON.stringify(body) }); return r.json(); }
+
+function preview(a) {
+  const cur = a.kind === "update" ? S.players.find(p => p.name.toLowerCase() === String(a.current || "").toLowerCase()) : S.players.find(p => p.name.toLowerCase() === a.name.toLowerCase());
+  const full = MAPS.map((_, m) => { const v = a.times[m]; if (a.kind === "update" && cur) return v != null && (cur.t[m] == null || v < cur.t[m]) ? v : cur.t[m]; return v; });
+  const total = full.reduce((x, v) => x + (v == null ? 60 : v), 0);
+  const rank = S.players.filter(p => p !== cur && p.total < total - 1e-9).length + 1;
+  const flags = [];
+  if (a.kind === "new" && cur) flags.push(["bad", "⚠️ " + cur.name + " is already ranked (#" + cur.place + "). Approving will update their times instead."]);
+  if (a.kind === "update" && !cur) flags.push(["bad", "⚠️ Can't find “" + a.current + "” in the rankings"]);
+  let or = 0, wr = 0, jumps = 0;
+  MAPS.forEach((_, m) => { const v = a.times[m]; if (v == null) return; if (S.WR && S.WR[m] != null && v < S.WR[m]) wr++; else if (S.OR && S.OR[m] != null && v < S.OR[m]) or++; if (cur && cur.t[m] != null && v < cur.t[m] * 0.7) jumps++; });
+  if (wr) flags.push(["bad", "🚩 " + wr + " time" + (wr > 1 ? "s" : "") + " faster than the world record"]);
+  if (or) flags.push(["warn", "🏆 " + or + " new Oceania record" + (or > 1 ? "s" : "")]);
+  if (jumps) flags.push(["warn", "📉 " + jumps + " time" + (jumps > 1 ? "s" : "") + " over 30% faster than before"]);
+  const filled = a.times.filter(v => v != null).length;
+  if (a.kind === "new" && filled < 27) flags.push(["", "🗺️ " + (27 - filled) + " map" + (27 - filled > 1 ? "s" : "") + " without a time (count as 60s)"]);
+  return { cur, total, rank, flags };
+}
+function card(a) {
+  const P = preview(a), fl = a.country === "nz" ? "🇳🇿" : "🇦🇺";
+  const rows = MAPS.map((n, m) => {
+    const v = a.times[m], c = P.cur ? P.cur.t[m] : null; if (a.kind === "update" && v == null) return "";
+    let cls = v == null ? "miss" : ""; if (v != null) { if (S.WR && S.WR[m] != null && v < S.WR[m]) cls = "wr"; else if (S.OR && S.OR[m] != null && v < S.OR[m]) cls = "or"; else if (c != null && v < c * 0.7) cls = "jump"; else if (a.kind === "update") cls = "pb"; }
+    return '<div class="' + cls + '"><span>' + esc(n) + "</span><span><b>" + (v == null ? "60" : fmt(v)) + "</b>" + (c != null ? " <small>was " + fmt(c) + "</small>" : "") + (S.OR && S.OR[m] != null ? " <small>OR " + fmt(S.OR[m]) + "</small>" : "") + "</span></div>";
+  }).join("");
+  const pending = a.status === "pending";
+  return '<article class="app" data-id="' + esc(a.id) + '"><div class="app-top"><div class="who"><b>' + fl + " " + esc(a.name) + '</b><span class="tag ' + esc(a.kind) + '">' + (a.kind === "update" ? "⚡ Update" + (a.current && a.current !== a.name ? " · " + esc(a.current) : "") : "🆕 New player") + "</span><small>Sent " + esc(a.at) + (a.discord ? " · Discord: " + esc(a.discord) : "") + " · total " + P.total.toFixed(3) + '</small></div><div class="app-rank"><small>' + (pending ? "Would be" : "Result") + "</small><b>#" + P.rank + "</b>" + (P.cur ? "<small>now #" + P.cur.place + "</small>" : "") + "</div></div>" +
+    (P.flags.length ? '<div class="app-flags">' + P.flags.map(f => '<span class="flag ' + f[0] + '">' + esc(f[1]) + "</span>").join("") + "</div>" : "") +
+    "<details" + (pending ? " open" : "") + "><summary>Times</summary><div class=\"app-times\">" + rows + "</div></details>" +
+    '<details class="app-proof" data-proof><summary>📸 Ping screenshot</summary><p class="muted">Loading…</p></details>' +
+    (pending ? '<div class="app-act"><textarea placeholder="Reason (only needed if you decline)" maxlength="200"></textarea><button type="button" class="btn btn-no" data-act="decline">Decline</button><button type="button" class="btn btn-outline" data-act="dry">Preview</button><button type="button" class="btn btn-ok" data-act="approve">✅ Approve</button></div><div class="app-res" hidden></div>'
+      : '<div class="app-res ' + (a.status === "approved" ? "good" : "err") + '">' + (a.status === "approved" ? "✅ Approved " + esc(a.decided) + (a.result ? " · " + esc(a.result) : "") : "❌ Declined " + esc(a.decided) + (a.note ? " · " + esc(a.note) : "")) + "</div>") + "</article>";
+}
+function render() {
+  const n = s => S.apps.filter(a => a.status === s).length;
+  ["pending", "approved", "declined"].forEach(s => { $("n-" + s).textContent = n(s); });
+  document.querySelectorAll("[data-f]").forEach(b => b.setAttribute("aria-selected", String(b.dataset.f === S.f)));
+  const list = S.apps.filter(a => a.status === S.f);
+  $("list").innerHTML = list.length ? list.map(card).join("") : '<div class="adm-empty">' + (S.f === "pending" ? "🎉 No applications waiting. You're all caught up!" : "Nothing here yet.") + "</div>";
+}
+async function load() {
+  $("list").innerHTML = '<div class="adm-empty">Loading applications…</div>';
+  await loadRankings();
+  const r = await api({ action: "list" });
+  if (!r.ok) { $("list").innerHTML = '<div class="adm-empty">Couldn\'t load: ' + esc(r.error) + "</div>"; return; }
+  S.apps = r.apps; render();
+  $("adm-sub").textContent = S.apps.filter(a => a.status === "pending").length + " waiting for review. Approving puts the player straight into the rankings sheet, and the website updates from there.";
+}
+document.addEventListener("toggle", async e => {
+  const d = e.target; if (!d.matches || !d.matches("[data-proof]") || !d.open || d.dataset.loaded) return;
+  d.dataset.loaded = 1; const id = d.closest(".app").dataset.id;
+  try { const r = await api({ action: "proof", id }); d.querySelector("p").outerHTML = r.ok ? '<img src="' + r.data + '" alt="Ping screenshot">' : '<p class="muted">Couldn\'t load the screenshot.</p>'; } catch (x) { d.querySelector("p").textContent = "Couldn't load the screenshot."; }
+}, true);
+document.addEventListener("click", async e => {
+  const img = e.target.closest(".app-proof img"); if (img) { window.open().document.write('<img src="' + img.src + '" style="max-width:100%">'); return; }
+  const f = e.target.closest("[data-f]"); if (f) { S.f = f.dataset.f; render(); return; }
+  if (e.target.closest("#refresh")) { load(); return; }
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const card = b.closest(".app"), id = card.dataset.id, res = card.querySelector(".app-res"), note = card.querySelector("textarea").value.trim(), act = b.dataset.act;
+  if (act === "decline" && !note && !confirm("Decline without a reason?")) return;
+  if (act === "approve" && !confirm("Approve and add to the rankings sheet now?")) return;
+  card.querySelectorAll("[data-act]").forEach(x => { x.disabled = true; });
+  res.hidden = false; res.className = "app-res"; res.textContent = act === "dry" ? "Checking where they'd go…" : "Working…";
+  try {
+    const r = await api({ action: act === "decline" ? "decline" : "approve", id, note, dryRun: act === "dry" });
+    if (!r.ok) throw new Error(r.error);
+    if (act === "dry") { res.className = "app-res good"; res.innerHTML = "👀 Preview: " + esc(r.summary) + (r.changes && r.changes.length ? "<br><small>" + r.changes.map(c => esc(c.map) + " " + fmt(c.from) + " → " + fmt(c.to)).join(" · ") + "</small>" : "") + "<br><small>Nothing has changed yet.</small>"; card.querySelectorAll("[data-act]").forEach(x => { x.disabled = false; }); return; }
+    res.className = "app-res good"; res.textContent = act === "decline" ? "❌ Declined." : "✅ " + r.summary + ". The rankings sheet is updated.";
+    const a = S.apps.find(x => x.id === id); if (a) { a.status = act === "decline" ? "declined" : "approved"; a.result = r.summary || ""; a.note = note; a.decided = "just now"; }
+    setTimeout(render, 2500);
+  } catch (x) { res.className = "app-res err"; res.textContent = "⚠️ " + x.message; card.querySelectorAll("[data-act]").forEach(y => { y.disabled = false; }); }
+});
+(async () => {
+  try {
+    const [app, A] = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js")]);
+    let fapp; try { fapp = app.getApps().find(x => x.name === "[DEFAULT]") || app.initializeApp(FIREBASE); } catch (e) { fapp = app.getApp(); }
+    A.onAuthStateChanged(A.getAuth(fapp), u => {
+      if (!u || u.isAnonymous) { $("adm-sub").textContent = "Log in with the admin account (top right) to see applications."; $("tabs").hidden = true; $("list").innerHTML = ""; return; }
+      S.user = u; $("tabs").hidden = false; load();
+    });
+  } catch (e) { $("adm-sub").textContent = "Couldn't load sign-in. Refresh the page."; }
+})();
+</script>
+<script type="module" src="auth-widget.js?v=6"></script>
+</body>
+</html>
