@@ -1264,7 +1264,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       }).join("") : '<p class="muted">You\'re at or ahead of ' + esc(G.refLbl) + " on every map. 🔥</p>") + "</div>";
 
     // predicted ranking
-    var pred = '<div class="card"><h3>Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their expected pace.</p><div class=\"trk-pred\">" +
+    var pred = '<div class="card"><h3>Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their expected pace.</p><div class="trk-pred">' +
       "<div><span>Now</span><b>#" + p.place + "</b></div>" + [4, 12, 26].map(function (w) { var r = predictRank(p, w), d = p.place - r; return "<div><span>In " + w + " weeks</span><b>#" + r + "</b><small>" + (d > 0 ? "↑ " + d : d < 0 ? "↓ " + (-d) : "no change") + "</small></div>"; }).join("") + "</div></div>";
 
     var F = formInfo(p), RV = rivalFor(p);
