@@ -791,7 +791,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var sel = ranges.filter(function (r) { return r[0] === S.trange; })[0] || ranges[2];
     var pts = sel[2] ? all.slice(-(sel[2] + 1)) : all.slice();
     var base = pts[0].v; pts = pts.map(function (q) { return { d: q.d, v: q.v - base }; });
-    if (sel[0] !== "3m") { var byM = {}, order = []; pts.forEach(function (q, i) { var mk = q.d.slice(0, 7); if (!byM[mk]) order.push(mk); byM[mk] = q; }); var first = pts[0]; pts = order.map(function (mk) { return byM[mk]; }); if (pts[0] !== first) pts.unshift(first); }
+    var weekly = sel[0] === "3m" || pts.length <= 14;
+    if (!weekly) { var byM = {}, order = []; pts.forEach(function (q, i) { var mk = q.d.slice(0, 7); if (!byM[mk]) order.push(mk); byM[mk] = q; }); var first = pts[0]; pts = order.map(function (mk) { return byM[mk]; }); if (pts[0] !== first) pts.unshift(first); }
     var head = '<div class="ghead">' + title + '<select class="gsel" id="trange" aria-label="Time range">' + ranges.map(function (r) { return '<option value="' + r[0] + '"' + (r === sel ? " selected" : "") + ">" + r[1] + "</option>"; }).join("") + "</select></div>";
     if (pts.length < 2) return '<div class="card">' + head + stats + '<p class="muted">Not enough history for this period yet.</p></div>';
     var W = 720, H = 300, Lm = 64, R = 22, T = 18, B = 58, n = pts.length;
@@ -805,7 +806,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     pts.forEach(function (q, i) {
       if (i % every !== 0 && i !== n - 1) return;
       if (i === n - 1 && i % every !== 0 && n > 2 && (X(i) - X(i - (i % every))) < 40) return;
-      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(q.d), lbl = sel[0] === "3m" ? (+m[3]) + " " + MON[+m[2] - 1] : MON[+m[2] - 1] + (+m[2] === 1 || i === 0 ? " " + m[1].slice(2) : "");
+      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(q.d), lbl = weekly ? (+m[3]) + " " + MON[+m[2] - 1] : MON[+m[2] - 1] + (+m[2] === 1 || i === 0 ? " \u2019" + m[1].slice(2) : "");
       svg += '<text x="' + X(i) + '" y="' + (H - B + 22) + '" text-anchor="middle">' + lbl + "</text>";
     });
     svg += '<text class="axt" transform="translate(14 ' + ((T + H - B) / 2) + ') rotate(-90)" text-anchor="middle">Seconds taken off</text>';
