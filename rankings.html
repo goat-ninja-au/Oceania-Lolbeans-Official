@@ -327,6 +327,73 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .fline:first-child .n { color: var(--gold); }
 .fline b { display: block; } .fline small { color: var(--muted); font-size: .82rem; }
 .fline .v { text-align: right; font-weight: 800; font-family: var(--mono); } .fline .v small { display: block; font-family: var(--font); font-weight: 500; }
+.imp-tg { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 16px; }
+.imp-tg button { border: 1px solid var(--line); background: var(--card); color: var(--text); font: inherit; font-weight: 700; font-size: .85rem; padding: 7px 13px; border-radius: 999px; cursor: pointer; }
+.imp-tg button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #fff; }
+.imp-list .fline { grid-template-columns: 28px minmax(0, 1fr) auto; }
+.imp-list .fline b[data-player] { cursor: pointer; } .imp-list .fline b[data-player]:hover { text-decoration: underline; }
+.imp-bar { height: 6px; border-radius: 3px; background: var(--soft); margin-top: 6px; overflow: hidden; } .imp-bar i { display: block; height: 100%; background: #2a9d5c; border-radius: 3px; }
+.imp-v { color: #2a9d5c; }
+.imp-note { font-size: .85rem; margin: 0 0 14px; }
+.imp-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 6px 0 14px; }
+.imp-stats div { background: var(--soft); border-radius: 10px; padding: 10px 12px; } .imp-stats span { display: block; font-size: .75rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.imp-stats b { font-family: var(--mono); font-size: 1.15rem; color: #2a9d5c; } .imp-stats small { display: block; color: var(--muted); font-size: .76rem; }
+.graph .ln.imp { stroke: #2a9d5c; } .graph .dt.imp { fill: #2a9d5c; }
+.trk-goal { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; } .trk-goal label { font-weight: 700; }
+.trk-status { border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; border: 1px solid var(--line); background: var(--card); }
+.trk-status .big { font-size: 1.25rem; font-weight: 800; margin: 2px 0 4px; } .trk-status p { margin: 0; color: var(--muted); }
+.trk-status.g { border-color: #2a9d5c; background: color-mix(in srgb, #2a9d5c 12%, var(--card)); } .trk-status.y { border-color: #e0a526; background: color-mix(in srgb, #e0a526 12%, var(--card)); } .trk-status.r { border-color: #d9505c; background: color-mix(in srgb, #d9505c 12%, var(--card)); }
+.trk-nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0 4px; }
+.trk-nums div { background: var(--soft); border-radius: 10px; padding: 10px 12px; } .trk-nums span { display: block; font-size: .74rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; } .trk-nums b { font-family: var(--mono); font-size: 1.1rem; } .trk-nums small { display: block; color: var(--muted); font-size: .76rem; }
+.trk-maps .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 9px 0; border-bottom: 1px solid var(--row); } .trk-maps .row:last-child { border-bottom: 0; }
+.trk-maps .row small { color: var(--muted); grid-column: 1 / -1; font-size: .8rem; } .trk-maps .v { font-family: var(--mono); font-weight: 800; color: #d9505c; }
+.trk-maps .bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--soft); overflow: hidden; } .trk-maps .bar i { display: block; height: 100%; background: #d9505c; border-radius: 3px; }
+.trk-maps .row.miss .v, .trk-maps .row.miss .bar i { color: #e0a526; background: #e0a526; } .trk-maps .row.miss .v { background: none; }
+.trk-pred { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; } .trk-pred div { background: var(--soft); border-radius: 10px; padding: 12px; text-align: center; } .trk-pred span { display: block; font-size: .78rem; color: var(--muted); font-weight: 700; } .trk-pred b { font-size: 1.6rem; } .trk-pred small { display: block; font-size: .78rem; color: var(--muted); }
+.graph .ln.you { stroke: var(--blue); } .graph .ln.goal { stroke: #8a96a3; } .graph .ln.fut { stroke-dasharray: 6 6; } .graph .eta { fill: #2a9d5c; } .graph .lg { font-size: 12px; font-weight: 700; }
+.trk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 16px; margin-bottom: 16px; } .trk-grid > .card { margin: 0; }
+.trk-tabs-card { margin-bottom: 16px; }
+.trk-share { margin-left: auto; }
+.trk-badge { display: inline-block; font-weight: 800; padding: 4px 12px; border-radius: 999px; font-size: .95rem; } .trk-badge.hot { background: color-mix(in srgb, #e8590c 18%, var(--card)); color: #e8590c; } .trk-badge.steady { background: color-mix(in srgb, #1478c2 15%, var(--card)); color: var(--blue); } .trk-badge.cold { background: color-mix(in srgb, #4dabf7 15%, var(--card)); color: #4dabf7; }
+.trk-kv { display: grid; gap: 8px; margin-top: 12px; } .trk-kv div { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--row); padding-bottom: 7px; } .trk-kv div:last-child { border-bottom: 0; } .trk-kv span { color: var(--muted); } .trk-kv b { text-align: right; }
+.trk-bars { display: flex; align-items: flex-end; gap: 4px; height: 70px; margin-top: 14px; } .trk-bars i { flex: 1; background: #2a9d5c; border-radius: 3px 3px 0 0; min-height: 2px; opacity: .9; } .trk-bars i.z { background: var(--soft); }
+.trk-bars-l { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-top: 4px; }
+.trk-vs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; text-align: center; margin: 10px 0; } .trk-vs b { display: block; font-size: 1.05rem; } .trk-vs small { color: var(--muted); } .trk-vs .x { font-weight: 800; color: var(--muted); }
+.trk-ms { display: grid; gap: 10px; } .trk-ms .m { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--row); } .trk-ms .m:last-child { border-bottom: 0; }
+.trk-ms .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-size: 1rem; } .trk-ms .m.done .ic { background: color-mix(in srgb, #2a9d5c 20%, var(--card)); }
+.trk-ms small { display: block; color: var(--muted); font-size: .8rem; } .trk-ms .v { font-family: var(--mono); font-weight: 800; text-align: right; } .trk-ms .m.done .v { color: #2a9d5c; font-family: var(--font); font-size: .82rem; }
+.trk-ms h4 { margin: 14px 0 2px; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.trk-str { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 4px 22px; } .trk-str .r { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 8px; padding: 6px 0; }
+.trk-str .r small { color: var(--muted); font-family: var(--mono); font-size: .8rem; } .trk-str .bar { grid-column: 1 / -1; height: 7px; background: var(--soft); border-radius: 4px; overflow: hidden; } .trk-str .bar i { display: block; height: 100%; border-radius: 4px; }
+.trk-str .e i { background: #2a9d5c; } .trk-str .g i { background: var(--blue); } .trk-str .m i { background: #e0a526; } .trk-str .w i { background: #d9505c; } .trk-str .n small { color: #e0a526; }
+.trk-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .78rem; color: var(--muted); margin: 6px 0 10px; } .trk-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; background: var(--c); }
+.trk-tr { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 10px; } .trk-tr .t { background: var(--soft); border-radius: 10px; padding: 10px 12px; }
+.trk-tr .t b { display: block; font-size: .9rem; } .trk-tr .t .d { font-family: var(--mono); font-weight: 800; color: #2a9d5c; } .trk-tr .t .d.z { color: var(--muted); } .trk-tr .t small { display: block; color: var(--muted); font-size: .76rem; } .trk-tr svg { width: 100%; height: 38px; display: block; margin: 6px 0 2px; } .trk-tr svg path { fill: none; stroke: #2a9d5c; stroke-width: 2; } .trk-tr svg circle { fill: #2a9d5c; }
+.trk-rec { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 10px; } .trk-rec div { background: var(--soft); border-radius: 10px; padding: 12px; } .trk-rec span { display: block; font-size: .74rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; } .trk-rec b { display: block; font-size: 1.15rem; margin: 2px 0; } .trk-rec small { color: var(--muted); font-size: .78rem; }
+.trk-modal { position: fixed; inset: 0; z-index: 9999; background: rgba(4, 12, 22, .72); display: grid; place-items: center; padding: 16px; } .trk-modal .box { background: var(--card); border-radius: 16px; padding: 16px; width: min(640px, 100%); max-height: 100%; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+.trk-modal img { width: 100%; border-radius: 10px; display: block; } .trk-modal .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; justify-content: flex-end; } .trk-modal h3 { margin: 0 0 10px; }
+.trk-chance { margin-top: 10px !important; color: var(--text) !important; } .trk-chance b { color: inherit; }
+.trk-tal { display: inline-block; font-weight: 800; font-size: .8rem; padding: 3px 10px; border-radius: 999px; background: var(--soft); white-space: nowrap; }
+.trk-tal.gen { background: linear-gradient(90deg, #f7c948, #f08c00); color: #2b1a00; } .trk-tal.star { background: color-mix(in srgb, #7950f2 22%, var(--card)); color: #9775fa; } .trk-tal.elite { background: color-mix(in srgb, #f0b429 22%, var(--card)); color: #e0a526; } .trk-tal.steady { background: color-mix(in srgb, #2a9d5c 18%, var(--card)); color: #2a9d5c; } .trk-tal.quiet { color: var(--muted); } .trk-tal.new { background: color-mix(in srgb, #1478c2 18%, var(--card)); color: var(--blue); }
+.trk-talent { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); } .trk-talent p { margin: 0; flex: 1; min-width: 220px; }
+.trk-cls .row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--row); } .trk-cls .row:last-child { border-bottom: 0; } .trk-cls .row.me { background: color-mix(in srgb, var(--blue) 10%, transparent); border-radius: 8px; padding-left: 6px; }
+.trk-cls .row .n { font-family: var(--mono); font-weight: 800; color: var(--muted); text-align: right; } .trk-cls .row small { display: block; color: var(--muted); font-size: .78rem; } .trk-cls b[data-player] { cursor: pointer; }
+.trk-ch { display: grid; gap: 10px; } .trk-ch .r { display: grid; grid-template-columns: 90px minmax(0, 1fr) 52px; gap: 10px; align-items: center; } .trk-ch .bar { height: 10px; border-radius: 5px; background: var(--soft); overflow: hidden; } .trk-ch .bar i { display: block; height: 100%; background: linear-gradient(90deg, #1478c2, #2a9d5c); border-radius: 5px; } .trk-ch b { text-align: right; font-family: var(--mono); }
+.trk-like .head { background: var(--soft); border-radius: 12px; padding: 12px 14px; margin: 10px 0; } .trk-like .head b[data-player] { cursor: pointer; text-decoration: underline; text-decoration-color: var(--line); }
+.trk-like .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--row); } .trk-like .row:last-child { border-bottom: 0; } .trk-like .up { color: #2a9d5c; font-weight: 800; } .trk-like .down { color: #d9505c; font-weight: 800; } .trk-like b[data-player] { cursor: pointer; }
+.trk-like h4 { margin: 16px 0 0; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.trk-acc p { margin: 6px 0; } .trk-acc ul { margin: 6px 0 0 18px; padding: 0; } .trk-acc li { margin: 4px 0; color: var(--muted); }
+.trk-qs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 10px; margin: 0 0 16px; }
+.trk-qs div { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 12px 52px; min-height: 74px; transition: transform .15s, box-shadow .15s; }
+.trk-qs div:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(7, 17, 28, .18); }
+.trk-qs i { position: absolute; left: 12px; top: 14px; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--soft); font-style: normal; font-size: 1rem; }
+.trk-qs span { display: block; font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); } .trk-qs b { display: block; font-size: 1.02rem; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .trk-qs small { display: block; color: var(--muted); font-size: .74rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trk-status { border-radius: 18px; padding: 20px 22px; box-shadow: 0 10px 30px rgba(7, 17, 28, .12); } .trk-status .big { font-size: 1.4rem; letter-spacing: -.01em; }
+.trk-status.g { background: linear-gradient(135deg, color-mix(in srgb, #2a9d5c 16%, var(--card)), var(--card) 70%); } .trk-status.y { background: linear-gradient(135deg, color-mix(in srgb, #e0a526 16%, var(--card)), var(--card) 70%); } .trk-status.r { background: linear-gradient(135deg, color-mix(in srgb, #d9505c 16%, var(--card)), var(--card) 70%); }
+#pbody .trk-grid > .card, #pbody .trk-tabs-card, #pbody .trk-maps, #pbody .trk-like { border-radius: 16px; transition: box-shadow .15s; } #pbody .trk-grid > .card:hover, #pbody .trk-tabs-card:hover { box-shadow: 0 10px 28px rgba(7, 17, 28, .14); }
+.trk-ch .r { grid-template-columns: 70px minmax(0, 1fr) 58px; row-gap: 2px; } .trk-ch .r small { grid-column: 2 / -1; font-size: .78rem; color: var(--muted); } .trk-ch .r small.imp { color: #d9505c; }
+.trk-pot { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 10px; margin: 0 0 12px; } .trk-pot div { background: color-mix(in srgb, #7950f2 10%, var(--soft)); border-radius: 12px; padding: 12px; }
+.trk-pot span { display: block; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); } .trk-pot b { display: block; font-size: 1.3rem; font-family: var(--mono); } .trk-pot small { color: var(--muted); font-size: .78rem; }
 .fline.rec { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
 .fline .pic { width: 52px; height: 34px; border-radius: 6px; overflow: hidden; background: var(--soft); }
 .fline .pic img, .fline .pic .mfall { width: 100%; height: 100%; object-fit: cover; }
@@ -515,6 +582,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       <button role="tab" id="s-maps" data-sec="maps" aria-selected="false">Map Records</button>
       <button role="tab" id="s-h2h" data-sec="h2h" aria-selected="false">Head to Head</button>
       <button role="tab" id="s-fame" data-sec="fame" aria-selected="false">Hall of Fame</button>
+      <button role="tab" id="s-improved" data-sec="improved" aria-selected="false">Most Improved</button>
       <button role="tab" id="s-info" data-sec="info" aria-selected="false">Info</button>
     </div>
   </div>
@@ -586,6 +654,10 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   </section>
 
   <!-- HALL OF FAME -->
+  <section class="view" id="v-improved" role="tabpanel" aria-labelledby="s-improved" hidden>
+    <div id="improved-body"></div>
+  </section>
+
   <section class="view" id="v-fame" role="tabpanel" aria-labelledby="s-fame" hidden>
     <div id="fame-body"></div>
   </section>
@@ -636,6 +708,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // Website data (history, records, #1 log) lives in a separate spreadsheet so the rankings sheet stays clean
   var DATA = "https://docs.google.com/spreadsheets/d/12D4wvMVKNqAoot5Ytk2ttgE-CZPNSUCPfktiAiGIE6w/gviz/tq?tqx=out:csv&headers=1";
   var HIST_URL = DATA + "&sheet=" + encodeURIComponent("Rank history");
+  var TIME_URL = DATA + "&sheet=" + encodeURIComponent("Time history");
   var ONE_URL = DATA + "&sheet=" + encodeURIComponent("Number one log");
   var REC_URL = DATA + "&sheet=" + encodeURIComponent("Record log");
   var ALIAS_URL = DATA + "&sheet=" + encodeURIComponent("Name changes"); // Old name | New name
@@ -721,6 +794,666 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     return ph ? '<img src="' + esc(ph) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' + initial(p.name) : initial(p.name);
   }
   function canon(n) { n = String(n || "").trim(); return ALIAS[n.toLowerCase()] || n; }
+  // ---- Time improvement (from the "Time history" tab) ----
+  var timp = {}, tweeks = [];
+  function loadTime(rows) {
+    timp = {}; tweeks = []; var seen = {}; SIM = null; TAL = null; BT = null; UT = {}; ACT = {};
+    if (!header(rows, "week", "name")) return;
+    rows.slice(1).forEach(function (r) {
+      var w = String(r[0]).trim(), n = canon(r[1]).toLowerCase(), s = parseFloat(r[2]), c = parseInt(r[3], 10) || 0;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(w) || !n || isNaN(s)) return;
+      (timp[n] = timp[n] || []).push({ w: w, s: s, c: c });
+      if (!seen[w]) { seen[w] = 1; tweeks.push(w); }
+    });
+    tweeks.sort();
+    Object.keys(timp).forEach(function (k) { timp[k].sort(function (a, b) { return a.w < b.w ? -1 : 1; }); });
+  }
+  var IRANGES = [["1w", "Last week", 1], ["4w", "Last 4 weeks", 4], ["3m", "Last 3 months", 13], ["1y", "Last 12 months", 52], ["all", "All time", 0]];
+  function tcut(n) { if (!n || !tweeks.length) return ""; var d = new Date(dnum(tweeks[tweeks.length - 1]) - (n - 1) * 6048e5); return ymd(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); } // n calendar weeks back from the latest week
+  // seconds taken off in the weeks from `cut` onwards (the first tracked week only marks the start, so it never counts)
+  function impSum(k, cut) { var s = 0, c = 0, L = timp[k] || []; L.forEach(function (e, i) { if (i && e.w >= cut) { s += e.s; c += e.c; } }); return { s: s, c: c }; }
+  function secs(v) { return (v >= 0.0005 ? "−" : "") + v.toFixed(3) + "s"; }
+  function renderImproved() {
+    var r = IRANGES.filter(function (x) { return x[0] === S.irange; })[0] || IRANGES[0], cut = tcut(r[2]);
+    var head = '<div class="imp-tg" role="group" aria-label="Period">' + IRANGES.map(function (x) { return '<button type="button" data-irange="' + x[0] + '" aria-pressed="' + (x === r) + '">' + x[1] + "</button>"; }).join("") + "</div>";
+    if (!tweeks.length) { $("improved-body").innerHTML = head + '<p class="muted">Time history is still being collected. Check back soon.</p>'; return; }
+    var list = players.map(function (p) { var s = impSum(p.name.toLowerCase(), cut); return { p: p, s: s.s, c: s.c }; }).filter(function (x) { return x.s >= 0.0005; })
+      .sort(function (a, b) { return b.s - a.s; }).slice(0, 25);
+    var top = list.length ? list[0].s : 1;
+    var lw = tweeks[tweeks.length - 1], prevW = tweeks[tweeks.length - 2];
+    var when = r[0] === "1w" && prevW ? niceDate(prevW) + " → " + niceDate(lw) : r[2] ? "since " + niceDate(cut) : "since " + niceDate(tweeks[0]);
+    var tl = players.filter(function (o) { var t = talOf(o); return t.tag[1] === "gen" || t.tag[1] === "star"; }).sort(function (a, b) { return talOf(b).score - talOf(a).score; }).slice(0, 10);
+    var watch = tl.length ? '<div class="card tal-list trk-cls" style="margin-bottom:16px"><h3>🌟 Talents to watch</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Players climbing the fastest right now and still setting PBs most weeks.</p>' +
+      tl.map(function (o, i) { var t = talOf(o); return '<div class="row"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(o.name) + '">' + flag(o.country) + " " + esc(o.name) + "</b><small>#" + t.then + " → #" + o.place + " in " + t.span + " weeks · " + clsName(t.cls) + '</small></div><span class="trk-tal ' + t.tag[1] + '">' + t.tag[0] + "</span></div>"; }).join("") + "</div>" : "";
+    $("improved-body").innerHTML = head +
+      '<p class="muted imp-note">Seconds taken off their total time, ' + when + '. Only maps a player already had a time on are counted, so new maps never count against anyone.</p>' +
+      '<div class="card imp-list">' + (list.length ? list.map(function (x, i) {
+        return '<div class="fline"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(x.p.name) + '" tabindex="0" role="link">' + flag(x.p.country) + " " + esc(x.p.name) + "</b><small>#" + x.p.place + " in Oceania · " + x.c + (x.c === 1 ? " new PB" : " new PBs") + '</small><div class="imp-bar"><i style="width:' + Math.max(3, Math.round(100 * x.s / top)) + '%"></i></div></div><div class="v imp-v">' + secs(x.s) + "</div></div>";
+      }).join("") : '<p class="muted">Nobody improved a time in this period.</p>') + "</div>";
+  }
+  // ======================= TRACKING =======================
+  var PACE_WEEKS = 26, PACE_K = 0.3, GRAPH_WEEKS = 8; // expected pace = 20-40% of your 26-week average depending on how steadily you PB (see kFor); tested on past weeks
+  function paceOf(name) {
+    var k = String(name).toLowerCase(), L = timp[k] || [];
+    if (L.length < 2 || !tweeks.length) return 0;
+    var span = Math.min(PACE_WEEKS, tweeks.length - 1 - tweeks.indexOf(L[0].w));
+    return span >= 1 ? kFor(pbWeeks(k, tcut(PACE_WEEKS))) * impSum(k, tcut(PACE_WEEKS)).s / Math.max(span, 8) : 0; // at least 8 weeks, so one big week isn't treated as a trend
+  }
+  // how much of your raw pace carries on, by how steadily you PB (tested on past weeks: steady grinders keep more of it)
+  function kFor(n) { return n >= 8 ? 0.4 : n >= 4 ? 0.3 : 0.2; }
+  function pbWeeks(k, cut, upto) { var n = 0; (timp[k] || []).forEach(function (e, i) { if (i && e.w >= cut && (!upto || e.w <= upto) && e.s > 0.0005) n++; }); return n; }
+  function tv(p, m) { return p.t[m] == null ? MISSING : p.t[m]; }
+  function goalsFor(p) {
+    var g = [];
+    if (p.place === 1) { if (players[1]) g.push({ id: "next", label: "Stay ahead of #2 (" + players[1].name + ")", who: players[1], defend: true }); return g; }
+    [1, 3, 5, 10, 25, 50, 100].forEach(function (n) { if (p.place > n && players[n - 1]) g.push({ id: "top" + n, label: n === 1 ? "Become #1" : "Reach the top " + n, n: n, who: players[n - 1] }); });
+    var above = players[p.place - 2]; if (above) g.push({ id: "next", label: "Pass the next player (#" + above.place + " " + above.name + ")", who: above });
+    return g;
+  }
+  function pickGoal(p) {
+    var g = goalsFor(p), want = S.goal;
+    var pick = g.filter(function (x) { return x.id === want; })[0];
+    if (!pick && want && want.indexOf("p:") === 0 && byName[want.slice(2)] && byName[want.slice(2)].place < p.place) { var w = byName[want.slice(2)]; pick = { id: want, label: "Catch " + w.name + " (#" + w.place + ")", who: w }; }
+    if (!pick) pick = g.filter(function (x) { return x.n && x.n < p.place && p.place <= x.n * 3; }).pop() || g.filter(function (x) { return x.id === "next"; })[0] || g[0];
+    if (!pick) return null;
+    // pace of the goal: for a top-N goal, the average pace of the players around #N (they're the ones you need to pass)
+    var around = pick.n ? players.filter(function (o) { return Math.abs(o.place - pick.n) <= 2 && o !== p; }) : [pick.who];
+    pick.pace = around.reduce(function (a, o) { return a + paceOf(o.name); }, 0) / Math.max(around.length, 1);
+    pick.ref = pick.n ? function (m) { var a = players.slice(0, pick.n).map(function (o) { return o.t[m]; }).filter(function (v) { return v != null; }); return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : null; } : function (m) { return tv(pick.who, m); };
+    pick.refLbl = pick.n ? "the top-" + pick.n + " average" : pick.who.name;
+    return pick;
+  }
+  function pastTotals(p, n) { // estimated total at each of the last n Mondays (now last); only counts improvements, so new maps don't distort it
+    var k = p.name.toLowerCase(), by = {}; (timp[k] || []).forEach(function (e, i) { if (i) by[e.w] = e.s; });
+    var ws = tweeks.slice(-n), out = [], tot = p.total;
+    for (var i = ws.length - 1; i >= 0; i--) { out.unshift({ w: ws[i], v: tot }); tot += by[ws[i]] || 0; }
+    return out;
+  }
+  function monthYear(weeks) { var d = new Date(); d.setDate(d.getDate() + Math.round(weeks * 7)); return MONTHS[d.getMonth()] + " " + d.getFullYear(); }
+  function predictRank(p, weeks) {
+    var me = proj(p, weeks), better = 0;
+    players.forEach(function (o) { if (o !== p && proj(o, weeks) < me) better++; });
+    return better + 1;
+  }
+  function lcPlayers() { var o = {}; players.forEach(function (x) { o[x.name.toLowerCase()] = x; }); return o; }
+  function weeklyOf(p) { // one entry per week since tracking began (0 when no PB that week)
+    var L = timp[p.name.toLowerCase()] || [], by = {}; if (!L.length) return [];
+    L.forEach(function (e, i) { if (i) by[e.w] = e; });
+    return tweeks.filter(function (w) { return w > L[0].w; }).map(function (w) { var e = by[w]; return { w: w, s: e ? e.s : 0, c: e ? e.c : 0 }; });
+  }
+  function weeksAgoTxt(n) { return n === 0 ? "this week" : n === 1 ? "last week" : n + " weeks ago"; }
+
+  // 1. Form and momentum
+  function formInfo(p) {
+    var W = weeklyOf(p), streak = 0, i, lastI = -1, best = 0, run = 0;
+    for (i = W.length - 1; i >= 0 && W[i].s > 0.0005; i--) streak++;
+    for (i = W.length - 1; i >= 0; i--) if (W[i].s > 0.0005) { lastI = i; break; }
+    W.forEach(function (x) { run = x.s > 0.0005 ? run + 1 : 0; if (run > best) best = run; });
+    var pbWeeks = W.slice(-4).filter(function (x) { return x.s > 0.0005; }).length;
+    var badge = !W.length ? ["New", "steady"] : pbWeeks >= 3 ? ["🔥 Hot", "hot"] : pbWeeks >= 1 ? ["➖ Steady", "steady"] : ["🧊 Cold", "cold"];
+    var cut = tcut(4), mine = impSum(p.name.toLowerCase(), cut).s, below = 0;
+    players.forEach(function (o) { if (o !== p && impSum(o.name.toLowerCase(), cut).s < mine - 1e-9) below++; });
+    return { W: W, streak: streak, bestStreak: best, last: lastI < 0 ? null : { ago: W.length - 1 - lastI, w: W[lastI].w }, badge: badge, month: mine, pct: Math.round(100 * below / Math.max(players.length - 1, 1)) };
+  }
+  function formHTML(p, F) {
+    var body;
+    if (!F.W.length) body = '<p class="muted">Form shows up after a couple of Mondays of history.</p>';
+    else {
+      var last = F.W.slice(-12), mx = Math.max.apply(null, last.map(function (x) { return x.s; }).concat([0.001]));
+      body = '<span class="trk-badge ' + F.badge[1] + '">' + F.badge[0] + "</span>" +
+        '<div class="trk-kv"><div><span>PB streak</span><b>' + (F.streak ? F.streak + (F.streak === 1 ? " week" : " weeks") + " in a row" : "–") + "</b></div>" +
+        "<div><span>Last PB</span><b>" + (F.last ? weeksAgoTxt(F.last.ago) + (F.last.ago > 1 ? " (" + niceDate(F.last.w) + ")" : "") : "None yet") + "</b></div>" +
+        "<div><span>This month</span><b>" + (F.month > 0.0005 ? "Faster than " + F.pct + "% of Oceania" : "No PBs in 4 weeks") + "</b></div></div>" +
+        '<div class="trk-bars" role="img" aria-label="Seconds taken off each week, last ' + last.length + ' weeks">' + last.map(function (x) { return '<i class="' + (x.s > 0.0005 ? "" : "z") + '" style="height:' + Math.max(3, Math.round(100 * x.s / mx)) + '%" title="Week of ' + niceDate(x.w) + ": " + (x.s > 0.0005 ? "−" + x.s.toFixed(3) + "s" : "no PB") + '"></i>'; }).join("") + "</div>" +
+        '<div class="trk-bars-l"><span>' + last.length + " weeks ago</span><span>This week</span></div>";
+    }
+    return '<div class="card"><h3>🔥 Form</h3>' + body + "</div>";
+  }
+
+  // 2. Rival
+  function rivalFor(p) {
+    var near = players.filter(function (o) { return o !== p && Math.abs(o.place - p.place) <= 10; });
+    if (S.rival && byName[S.rival] && byName[S.rival] !== p) return { o: byName[S.rival], near: near };
+    var my = paceOf(p.name), best = null, bs = 1e9;
+    near.forEach(function (o) { if (Math.abs(o.place - p.place) > 6) return; var sc = Math.abs(o.total - p.total) + 4 * Math.abs(paceOf(o.name) - my); if (sc < bs) { bs = sc; best = o; } });
+    return best ? { o: best, near: near } : null;
+  }
+  function rivalHTML(p, RV) {
+    if (!RV) return '<div class="card"><h3>Rival</h3><p class="muted">No one close enough yet.</p></div>';
+    var o = RV.o, my = weeklyGain(p), op = weeklyGain(o), gap = p.total - o.total, d = my - op;
+    var m4 = impSum(p.name.toLowerCase(), tcut(4)).s, o4 = impSum(o.name.toLowerCase(), tcut(4)).s;
+    var who = gap > 0 ? "You're " + gap.toFixed(3) + "s behind" : "You're " + (-gap).toFixed(3) + "s ahead";
+    var trend = Math.abs(d) < 0.05 ? "Neck and neck on pace" : d > 0 ? (gap > 0 ? "You're catching them: " : "You're pulling away: ") + d.toFixed(2) + "s a week" : (gap > 0 ? "They're pulling away: " : "They're catching you: ") + (-d).toFixed(2) + "s a week";
+    var selR = '<select class="gsel" id="rival" aria-label="Choose a rival" style="max-width:100%">' + RV.near.map(function (x) { return '<option value="' + esc(x.name) + '"' + (x === o ? " selected" : "") + ">#" + x.place + " " + esc(x.name) + "</option>"; }).join("") + "</select>";
+    return '<div class="card"><div class="ip-head"><h3>🥊 Rival</h3>' + selR + "</div>" +
+      '<div class="trk-vs"><div><b>' + flag(p.country) + " " + esc(p.name) + "</b><small>#" + p.place + " · " + fmt(p.total) + '</small></div><div class="x">VS</div><div><b>' + flag(o.country) + " " + esc(o.name) + "</b><small>#" + o.place + " · " + fmt(o.total) + "</small></div></div>" +
+      '<div class="trk-kv"><div><span>Gap</span><b>' + who + "</b></div><div><span>Pace</span><b>" + trend + "</b></div>" +
+      "<div><span>Last 4 weeks</span><b>You " + (m4 > 0.0005 ? "−" + m4.toFixed(2) + "s" : "no PBs") + " · them " + (o4 > 0.0005 ? "−" + o4.toFixed(2) + "s" : "no PBs") + "</b></div></div>" +
+      '<p style="margin:12px 0 0"><button type="button" class="ip-link" data-vs="' + esc(o.name) + '">Full head to head ›</button></p></div>';
+  }
+
+  // 3. Milestones
+  function milestonesHTML(p) {
+    var next = [], done = [], my = paceOf(p.name), k = p.name.toLowerCase();
+    var eta = function (g) { var w = catchWeeks(p, function () { return p.total - g; }); return w ? " · " + exactDate(w) + " at your expected pace" : " · impossible at your current pace"; };
+    var round = Math.floor((p.total - 0.0005) / 10) * 10;
+    next.push(["⏱️", "Sub-" + round + "s total", "Your total is " + fmt(p.total) + eta(p.total - round), (p.total - round).toFixed(3) + "s"]);
+    var tier = [100, 50, 25, 10, 5, 3, 1].filter(function (n) { return n < p.place && players[n - 1]; })[0];
+    if (tier) { var tg = p.total - players[tier - 1].total; next.push(["🏅", tier === 1 ? "Oceania #1" : "Top " + tier + " in Oceania", "Pass #" + tier + " " + esc(players[tier - 1].name) + "'s total (if they don't improve)", tg.toFixed(3) + "s"]); }
+    if (OR) {
+      var orGap = MAPS.map(function (n, m) { return p.t[m] != null && OR.t[m] ? { m: m, g: p.t[m] - OR.t[m] } : null; }).filter(function (x) { return x && x.g > 0.0005; }).sort(function (a, b) { return a.g - b.g; })[0];
+      if (orGap) next.push(["🏆", (p.orN ? "Another" : "Your first") + " Oceania record", esc(MAPS[orGap.m]) + " is your closest: " + fmt(p.t[orGap.m]) + " vs " + fmt(OR.t[orGap.m]), orGap.g.toFixed(3) + "s"]);
+    }
+    var t10 = MAPS.map(function (n, m) { var a = sorted[m]; return p.t[m] != null && a.length >= 10 && p.t[m] > a[9] + 1e-9 ? { m: m, g: p.t[m] - a[9] } : null; }).filter(Boolean).sort(function (a, b) { return a.g - b.g; })[0];
+    var in10 = MAPS.filter(function (n, m) { return p.t[m] != null && mapRank(m, p.t[m]) <= 10; }).length;
+    if (t10) next.push(["🎯", "Top 10 on " + (in10 ? "another map" : "a map"), esc(MAPS[t10.m]) + " is your closest (#10 there is " + fmt(sorted[t10.m][9]) + ")", t10.g.toFixed(3) + "s"]);
+    var miss = MAPS.length - p.t.filter(function (v) { return v != null; }).length;
+    if (miss) next.push(["🗺️", "A time on every map", miss + (miss === 1 ? " map" : " maps") + " still at 60s", miss + " left"]);
+    // achieved: first week in each rank tier, from the ranking history
+    var firstIn = {};
+    weeks.forEach(function (w) { var r = hist[w][k]; if (r == null) return; [100, 50, 25, 10, 5, 3, 1].forEach(function (n) { if (r <= n && !firstIn[n]) firstIn[n] = w; }); });
+    [1, 3, 5, 10, 25, 50, 100].forEach(function (n) { if (firstIn[n]) done.push(["✅", n === 1 ? "Reached #1" : "Reached the top " + n, "", niceDate(firstIn[n])]); });
+    if (p.orN) done.push(["🏆", "Holds " + p.orN + " Oceania record" + (p.orN === 1 ? "" : "s"), "", "Now"]);
+    if (in10) done.push(["🎯", "Top 10 on " + in10 + " map" + (in10 === 1 ? "" : "s"), "", "Now"]);
+    if (!miss) done.push(["🗺️", "A time on every map", "", "Done"]);
+    var row = function (x, isDone) { return '<div class="m' + (isDone ? " done" : "") + '"><span class="ic">' + x[0] + "</span><div><b>" + x[1] + "</b>" + (x[2] ? "<small>" + x[2] + "</small>" : "") + '</div><span class="v">' + x[3] + "</span></div>"; };
+    return '<div class="card trk-tabs-card"><h3>🏁 Milestones</h3><div class="trk-ms"><h4>Next up</h4>' + next.map(function (x) { return row(x, false); }).join("") +
+      (done.length ? "<h4>Achieved</h4>" + done.slice(0, 6).map(function (x) { return row(x, true); }).join("") : "") + "</div></div>";
+  }
+
+  // 4. Map strengths
+  function strengthsHTML(p) {
+    var rows = MAPS.map(function (n, m) {
+      if (p.t[m] == null) return { m: m, n: n, miss: true, pct: -1 };
+      var r = mapRank(m, p.t[m]), tot = sorted[m].length; return { m: m, n: n, r: r, tot: tot, pct: tot > 1 ? 1 - (r - 1) / (tot - 1) : 1 };
+    }).sort(function (a, b) { return b.pct - a.pct; });
+    var cls = function (x) { return x.miss ? "n" : x.pct >= 0.9 ? "e" : x.pct >= 0.65 ? "g" : x.pct >= 0.35 ? "m" : "w"; };
+    var have = rows.filter(function (x) { return !x.miss; }), best = have[0], worst = have[have.length - 1];
+    return '<div class="card trk-tabs-card"><h3>💪 Map strengths</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">Where you rank in Oceania on each map' + (best ? ". Best: " + esc(best.n) + " (" + ordinal(best.r) + "). Weakest: " + esc(worst.n) + " (" + ordinal(worst.r) + ")." : ".") + "</p>" +
+      '<div class="trk-legend"><span style="--c:#2a9d5c">Top 10%</span><span style="--c:var(--blue)">Strong</span><span style="--c:#e0a526">Middle</span><span style="--c:#d9505c">Weak</span></div>' +
+      '<div class="trk-str">' + rows.map(function (x) {
+        return '<div class="r ' + cls(x) + '"><b>' + esc(x.n) + "</b><small>" + (x.miss ? "no time" : ordinal(x.r) + " of " + x.tot) + '</small><div class="bar"><i style="width:' + (x.miss ? 0 : Math.max(3, Math.round(100 * x.pct))) + '%"></i></div></div>';
+      }).join("") + "</div></div>";
+  }
+
+  // ---- Chances: simulate the next 52 weeks many times, each player drawing PB weeks from their own recent history ----
+  var SIM = null, SIM_N = 1000, SIM_W = 52, TIERS = [1, 3, 5, 10, 25, 50, 100];
+  function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function samplesOf(p) { var cut = tcut(PACE_WEEKS), kk = kFor(pbWeeks(p.name.toLowerCase(), cut)), W = weeklyOf(p).filter(function (x) { return x.w >= cut; }).map(function (x) { return x.s * kk; }); while (W.length < Math.min(PACE_WEEKS, 8)) W.push(0); while (W.length < PACE_WEEKS && W.length < weeklyOf(p).length) W.push(0); return W; }
+  function floorT() { return OR && OR.total ? OR.total : Math.min.apply(null, players.map(function (p) { return p.total; })) * 0.95; }
+  function stepT(cur, start, g, fl) { if (!(g > 0)) return cur; return Math.max(fl, cur - g); } // same expected pace as the projection; never faster than record pace
+  function runSim() {
+    if (SIM) return SIM;
+    var n = players.length, R = rng(20261019), fl = floorT(), samp = players.map(samplesOf), cu = players.map(function (p) { var U = isActive(p) ? untapped(p) : { sum: 0, missSum: 0 }; return [U.sum, U.missSum]; }), uw = new Float64Array(n), um = new Float64Array(n);
+    var first = players.map(function () { return TIERS.map(function () { var a = new Int16Array(SIM_N); a.fill(-1); return a; }); });
+    var tot = new Float64Array(n), idx = []; for (var i = 0; i < n; i++) idx.push(i);
+    for (var s = 0; s < SIM_N; s++) {
+      for (i = 0; i < n; i++) { tot[i] = players[i].total; uw[i] = cu[i][0]; um[i] = cu[i][1]; }
+      for (var w = 1; w <= SIM_W; w++) {
+        for (i = 0; i < n; i++) { var a = samp[i]; tot[i] = stepT(tot[i], players[i].total, a[(R() * a.length) | 0], fl); if (uw[i] || um[i]) { var gx = uw[i] * CU_RATE * 2 * R(), gy = um[i] * CU_MISS * 2 * R(); tot[i] -= gx + gy; uw[i] -= gx; um[i] -= gy; } }
+        idx.sort(function (x, y) { return tot[x] - tot[y]; });
+        for (var r = 0; r < Math.min(n, 100); r++) { var F = first[idx[r]]; for (var t = 0; t < TIERS.length; t++) if (r < TIERS[t] && F[t][s] < 0) F[t][s] = w; }
+      }
+    }
+    SIM = { first: first };
+    return SIM;
+  }
+  function pairSim(a, b) { // weeks until a's total drops below b's, in each simulation (-1 = not within a year)
+    var R = rng(7 + a.place * 131 + b.place), fl = floorT(), sa = samplesOf(a), sb = samplesOf(b), out = [];
+    var Ua = isActive(a) ? untapped(a) : { sum: 0, missSum: 0 }, Ub = isActive(b) ? untapped(b) : { sum: 0, missSum: 0 };
+    for (var s = 0; s < SIM_N; s++) {
+      var ta = a.total, tb = b.total, hit = -1, aw = Ua.sum, am = Ua.missSum, bw = Ub.sum, bm = Ub.missSum;
+      for (var w = 1; w <= SIM_W && hit < 0; w++) {
+        ta = stepT(ta, a.total, sa[(R() * sa.length) | 0], fl); tb = stepT(tb, b.total, sb[(R() * sb.length) | 0], fl);
+        var g1 = aw * CU_RATE * 2 * R(), g2 = am * CU_MISS * 2 * R(), g3 = bw * CU_RATE * 2 * R(), g4 = bm * CU_MISS * 2 * R();
+        ta -= g1 + g2; aw -= g1; am -= g2; tb -= g3 + g4; bw -= g3; bm -= g4;
+        if (ta < tb) hit = w;
+      }
+      out.push(hit);
+    }
+    return out;
+  }
+  function summarize(arr) {
+    var hits = Array.prototype.filter.call(arr, function (w) { return w >= 0; }).sort(function (x, y) { return x - y; });
+    var q = function (f) { return hits[Math.min(hits.length - 1, Math.floor(f * hits.length))]; };
+    return { pct: 100 * hits.length / arr.length, med: hits.length ? q(0.5) : null, lo: hits.length ? q(0.25) : null, hi: hits.length ? q(0.75) : null };
+  }
+  function tierChance(p, n) { var i = players.indexOf(p), t = TIERS.indexOf(n); if (i < 0 || t < 0) return null; return summarize(runSim().first[i][t]); }
+  function wkDate(w) { return exactDate(w); }
+  function fmtPct(v) { if (v <= 0) return "0%"; if (v >= 100) return "100%"; if (v < 1 || v > 99) return (Math.round(v * 10) / 10) + "%"; return Math.round(v) + "%"; }
+  function pctTxt(x) { return fmtPct(x.pct); }
+  function exactDate(weeks) { var d = new Date(); d.setDate(d.getDate() + Math.round(weeks * 7)); return d.getDate() + " " + MON[d.getMonth()] + " " + d.getFullYear(); }
+  // weeks until p catches a total that improves `tp` a week (null = impossible at the current pace)
+  function detWeeks(p, o) { return p.total <= o.total ? 0 : catchWeeks(p, function (w) { return proj(o, w); }); }
+  function tierPace(n, p) { var ar = players.filter(function (o) { return Math.abs(o.place - n) <= 2 && o !== p; }); return ar.reduce(function (a, o) { return a + paceOf(o.name); }, 0) / Math.max(ar.length, 1); }
+  function goalChance(p, G) {
+    if (G.n) return tierChance(p, G.n);
+    return G.defend ? summarize(pairSim(G.who, p)) : summarize(pairSim(p, G.who));
+  }
+  function chanceLine(p, G, gap) {
+    if (!G.defend && gap <= 0) return "";
+    var c = goalChance(p, G); if (!c) return "";
+    if (G.defend) return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> " + esc(G.who.name) + " passes you in the next 12 months" + (c.med ? ". If it happens, most likely around <b>" + wkDate(c.med) + "</b>." : ".") + "</p>";
+    if (c.pct <= 0) return '<p class="trk-chance">🎲 <b>0% chance</b> in the next 12 months: none of the ' + SIM_N + " simulated years got there.</p>";
+    var when = c.med ? (c.pct >= 50 ? " · half the simulations land between <b>" + wkDate(c.lo) + "</b> and <b>" + wkDate(c.hi) + "</b>" : " · if it happens, most likely around <b>" + wkDate(c.med) + "</b>" + (c.lo !== c.hi ? " (between " + wkDate(c.lo) + " and " + wkDate(c.hi) + ")" : "")) : "";
+    return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> in the next 12 months" + when + ".</p>";
+  }
+  function chancesHTML(p) {
+    var tiers = TIERS.filter(function (n) { return n < p.place || (n === 1 && p.place === 1); });
+    if (!tiers.length) return "";
+    var rows = tiers.map(function (n) {
+      var c = tierChance(p, n), dw = c.pct >= 50 ? c.med : detWeeks(p, players[n - 1]);
+      var when = p.place <= n ? "You're there now" : dw == null ? "Impossible at your current pace" : (c.pct >= 50 ? "Most likely " : "At your expected pace: ") + exactDate(dw);
+      return '<div class="r"><span>' + (n === 1 ? "#1" : "Top " + n) + '</span><div class="bar"><i style="width:' + Math.max(c.pct, 0.5) + '%"></i></div><b>' + fmtPct(c.pct) + '</b><small class="' + (dw == null && p.place > n ? "imp" : "") + '">' + when + "</small></div>";
+    }).join("");
+    return '<div class="card"><h3>🎲 Your chances</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Chance of reaching each spot at some point in the next 12 months. Worked out by playing out the next year ' + SIM_N + " times, with every player setting PBs like they have over the last 6 months (scaled to what really happened when we tested it on past weeks).</p>" + '<div class="trk-ch">' + rows + "</div></div>";
+  }
+
+  // ---- Talent tiers and classes (the year a player first appeared in the rankings) ----
+  var TAL = null;
+  function talents() {
+    if (TAL) return TAL; TAL = {};
+    var lw = weeks.length - 1;
+    players.forEach(function (p) {
+      var k = p.name.toLowerCase(), first = -1;
+      for (var i = 0; i < weeks.length; i++) if (hist[weeks[i]][k] != null) { first = i; break; }
+      if (first < 0) first = lw;
+      var back = Math.max(first, lw - 26), then = (hist[weeks[back]] || {})[k] || p.place;
+      var W = weeklyOf(p), act = W.slice(-26).filter(function (x) { return x.s > 0.0005; }).length, act8 = W.slice(-8).filter(function (x) { return x.s > 0.0005; }).length;
+      var rise = Math.log(Math.max(then, 1) / p.place) / Math.LN2, score = rise * (0.4 + 0.6 * Math.min(1, act / 8));
+      TAL[k] = { joined: weeks[first], cls: +weeks[first].slice(0, 4), wks: lw - first, then: then, span: lw - back, act: act, act8: act8, rise: rise, score: score };
+    });
+    // generational: at most 3 per class, climbing fast, near the top and still setting PBs lately
+    var gen = {}, byCls = {};
+    players.forEach(function (p) { var t = TAL[p.name.toLowerCase()]; if (t.wks >= 6 && t.score >= 1 && p.place <= 40 && t.act >= 4 && t.act8 >= 1) (byCls[t.cls] = byCls[t.cls] || []).push(p); });
+    Object.keys(byCls).forEach(function (c) { byCls[c].sort(function (a, b) { return TAL[b.name.toLowerCase()].score - TAL[a.name.toLowerCase()].score; }).slice(0, 3).forEach(function (p) { gen[p.name.toLowerCase()] = 1; }); });
+    players.forEach(function (p) {
+      var t = TAL[p.name.toLowerCase()], tag;
+      if (t.wks < 6) tag = ["🆕 New", "new", "Joined the rankings " + niceDate(t.joined) + ". Talent shows up after 6 weeks."];
+      else if (gen[p.name.toLowerCase()]) tag = ["🌟 Generational talent", "gen", "Climbed from #" + t.then + " to #" + p.place + " in " + t.span + " weeks, with PBs in " + t.act + " of the last 26 weeks and still going."];
+      else if (t.score >= 0.45 && t.act >= 3 && t.act8 >= 1) tag = ["🚀 Rising star", "star", "Climbed from #" + t.then + " to #" + p.place + " in " + t.span + " weeks, with PBs in " + t.act + " of the last 26 weeks."];
+      else if (p.place <= 5) tag = ["👑 Elite", "elite", "Already at the very top of Oceania."];
+      else if (t.act >= 3) tag = ["📈 Steady improver", "steady", "PBs in " + t.act + " of the last 26 weeks."];
+      else if (t.act === 0) tag = ["💤 Quiet", "quiet", "No PBs in the last 26 weeks."];
+      else tag = ["➖ Cruising", "quiet", "A PB here and there (" + t.act + " in the last 26 weeks)."];
+      t.tag = tag;
+    });
+    return TAL;
+  }
+  function talOf(p) { return talents()[p.name.toLowerCase()]; }
+  function clsName(y) { return y <= 2024 ? "Class of 2024 (originals)" : "Class of " + y; }
+  function talentHTML(p) { var t = talOf(p); return '<div class="trk-talent"><span class="trk-tal ' + t.tag[1] + '">' + t.tag[0] + "</span><p class=\"muted\">" + t.tag[2] + " · " + clsName(t.cls) + "</p></div>"; }
+  function classHTML(p) {
+    var t = talOf(p), mates = players.filter(function (o) { return talOf(o).cls === t.cls; }).sort(function (a, b) { return a.place - b.place; });
+    var me = mates.indexOf(p), show = mates.slice(0, 8); if (me >= 8) show.push(p);
+    return '<div class="card trk-cls"><h3>' + clsName(t.cls) + "</h3><p class=\"muted\" style=\"font-size:.85rem;margin:4px 0 10px\">" + (t.cls <= 2024 ? "Players already ranked when the history starts (Sep 2024)." : "Players who first joined the rankings in " + t.cls + ".") + " You're <b>" + ordinal(me + 1) + "</b> of " + mates.length + " in your class.</p>" +
+      show.map(function (o) { var ot = talOf(o); return '<div class="row' + (o === p ? " me" : "") + '"><span class="n">' + (mates.indexOf(o) + 1) + "</span><div><b data-player=\"" + esc(o.name) + "\">" + flag(o.country) + " " + esc(o.name) + "</b><small>#" + o.place + " in Oceania · joined " + niceDate(ot.joined) + '</small></div><span class="trk-tal ' + ot.tag[1] + '">' + ot.tag[0] + "</span></div>"; }).join("") + "</div>";
+  }
+
+  // 5. Players like you: who was at your rank back then, and where they are now
+  function likeYouHTML(p) {
+    var lc = lcPlayers(), parts = [];
+    [[52, "A year ago"], [26, "6 months ago"]].forEach(function (x) {
+      var w = weeks[weeks.length - 1 - x[0]]; if (!w) return;
+      var grp = Object.keys(hist[w]).filter(function (k) { return Math.abs(hist[w][k] - p.place) <= 3 && k !== p.name.toLowerCase() && lc[k]; })
+        .map(function (k) { return { o: lc[k], then: hist[w][k] }; }).sort(function (a, b) { return Math.abs(a.then - p.place) - Math.abs(b.then - p.place) || a.o.place - b.o.place; });
+      if (!grp.length) return;
+      var h = grp[0], d = h.then - h.o.place;
+      var line = function (q) { var dd = q.then - q.o.place; return '<div class="row"><span><b data-player="' + esc(q.o.name) + '">' + flag(q.o.country) + " " + esc(q.o.name) + "</b> <span class=\"muted\">was #" + q.then + "</span></span><span>now <b>#" + q.o.place + '</b> <span class="' + (dd > 0 ? "up" : dd < 0 ? "down" : "") + '">' + (dd > 0 ? "↑" + dd : dd < 0 ? "↓" + (-dd) : "=") + "</span></span></div>"; };
+      parts.push("<h4>" + x[1] + " (" + niceDate(w) + ")</h4>" +
+        '<div class="head"><b data-player="' + esc(h.o.name) + '">' + esc(h.o.name) + "</b> was <b>#" + h.then + "</b> " + x[1].toLowerCase() + (h.then === p.place ? ", exactly where you are now" : ", right around where you are now (#" + p.place + ")") + ". Now they're <b>#" + h.o.place + "</b>" + (d > 0 ? " (up " + d + " places)." : d < 0 ? " (down " + (-d) + ")." : ".") + "</div>" +
+        grp.slice(1, 6).map(line).join(""));
+    });
+    return '<div class="card trk-like"><h3>👥 Players like you</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">Players who were at your rank (#' + p.place + ") before, and where they are today.</p>" + (parts.length ? parts.join("") : '<p class="muted">Not enough history at this rank yet.</p>') + "</div>";
+  }
+
+  // ---- How accurate is this? Test the pace prediction on the past ----
+  var BT = null;
+  function backtest() {
+    if (BT !== null) return BT; BT = false;
+    var h = 12; if (tweeks.length < h + 10) return BT;
+    var W0 = tweeks[tweeks.length - 1 - h], Wb = tweeks[Math.max(0, tweeks.length - 1 - h - PACE_WEEKS)], hw = hist[W0]; if (!hw) return BT;
+    var rows = [];
+    players.forEach(function (p) {
+      var k = p.name.toLowerCase(); if (hw[k] == null) return;
+      var L = timp[k] || [], since = 0, before = 0, st = L.length ? L[0].w : W0;
+      var nb = 0; L.forEach(function (e, i) { if (!i) return; if (e.w > W0) since += e.s; else if (e.w > Wb) { before += e.s; if (e.s > 0.0005) nb++; } });
+      var span = Math.min(PACE_WEEKS, tweeks.indexOf(W0) - tweeks.indexOf(st)), pace = span >= 1 ? kFor(nb) * before / Math.max(span, 8) : 0;
+      var then = p.total + since; rows.push({ then: then, pred: then - pace * h, now: p.total });
+    });
+    if (rows.length < 20) return BT;
+    var rk = function (key) { var s = rows.slice().sort(function (a, b) { return a[key] - b[key]; }); s.forEach(function (r, i) { r[key + "R"] = i + 1; }); };
+    rk("then"); rk("pred"); rk("now");
+    var err = function (key) { var e = rows.map(function (r) { return Math.abs(r[key + "R"] - r.nowR); }).sort(function (a, b) { return a - b; }); return { med: e[Math.floor(e.length / 2)], w3: Math.round(100 * e.filter(function (x) { return x <= 3; }).length / e.length), w10: Math.round(100 * e.filter(function (x) { return x <= 10; }).length / e.length) }; };
+    BT = { n: rows.length, h: h, from: W0, pred: err("pred"), naive: err("then") };
+    return BT;
+  }
+  function accuracyHTML() {
+    var b = backtest();
+    return '<div class="card trk-acc trk-tabs-card"><h3>✅ How accurate is this?</h3>' +
+      (b ? "<p>We tested the predictions on the past: starting from " + niceDate(b.from) + " and predicting " + b.h + " weeks ahead for " + b.n + " players, the predicted rank was within <b>3 places for " + b.pred.w3 + "%</b> and within <b>10 places for " + b.pred.w10 + "%</b> of players (typical miss: " + b.pred.med + (b.pred.med === 1 ? " place" : " places") + "). Just guessing nobody moves got " + b.naive.w3 + "% within 3 places.</p>" : "") +
+      "<ul><li>Past numbers (PBs, pace, map trends) come straight from saved versions of the rankings sheet each Monday, so they're as accurate as the sheet was.</li>" +
+      "<li>For players who are still setting PBs, predictions also expect them to grab the time they have on maps below their level, about 5% of what's left each week (roughly what active players actually did in the history). The level comes from players around the world with a similar total.</li>" +
+      "<li>Expected pace keeps 40% of your raw 6-month pace if you PB most weeks, 30% if you PB on and off, and 20% if your PBs come in rare bursts. Those numbers matched what really happened when tested on past weeks.</li>" +
+      "<li>Predictions and chances assume you keep improving like you have recently. A new strat, a break or a new map can change things fast.</li>" +
+      "<li>Filling in a missing map (60s) drops your total straight away but isn't counted as pace.</li></ul></div>";
+  }
+
+  // ---- Untapped time: maps where a player's time is well below their level on the other maps ----
+  // level = the middle of where they rank across their maps; "your level" time on a map = the time at that same spot on the map
+  var UT = {}, ACT = {}, WORLD = null, CU_RATE = 0.05, CU_MISS = 0.025;
+  var WORLD_URL = "https://script.google.com/macros/s/AKfycbxJunGL8SSr1lI6Cb4DezG9q98l-Lt2EbFoZjIrwlZa2imRKseKqkiaJ3JCzKhqv2BL-w/exec";
+  function loadWorld() {
+    fetch(WORLD_URL).then(function (r) { return r.json(); }).then(function (j) {
+      var names = j.courseNames || MAPS;
+      WORLD = (j.data || []).map(function (d) { return { name: String(d.name || ""), total: +d.score, t: MAPS.map(function (n, m) { var v = d.courses && d.courses[names[m]]; return typeof v === "number" && v > 0 && v < MISSING - EPS ? v : null; }) }; }).filter(function (w) { return w.total > 0; });
+      UT = {}; SIM = null; if (S.player && S.ptab === "tracking") renderProfile();
+    }).catch(function () {});
+  }
+  function median(a) { a = a.slice().sort(function (x, y) { return x - y; }); return a.length ? (a.length % 2 ? a[a.length >> 1] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2) : null; }
+  function isActive(p) { var k = p.name; if (ACT[k] == null) ACT[k] = weeklyOf(p).slice(-8).some(function (x) { return x.s > 0.0005; }); return ACT[k]; }
+  // expected total after w weeks: expected pace, plus (for active players) gradually grabbing untapped time
+  function proj(p, w) {
+    var t = p.total - paceOf(p.name) * w;
+    if (w > 0 && isActive(p)) { var U = untapped(p); t -= U.sum * (1 - Math.pow(1 - CU_RATE, w)) + U.missSum * (1 - Math.pow(1 - CU_MISS, w)); }
+    return t;
+  }
+  function weeklyGain(p) { return (p.total - proj(p, 12)) / 12; }
+  function catchWeeks(a, target, max) { for (var w = 1; w <= (max || 520); w++) if (proj(a, w) < target(w) - 1e-9) return w; return null; }
+  function levelTime(m, s) { var a = sorted[m]; if (!a.length) return null; var x = s * (a.length - 1), lo = Math.floor(x), hi = Math.ceil(x); return a[lo] + (a[hi] - a[lo]) * (x - lo); }
+  function untapped(p) {
+    if (UT[p.name]) return UT[p.name];
+    var have = MAPS.map(function (n, m) { return m; }).filter(function (m) { return p.t[m] != null; });
+    if (WORLD && WORLD.length > 50 && have.length >= 10) {
+      var me = p.name.toLowerCase();
+      // world players with a similar total on the same maps this player has played
+      var near = WORLD.filter(function (w) { return w.name.toLowerCase() !== me && have.every(function (m) { return w.t[m] != null; }); })
+        .map(function (w) { var d = 0; have.forEach(function (m) { d += p.t[m] - w.t[m]; }); return { w: w, d: Math.abs(d) }; })
+        .sort(function (a, b) { return a.d - b.d; }).slice(0, 15).map(function (x) { return x.w; });
+      if (near.length >= 8) {
+        var resW = { ok: true, world: true, maps: [], miss: [], sum: 0, missSum: 0, n: near.length, lvTotal: median(near.map(function (w) { return have.reduce(function (a, m) { return a + w.t[m]; }, 0); })) };
+        MAPS.forEach(function (n, m) {
+          var vals = near.map(function (w) { return w.t[m]; }).filter(function (v) { return v != null; }); if (vals.length < 6) return;
+          var lv = median(vals);
+          if (p.t[m] == null) { resW.miss.push({ m: m, lv: lv, g: MISSING - lv }); resW.missSum += MISSING - lv; return; }
+          var g = p.t[m] - lv;
+          if (g > Math.max(0.5, 0.06 * lv)) resW.maps.push({ m: m, t: p.t[m], lv: lv, g: g, r: mapRank(m, p.t[m]) });
+        });
+        resW.maps.sort(function (a, b) { return b.g - a.g; });
+        resW.sum = resW.maps.reduce(function (a, x) { return a + x.g; }, 0);
+        return (UT[p.name] = resW);
+      }
+    }
+    var ps = [];
+    MAPS.forEach(function (n, m) { if (p.t[m] != null && sorted[m].length >= 10) ps.push((mapRank(m, p.t[m]) - 1) / (sorted[m].length - 1)); });
+    var res = { ok: ps.length >= 10, maps: [], miss: [], s: 0, sum: 0, missSum: 0 };
+    if (res.ok) {
+      ps.sort(function (a, b) { return a - b; }); res.s = ps[ps.length >> 1];
+      MAPS.forEach(function (n, m) {
+        if (sorted[m].length < 10) return;
+        var lv = levelTime(m, res.s); if (lv == null) return;
+        if (p.t[m] == null) { res.miss.push({ m: m, lv: lv, g: MISSING - lv }); res.missSum += MISSING - lv; return; }
+        var pc = (mapRank(m, p.t[m]) - 1) / (sorted[m].length - 1);
+        if (pc - res.s > 0.2 && p.t[m] - lv > 0.0005) res.maps.push({ m: m, t: p.t[m], lv: lv, g: p.t[m] - lv, r: mapRank(m, p.t[m]), lr: Math.round(res.s * (sorted[m].length - 1)) + 1 });
+      });
+      res.maps.sort(function (a, b) { return b.g - a.g; });
+      res.sum = res.maps.reduce(function (a, x) { return a + x.g; }, 0);
+    }
+    return (UT[p.name] = res);
+  }
+  function rankAt(p, total) { var r = 1; players.forEach(function (o) { if (o !== p && o.total < total - 1e-9) r++; }); return r; }
+  function untappedHTML(p) {
+    var U = untapped(p);
+    if (!U.ok) return '<div class="card trk-tabs-card"><h3>🎯 Below your level</h3><p class="muted">Needs times on at least 10 maps to work out your level.</p></div>';
+    var all = U.sum + U.missSum, pot = rankAt(p, p.total - all), potMaps = rankAt(p, p.total - U.sum);
+    var act = weeklyOf(p).slice(-8).some(function (x) { return x.s > 0.0005; });
+    var head = '<p class="muted" style="font-size:.85rem;margin:4px 0 10px">' + (U.world ? "Maps where you're clearly slower than the " + U.n + ' players around the world with a total most like yours on the same maps (from the <a href="https://tanabesan.github.io/probeans/total-scores.html" target="_blank" rel="noopener">ProBeans world rankings</a>)' : "Maps where your time is well below your level on your other maps (you usually rank around the top " + Math.max(1, Math.round(U.s * 100)) + "% of Oceania)") + ". These are usually the easiest seconds to grab" + (act ? ", and since you're still setting PBs, your predictions expect you to grab them gradually" : "") + ".</p>";
+    var potLine = all > 0.0005 ? '<div class="trk-pot"><div><span>Untapped time</span><b>−' + all.toFixed(3) + 's</b><small>' + (U.missSum && U.sum > 0.05 ? U.sum.toFixed(1) + "s on weak maps + " + U.missSum.toFixed(1) + "s on maps with no time" : U.missSum ? "on " + U.miss.length + (U.miss.length === 1 ? " map" : " maps") + " with no time yet" : "on " + U.maps.length + (U.maps.length === 1 ? " weak map" : " weak maps")) + "</small></div>" +
+      "<div><span>Your potential rank</span><b>#" + pot + "</b><small>" + (pot < p.place ? "up " + (p.place - pot) + " from #" + p.place + " if every map was at your level" : "you're already at your level") + "</small></div>" +
+      (U.missSum && U.sum ? "<div><span>Weak maps only</span><b>#" + potMaps + "</b><small>fixing just the maps you've already played</small></div>" : "") + "</div>" : "";
+    var rows = U.maps.slice(0, 8).map(function (x) {
+      return '<div class="row"><b>' + esc(MAPS[x.m]) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span><small>You " + fmt(x.t) + " (" + ordinal(x.r) + " in Oceania) · " + (U.world ? "players at your level usually get " + fmt(x.lv) : "your level ≈ " + fmt(x.lv) + " (around " + ordinal(x.lr) + ")") + "</small></div>";
+    }).concat(U.miss.map(function (x) {
+      return '<div class="row miss"><b>' + esc(MAPS[x.m]) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span><small>No time yet (counts as " + MISSING + "s) · " + (U.world ? "players at your level usually get " : "your level ≈ ") + fmt(x.lv) + "</small></div>";
+    })).join("");
+    return '<div class="card trk-tabs-card trk-maps"><h3>🎯 Below your level</h3>' + head + potLine + (rows || '<p class="muted">Every map is at your level. Nice and consistent! 💪</p>') + "</div>";
+  }
+
+  // ---- Quick stats strip ----
+  function quickStatsHTML(p) {
+    var above = players[p.place - 2], below = players[p.place], k = p.name.toLowerCase();
+    var W = weeklyOf(p).slice(-26), pbw = W.filter(function (x) { return x.s > 0.0005; }), avg = pbw.length ? pbw.reduce(function (a, x) { return a + x.s; }, 0) / pbw.length : 0;
+    var mr = MAPS.map(function (n, m) { return p.t[m] != null ? { n: n, r: mapRank(m, p.t[m]) } : null; }).filter(Boolean).sort(function (a, b) { return a.r - b.r; });
+    var top10 = mr.filter(function (x) { return x.r <= 10; }).length, first = null;
+    for (var i = 0; i < weeks.length; i++) if (hist[weeks[i]][k] != null) { first = weeks[i]; break; }
+    var wr = first ? Math.round((dnum(weeks[weeks.length - 1]) - dnum(first)) / 6048e5) : 0, all = weeklyOf(p).reduce(function (a, x) { return a + x.s; }, 0);
+    var tile = function (ic, l, v, s) { return '<div><i aria-hidden="true">' + ic + "</i><span>" + l + "</span><b>" + v + "</b><small>" + s + "</small></div>"; };
+    return '<div class="trk-qs">' +
+      tile("⬆️", "Next place", above ? "+" + (p.total - above.total).toFixed(3) + "s" : "–", above ? "to pass #" + above.place + " " + esc(above.name) : "You're #1") +
+      tile("⬇️", "Your lead", below ? (below.total - p.total).toFixed(3) + "s" : "–", below ? "over #" + below.place + " " + esc(below.name) : "Nobody behind") +
+      tile("📅", "PB weeks", pbw.length + " / " + W.length, "weeks with a PB lately") +
+      tile("⚡", "Avg PB week", avg ? "−" + avg.toFixed(2) + "s" : "–", "seconds per PB week") +
+      tile("💪", "Best map", mr.length ? esc(mr[0].n) : "–", mr.length ? ordinal(mr[0].r) + " in Oceania" : "") +
+      tile("🎯", "Top-10 maps", top10 + " / " + MAPS.length, "maps where you're top 10") +
+      tile("⏳", "Ranked for", wr ? wr + " weeks" : "New", first ? "since " + niceDate(first) : "") +
+      tile("📉", "All-time drop", all > 0.0005 ? "−" + all.toFixed(1) + "s" : "–", "seconds taken off") +
+      (function () { var U = untapped(p), u = U.sum + U.missSum; return tile("🎯", "Untapped time", U.ok && u > 0.0005 ? "−" + u.toFixed(1) + "s" : "–", U.ok ? (u > 0.0005 ? "below your level (potential #" + rankAt(p, p.total - u) + ")" : "every map at your level") : "needs 10+ maps"); })() +
+      "</div>";
+  }
+
+  // 6. Personal records
+  function recordsHTML(p) {
+    var W = weeklyOf(p), F = formInfo(p);
+    if (!W.length) return "";
+    var bw = W.reduce(function (a, x) { return x.s > a.s ? x : a; }, W[0]), mp = W.reduce(function (a, x) { return x.c > a.c ? x : a; }, W[0]);
+    var byM = {}; W.forEach(function (x) { var k = x.w.slice(0, 7); byM[k] = (byM[k] || 0) + x.s; });
+    var bm = Object.keys(byM).sort(function (a, b) { return byM[b] - byM[a]; })[0];
+    var all = W.reduce(function (a, x) { return a + x.s; }, 0);
+    var cell = function (l, v, s) { return "<div><span>" + l + "</span><b>" + v + "</b><small>" + s + "</small></div>"; };
+    return '<div class="card trk-tabs-card"><h3>🏆 Personal records</h3><div class="trk-rec">' +
+      cell("Best week", bw.s > 0.0005 ? "−" + bw.s.toFixed(3) + "s" : "–", bw.s > 0.0005 ? "Week of " + niceDate(bw.w) : "No PBs yet") +
+      cell("Most PBs in a week", mp.c || "–", mp.c ? "Week of " + niceDate(mp.w) : "") +
+      cell("Best month", bm && byM[bm] > 0.0005 ? "−" + byM[bm].toFixed(3) + "s" : "–", bm ? MONTHS[+bm.slice(5) - 1] + " " + bm.slice(0, 4) : "") +
+      cell("Longest PB streak", F.bestStreak ? F.bestStreak + (F.bestStreak === 1 ? " week" : " weeks") : "–", "Weeks in a row with a PB") +
+      cell("Career-high rank", "#" + p.high, niceDate(p.highDate) ? niceDate(p.highDate) : p.high === p.place ? "Right now" : "") +
+      cell("Total taken off", "−" + all.toFixed(3) + "s", "Since " + niceDate((timp[p.name.toLowerCase()] || [{ w: tweeks[0] }])[0].w)) +
+      "</div></div>";
+  }
+
+  // 7. Map trends (loaded per player from the "Map history" tab)
+  var MT = {};
+  function loadTrends(p) {
+    var box = $("trk-trends"); if (!box || !p) return;
+    if (MT[p.name]) { box.innerHTML = trendsHTML(p, MT[p.name]); return; }
+    var nm = p.name, q = nm.indexOf("'") < 0 ? "'" + nm + "'" : '"' + nm + '"';
+    var names = [nm].concat(Object.keys(ALIAS).filter(function (o) { return ALIAS[o] === nm; })), where = names.filter(function (x) { return x.indexOf("'") < 0 || x.indexOf('"') < 0; }).map(function (x) { return "B = " + (x.indexOf("'") < 0 ? "'" + x + "'" : '"' + x + '"'); }).join(" or ");
+    get(DATA + "&sheet=" + encodeURIComponent("Map history") + "&tq=" + encodeURIComponent("select * where " + where)).then(function (t) {
+      var rows = parseCSV(t); MT[nm] = header(rows, "week", "name") ? rows.slice(1) : [];
+      if (S.player === nm && S.ptab === "tracking") { var b2 = $("trk-trends"); if (b2) b2.innerHTML = trendsHTML(p, MT[nm]); }
+    }, function () { var b2 = $("trk-trends"); if (b2) b2.innerHTML = "<h3>📉 Map trends</h3><p class=\"muted\">Couldn't load map history right now.</p>"; });
+  }
+  function trendsHTML(p, rows) {
+    var by = {};
+    rows.forEach(function (r) { var m = MAPS.indexOf(String(r[2]).trim()), t = parseFloat(r[3]), w = String(r[0]).trim(); if (m < 0 || isNaN(t) || !/^\d{4}-/.test(w)) return; (by[m] = by[m] || []).push({ w: w, t: t }); });
+    var cut3 = tcut(13) || "", list = Object.keys(by).map(function (m) {
+      var a = by[m].sort(function (x, y) { return x.w < y.w ? -1 : 1; }); m = +m;
+      var cur = p.t[m] != null ? p.t[m] : a[a.length - 1].t;
+      var before3 = a.filter(function (x) { return x.w < cut3; }).pop(), d3 = before3 ? before3.t - cur : 0;
+      return { m: m, a: a, cur: cur, first: a[0], d3: d3, all: a[0].t - cur, pbs: a.length - 1 };
+    }).sort(function (x, y) { return y.d3 - x.d3 || y.all - x.all; });
+    if (!list.length) return '<h3>📉 Map trends</h3><p class="muted">Map history is still being collected. It goes back to 2024 once it finishes, and adds a new week every Monday.</p>';
+    var spark = function (a, cur) {
+      var pts = a.map(function (x) { return x.t; }); pts.push(cur);
+      var mn = Math.min.apply(null, pts), mx = Math.max.apply(null, pts), n = pts.length, w = 200, h = 38;
+      if (n < 2 || mx - mn < 1e-6) return '<svg viewBox="0 0 200 38" aria-hidden="true"><path d="M0 19H200"/></svg>';
+      var X = function (i) { return (i / (n - 1)) * (w - 6) + 3; }, Y = function (v) { return 4 + (v - mn) / (mx - mn) * (h - 8); }, d = "";
+      pts.forEach(function (v, i) { d += (i ? "H" + X(i).toFixed(1) + "V" : "M" + X(i).toFixed(1) + " ") + Y(v).toFixed(1); });
+      return '<svg viewBox="0 0 200 38" aria-hidden="true"><path d="' + d + '"/><circle cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(cur).toFixed(1) + '" r="3"/></svg>';
+    };
+    return '<h3>📉 Map trends</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Your time on each map over time, most improved in the last 3 months first. Lower is faster.</p><div class="trk-tr">' +
+      list.map(function (x) {
+        return '<div class="t"><b>' + esc(MAPS[x.m]) + '</b><span class="d' + (x.d3 > 0.0005 ? "" : " z") + '">' + (x.d3 > 0.0005 ? "−" + x.d3.toFixed(3) + "s" : "no change") + '</span> <small style="display:inline">last 3 months</small>' + spark(x.a, x.cur) +
+          "<small>" + fmt(x.first.t) + " → " + fmt(x.cur) + " since " + niceDate(x.first.w) + " · " + x.pbs + (x.pbs === 1 ? " PB" : " PBs") + "</small></div>";
+      }).join("") + "</div>";
+  }
+
+  // 8. Share card (image for Discord etc.)
+  function shareCard() {
+    var T = S.trk; if (!T) return;
+    var W = 1200, H = 630, c = document.createElement("canvas"); c.width = W; c.height = H; var x = c.getContext("2d");
+    var g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, "#0c2a43"); g.addColorStop(1, "#1478c2"); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.fillStyle = "rgba(255,255,255,.06)"; x.beginPath(); x.arc(W - 120, 90, 260, 0, 7); x.fill();
+    var F = "system-ui, -apple-system, 'Segoe UI', Arial, sans-serif";
+    x.fillStyle = "#9fd0f5"; x.font = "700 26px " + F; x.fillText("OCEANIA LOLBEANS · TRACKING", 60, 74);
+    x.fillStyle = "#fff"; x.font = "800 68px " + F; x.fillText((T.country === "AUS" ? "🇦🇺 " : T.country === "NZ" ? "🇳🇿 " : "") + T.name, 60, 160);
+    x.font = "700 30px " + F; x.fillStyle = "#cfe6f7"; x.fillText("#" + T.place + " in Oceania  ·  " + T.total.toFixed(3) + "s total", 60, 210);
+    x.fillStyle = "rgba(255,255,255,.12)"; x.beginPath(); if (x.roundRect) x.roundRect(60, 245, W - 120, 84, 18); else x.rect(60, 245, W - 120, 84); x.fill();
+    x.fillStyle = "#fff"; x.font = "800 36px " + F; var dec = function (h) { var ta = document.createElement("textarea"); ta.innerHTML = String(h).replace(/<[^>]+>/g, ""); return ta.value; };
+    x.fillText(dec(T.big), 84, 300);
+    var tiles = [["PACE", T.my > 0.0005 ? "−" + T.my.toFixed(2) + "s/wk" : "0.00s/wk"], [T.defend ? "LEAD" : "GAP TO GOAL", Math.abs(T.gap).toFixed(2) + "s"], ["IN 12 WEEKS", "#" + T.p12], ["FORM", T.form.badge[0]]];
+    tiles.forEach(function (t, i) {
+      var tx = 60 + i * 275; x.fillStyle = "rgba(255,255,255,.1)"; x.beginPath(); if (x.roundRect) x.roundRect(tx, 360, 255, 130, 16); else x.rect(tx, 360, 255, 130); x.fill();
+      x.fillStyle = "#9fd0f5"; x.font = "700 20px " + F; x.fillText(t[0], tx + 22, 400); x.fillStyle = "#fff"; x.font = "800 40px " + F; x.fillText(t[1], tx + 22, 456);
+    });
+    x.fillStyle = "#cfe6f7"; x.font = "600 24px " + F; x.fillText("Goal: " + T.goal + (T.rival ? "   ·   Rival: " + T.rival : ""), 60, 545);
+    x.fillStyle = "#9fd0f5"; x.font = "600 22px " + F; x.fillText("goat-ninja-au.github.io/Oceania-Lolbeans-Official", 60, 590);
+    c.toBlob(function (blob) {
+      var url = URL.createObjectURL(blob), file = new File([blob], "tracking-" + T.name.replace(/[^\w-]+/g, "_") + ".png", { type: "image/png" });
+      var m = document.createElement("div"); m.className = "trk-modal"; m.setAttribute("role", "dialog"); m.setAttribute("aria-label", "Share your tracking");
+      m.innerHTML = '<div class="box"><h3>Share your tracking</h3><img alt="Tracking card for ' + esc(T.name) + '" src="' + url + '"><div class="row">' +
+        (navigator.canShare && navigator.canShare({ files: [file] }) ? '<button type="button" class="btn" data-sh="share">Share</button>' : "") +
+        (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write ? '<button type="button" class="btn" data-sh="copy">Copy image</button>' : "") +
+        '<a class="btn" download="' + esc(file.name) + '" href="' + url + '">Download</a><button type="button" class="btn" data-sh="close">Close</button></div></div>';
+      document.body.appendChild(m);
+      m.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-sh]"); if (e.target === m || (b && b.dataset.sh === "close")) { m.remove(); URL.revokeObjectURL(url); return; }
+        if (!b) return;
+        if (b.dataset.sh === "share") navigator.share({ files: [file], title: T.name + " · Oceania LOLBeans tracking" }).catch(function () {});
+        if (b.dataset.sh === "copy") navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]).then(function () { toast("Image copied. Paste it in Discord!"); }, function () { toast("Couldn't copy. Use Download instead."); });
+      });
+    }, "image/png");
+  }
+  function trackingHTML(p) {
+    if (!tweeks.length) return '<div class="card"><p class="muted">Tracking needs the time history, which is still loading. Try again in a minute.</p></div>';
+    var G = pickGoal(p);
+    if (!G) return '<div class="card"><p class="muted">No goal to track yet.</p></div>';
+    var opts = goalsFor(p), isCustom = G.id.indexOf("p:") === 0;
+    var sel = '<div class="trk-goal"><label for="goal">Goal</label><select class="gsel" id="goal">' + opts.map(function (o) { return '<option value="' + o.id + '"' + (o.id === G.id ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") +
+      '<optgroup label="Catch a player">' + players.filter(function (o) { return o.place < p.place && o.place >= Math.max(1, p.place - 40); }).map(function (o) { var id = "p:" + o.name; return '<option value="' + esc(id) + '"' + (id === G.id ? " selected" : "") + ">#" + o.place + " " + esc(o.name) + "</option>"; }).join("") + "</optgroup></select><button type=\"button\" class=\"btn trk-share\" id=\"trk-share\">📤 Share my tracking</button></div>";
+    var my = weeklyGain(p), myL = timp[p.name.toLowerCase()] || [], tracked = myL.length >= 2;
+    var aroundG = G.n && G.n > 3 ? players.filter(function (o) { return Math.abs(o.place - G.n) <= 2 && o !== p; }) : [G.who];
+    var gp = aroundG.reduce(function (a, o) { return a + weeklyGain(o); }, 0) / Math.max(aroundG.length, 1);
+    var wksTracked = myL.length ? tweeks.length - 1 - tweeks.indexOf(myL[0].w) : 0;
+    var gap = G.defend ? G.who.total - p.total : p.total - G.who.total; // defend: your lead; otherwise: how far behind
+    var close = G.defend ? my - gp : my - gp; // seconds per week you gain on them
+    var cls, big, txt, GC = null;
+    var who2 = G.n ? "the top " + G.n : esc(G.who.name);
+    if (!tracked) { cls = "y"; big = "Not enough history yet"; txt = "Your expected pace is worked out from your PBs over the last " + PACE_WEEKS + " weeks. Check back after a few Mondays."; }
+    else if (G.defend) {
+      GC = goalChance(p, G); var dW = GC.pct >= 50 ? GC.med : catchWeeks(G.who, function (w) { return proj(p, w); });
+      if (dW == null) { cls = "g"; big = "🟢 Safe at #1: impossible for " + esc(G.who.name) + " to catch you at the current pace"; txt = "You lead by " + gap.toFixed(3) + "s and you're improving at least as fast as them."; }
+      else { cls = dW < 12 ? "r" : "y"; big = (dW < 12 ? "🔴 " : "🟡 ") + esc(G.who.name) + " could catch you: " + exactDate(dW); txt = "They're gaining " + Math.max(-close, 0).toFixed(2) + "s a week on your " + gap.toFixed(3) + "s lead."; }
+    } else if (gap <= 0) { cls = "g"; big = "🟢 You're already there"; txt = "You're " + (-gap).toFixed(3) + "s ahead of " + esc(G.who.name) + ". Keep it up to stay ahead."; }
+    else {
+      GC = goalChance(p, G);
+      var detW = catchWeeks(p, function (w) { return proj(G.who, w); }), dateW = GC && GC.pct >= 50 ? GC.med : detW;
+      if (dateW == null) { cls = "r"; big = "🔴 Impossible at your current pace"; txt = close >= -0.05 ? "You're keeping up with " + who2 + " but not closing the " + gap.toFixed(3) + "s gap. You'd need to start setting PBs more often." : (G.n ? "The top " + G.n + " is" : esc(G.who.name) + " is") + " improving " + (-close).toFixed(2) + "s a week faster than you, so the " + gap.toFixed(3) + "s gap is growing."; }
+      else { cls = dateW <= 52 ? "g" : "y"; big = (dateW <= 52 ? "🟢 On track: " : "🟡 Slowly closing: ") + exactDate(dateW); txt = "You're gaining " + Math.max(close, 0).toFixed(2) + "s a week on " + who2 + " with a " + gap.toFixed(3) + "s gap to close. " + (GC && GC.pct >= 50 ? "This is the most likely date from the simulations." : "This is the date at your expected pace."); }
+    }
+    var nums = '<div class="trk-nums">' +
+      "<div><span>" + (G.defend ? "Your lead" : "Gap to goal") + "</span><b>" + Math.abs(gap).toFixed(3) + "s</b><small>vs " + esc(G.who.name) + " (#" + G.who.place + ")</small></div>" +
+      "<div><span>Your expected pace</span><b>" + (my > 0.005 ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, next 12 weeks" + (isActive(p) && (untapped(p).sum + untapped(p).missSum) > 0.5 ? " (incl. untapped maps)" : "") + "</small></div>" +
+      "<div><span>" + (G.n ? "Top-" + G.n + " expected pace" : "Their expected pace") + "</span><b>" + (gp > 0.005 ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>per week, next 12 weeks</small></div></div>";
+    var UU = untapped(p), uu = UU.sum + UU.missSum;
+    if (UU.ok && uu > 1 && isActive(p) && !(G.defend)) txt += " This includes gradually grabbing the " + uu.toFixed(1) + "s you have on maps below your level (that alone would make you about #" + rankAt(p, p.total - uu) + ").";
+    if (tracked && wksTracked < 8) txt += " Based on only " + wksTracked + (wksTracked === 1 ? " week" : " weeks") + " of history, so it's a rough guess for now.";
+    var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + (tracked ? chanceLine(p, G, gap) : "") + nums + "</div>";
+
+    // projection chart: last 8 weeks (estimated) + future
+    var past = pastTotals(p, GRAPH_WEEKS + 1), gpast = pastTotals(G.who, GRAPH_WEEKS + 1);
+    var eta = !G.defend && gap > 0 ? catchWeeks(p, function (w) { return proj(G.who, w); }, 26) : G.defend ? catchWeeks(G.who, function (w) { return proj(p, w); }, 26) : null;
+    var H2 = Math.min(Math.max(eta ? Math.ceil(eta) + 4 : 12, 12), 26), nP = past.length - 1;
+    var ys = [], W = 720, H = 300, Lm = 70, R = 24, T = 20, B = 52;
+    past.forEach(function (q) { ys.push(q.v); }); gpast.forEach(function (q) { ys.push(q.v); });
+    var fy = [], fg = []; for (var f = 0; f <= H2; f++) { fy.push(proj(p, f)); fg.push(proj(G.who, f)); ys.push(fy[f]); ys.push(fg[f]); }
+    var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys), pad = Math.max((hi - lo) * 0.08, 0.5); lo -= pad; hi += pad;
+    var X = function (i) { return Lm + (i + nP) / (nP + H2) * (W - Lm - R); }, Y = function (v) { return T + (hi - v) / (hi - lo) * (H - T - B); };
+    var svg = "", raw = (hi - lo) / 5, mag = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).filter(function (v) { return v >= raw; })[0];
+    for (var t = Math.ceil(lo / step) * step; t <= hi; t += step) svg += '<line class="grid" x1="' + Lm + '" x2="' + (W - R) + '" y1="' + Y(t).toFixed(1) + '" y2="' + Y(t).toFixed(1) + '"/><text x="' + (Lm - 10) + '" y="' + (Y(t) + 4).toFixed(1) + '" text-anchor="end">' + (+t.toFixed(2)) + "s</text>";
+    svg += '<line class="grid" x1="' + X(0) + '" x2="' + X(0) + '" y1="' + T + '" y2="' + (H - B) + '" style="stroke-dasharray:3 4"/><text x="' + X(0) + '" y="' + (H - B + 22) + '" text-anchor="middle">Now</text>';
+    svg += '<text x="' + X(-nP) + '" y="' + (H - B + 22) + '" text-anchor="start">' + nP + " weeks ago</text>" + '<text x="' + X(H2) + '" y="' + (H - B + 22) + '" text-anchor="end">+' + H2 + " weeks</text>";
+    var line = function (arr, cls2) { return '<path class="ln ' + cls2 + '" d="' + arr.map(function (q, i) { return (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" ") + '"/>'; };
+    svg += line(past.map(function (q, i) { return [X(i - nP), Y(q.v)]; }), "you") + line(gpast.map(function (q, i) { return [X(i - nP), Y(q.v)]; }), "goal");
+    svg += line(fy.map(function (v, i) { return [X(i), Y(v)]; }), "you fut") + line(fg.map(function (v, i) { return [X(i), Y(v)]; }), "goal fut");
+    if (eta && eta <= H2) { var ex = X(eta), ey = Y(fy[eta]); svg += '<circle class="eta" cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="7"><title>Around ' + exactDate(eta) + "</title></circle>" + '<text class="lg" x="' + ex.toFixed(1) + '" y="' + (ey - 14).toFixed(1) + '" text-anchor="middle" style="fill:#2a9d5c">' + exactDate(eta) + "</text>"; }
+    svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(fy[H2]) + (fy[H2] > fg[H2] ? 18 : -10)).toFixed(1) + '" text-anchor="end" style="fill:var(--blue)">' + esc(p.name) + "</text>";
+    svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(fg[H2]) + (fy[H2] > fg[H2] ? -10 : 18)).toFixed(1) + '" text-anchor="end" style="fill:#8a96a3">' + esc(G.who.name) + "</text>";
+    svg += '<text class="axt" transform="translate(16 ' + ((T + H - B) / 2) + ') rotate(-90)" text-anchor="middle">Total time</text>';
+    var chart = '<div class="card"><h3>📈 Projection</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Solid lines: the last ' + nP + ' weeks. Dashed: where you\'d both be at your expected pace (for active players this includes grabbing untapped time).</p><div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projected total time for ' + esc(p.name) + " and " + esc(G.who.name) + '">' + svg + "</svg></div></div>";
+
+    // where to find time
+    var rows = MAPS.map(function (name, m) { var r = G.ref(m); if (r == null) return null; var mine = tv(p, m); return { m: m, name: name, mine: mine, r: r, g: mine - r, miss: p.t[m] == null }; }).filter(function (x) { return x && x.g > 0.0005; }).sort(function (a, b) { return b.g - a.g; });
+    var atLevel = MAPS.length - rows.length, topG = rows.length ? rows[0].g : 1, sum = rows.reduce(function (a, x) { return a + x.g; }, 0);
+    var maps = '<div class="card trk-maps"><div class="ip-head"><h3>⏱️ Where to find time</h3><span class="muted" style="font-size:.82rem">vs ' + esc(G.refLbl) + "</span></div>" +
+      '<p class="muted" style="font-size:.85rem;margin:4px 0 8px">' + (rows.length ? "Your biggest gaps first. Matching " + esc(G.refLbl) + " on every map would take " + sum.toFixed(3) + "s off. " : "") + (atLevel ? "You're already at that level on " + atLevel + " of " + MAPS.length + " maps." : "") + "</p>" +
+      (rows.length ? rows.slice(0, 8).map(function (x) {
+        return '<div class="row' + (x.miss ? " miss" : "") + '"><b>' + esc(x.name) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span>" + '<div class="bar"><i style="width:' + Math.max(3, Math.round(100 * x.g / topG)) + '%"></i></div>' +
+          "<small>" + (x.miss ? "No time yet (counts as " + MISSING + "s). Any run here is a big drop." : "You " + fmt(x.mine) + " · " + esc(G.refLbl) + " " + fmt(x.r)) + "</small></div>";
+      }).join("") : '<p class="muted">You\'re at or ahead of ' + esc(G.refLbl) + " on every map. 🔥</p>") + "</div>";
+
+    // predicted ranking
+    var pred = '<div class="card"><h3>🔮 Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their expected pace.</p><div class="trk-pred">' +
+      "<div><span>Now</span><b>#" + p.place + "</b></div>" + [4, 12, 26].map(function (w) { var r = predictRank(p, w), d = p.place - r; return "<div><span>In " + w + " weeks</span><b>#" + r + "</b><small>" + (d > 0 ? "↑ " + d : d < 0 ? "↓ " + (-d) : "no change") + "</small></div>"; }).join("") + "</div></div>";
+
+    var F = formInfo(p), RV = rivalFor(p);
+    S.trk = { name: p.name, place: p.place, total: p.total, big: big, my: my, gap: gap, defend: !!G.defend, goal: G.label, who: G.who.name, p12: predictRank(p, 12), form: F, rival: RV ? RV.o.name : "", country: p.country };
+    return sel + status + quickStatsHTML(p) +
+      '<div class="trk-grid">' + formHTML(p, F) + rivalHTML(p, RV) + "</div>" +
+      chart + untappedHTML(p) + milestonesHTML(p) + maps + strengthsHTML(p) +
+      '<div class="card trk-tabs-card" id="trk-trends"><h3>📉 Map trends</h3><p class="muted">Loading map history…</p></div>' +
+      '<div class="trk-grid">' + pred + chancesHTML(p) + "</div>" + likeYouHTML(p) + recordsHTML(p) + accuracyHTML() +
+      '<p class="muted" style="font-size:.8rem;margin-top:10px">Pace only counts PBs on maps you already had a time on. Filling in a missing map drops your total straight away but isn\'t counted as pace.</p>';
+  }
+  function impCard(p) {
+    var k = p.name.toLowerCase(), L = timp[k] || [];
+    var title = "<h3>Time improvement</h3>";
+    if (!tweeks.length) return '<div class="card">' + title + '<p class="muted">Time history is still being collected.</p></div>';
+    if (L.length < 2) return '<div class="card">' + title + '<p class="muted">Not enough history yet. Improvement is saved every Monday' + (L.length ? ", starting " + niceDate(L[0].w) : "") + ".</p></div>";
+    var stat = function (lbl, n) { var s = impSum(k, tcut(n)); return "<div><span>" + lbl + "</span><b>" + secs(s.s) + "</b><small>" + s.c + (s.c === 1 ? " new PB" : " new PBs") + "</small></div>"; };
+    var stats = '<div class="imp-stats">' + stat("Last week", 1) + stat("Last 4 weeks", 4) + stat("Last 12 months", 52) + stat("All time", 0) + "</div>";
+    // cumulative seconds taken off, one point per week from the first tracked week
+    var by = {}; L.forEach(function (e) { by[e.w] = e.s; });
+    var start = L[0].w, cum = 0, all = [];
+    tweeks.forEach(function (w) { if (w < start) return; if (w > start) cum += by[w] || 0; all.push({ d: w, v: cum }); });
+    var ranges = [["3m", "Last 3 months", 13], ["1y", "Last 12 months", 52], ["all", "Since tracking began", 0]];
+    var sel = ranges.filter(function (r) { return r[0] === S.trange; })[0] || ranges[2];
+    var pts = sel[2] ? all.slice(-(sel[2] + 1)) : all.slice();
+    var base = pts[0].v; pts = pts.map(function (q) { return { d: q.d, v: q.v - base }; });
+    var weekly = sel[0] === "3m" || pts.length <= 14;
+    if (!weekly) { var byM = {}, order = []; pts.forEach(function (q, i) { var mk = q.d.slice(0, 7); if (!byM[mk]) order.push(mk); byM[mk] = q; }); var first = pts[0]; pts = order.map(function (mk) { return byM[mk]; }); if (pts[0] !== first) pts.unshift(first); }
+    var head = '<div class="ghead">' + title + '<select class="gsel" id="trange" aria-label="Time range">' + ranges.map(function (r) { return '<option value="' + r[0] + '"' + (r === sel ? " selected" : "") + ">" + r[1] + "</option>"; }).join("") + "</select></div>";
+    if (pts.length < 2) return '<div class="card">' + head + stats + '<p class="muted">Not enough history for this period yet.</p></div>';
+    var W = 720, H = 300, Lm = 64, R = 22, T = 18, B = 58, n = pts.length;
+    var maxV = Math.max.apply(null, pts.map(function (q) { return q.v; }));
+    var raw = Math.max(maxV, 0.5) / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).filter(function (v) { return v >= raw; })[0];
+    var hi = Math.max(Math.ceil(maxV / step) * step, step);
+    var X = function (i) { return Lm + i / (n - 1) * (W - Lm - R); }, Y = function (v) { return H - B - v / hi * (H - T - B); };
+    var svg = "";
+    for (var t = 0; t <= hi + 1e-9; t += step) svg += '<line class="grid" x1="' + Lm + '" x2="' + (W - R) + '" y1="' + Y(t) + '" y2="' + Y(t) + '"/><text x="' + (Lm - 10) + '" y="' + (Y(t) + 4) + '" text-anchor="end">' + (t ? "−" : "") + (+t.toFixed(3)) + "s</text>";
+    var every = Math.ceil(n / 12);
+    pts.forEach(function (q, i) {
+      if (i % every !== 0 && i !== n - 1) return;
+      if (i === n - 1 && i % every !== 0 && n > 2 && (X(i) - X(i - (i % every))) < 40) return;
+      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(q.d), lbl = weekly ? (+m[3]) + " " + MON[+m[2] - 1] : MON[+m[2] - 1] + (+m[2] === 1 || i === 0 ? " \u2019" + m[1].slice(2) : "");
+      svg += '<text x="' + X(i) + '" y="' + (H - B + 22) + '" text-anchor="middle">' + lbl + "</text>";
+    });
+    svg += '<text class="axt" transform="translate(14 ' + ((T + H - B) / 2) + ') rotate(-90)" text-anchor="middle">Seconds taken off</text>';
+    svg += '<path class="ln imp" d="' + pts.map(function (q, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(q.v).toFixed(1); }).join(" ") + '"/>';
+    pts.forEach(function (q, i) { svg += '<circle class="dt imp' + (i === n - 1 ? " now" : "") + '" cx="' + X(i).toFixed(1) + '" cy="' + Y(q.v).toFixed(1) + '" r="' + (i === n - 1 ? 6 : 4.5) + '"><title>' + (i === n - 1 ? "Now" : "Week of " + niceDate(q.d)) + ": " + secs(q.v) + " so far</title></circle>"; });
+    var tot = pts[n - 1].v;
+    return '<div class="card">' + head + stats + '<div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Seconds taken off over time: ' + secs(tot) + '">' + svg + "</svg></div>" +
+      '<p class="muted gtip">' + secs(tot) + " taken off over this period. Only maps " + esc(p.name) + " already had a time on are counted, so new maps never count against them. Tracking started " + niceDate(L[0].w) + ".</p></div>";
+  }
   function loadHistory(ex) {
     hist = {}; weeks = []; ones = []; recLog = []; ALIAS = {};
     if (header(ex.alias, "old name", "new name")) ex.alias.slice(1).forEach(function (r) { var o = String(r[0] || "").trim(), nw = String(r[1] || "").trim(); if (o && nw) ALIAS[o.toLowerCase()] = nw; });
@@ -758,7 +1491,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 
   function load(rows, careerRows, ex) {
     players = []; byName = {}; career = {};
-    loadHistory(ex || {});
+    loadHistory(ex || {}); loadTime((ex || {}).time);
     (careerRows || []).slice(1).forEach(function (r) {
       var n = canon(r[0]).toLowerCase(), p = parseInt(r[1], 10), d = String(r[2] || "").trim(), c = career[n];
       if (n && !isNaN(p) && (!c || p < c.place || (p === c.place && d && (!c.date || d < c.date)))) career[n] = { place: p, date: d };
@@ -823,13 +1556,13 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var onP = !!S.player;
     $("head").hidden = onP;
     $("v-profile").hidden = !onP;
-    ["list", "records", "maps", "h2h", "fame", "info"].forEach(function (s) { $("v-" + s).hidden = onP || S.sec !== s; $("s-" + s).setAttribute("aria-selected", String(!onP && S.sec === s)); });
-    if (onP) renderProfile(); else if (S.sec === "list") renderList(); else if (S.sec === "maps") renderMaps(); else if (S.sec === "h2h") renderH2H(); else if (S.sec === "fame") renderFame(); else if (S.sec === "records") renderRecords();
+    ["list", "records", "maps", "h2h", "fame", "improved", "info"].forEach(function (s) { $("v-" + s).hidden = onP || S.sec !== s; $("s-" + s).setAttribute("aria-selected", String(!onP && S.sec === s)); });
+    if (onP) renderProfile(); else if (S.sec === "list") renderList(); else if (S.sec === "maps") renderMaps(); else if (S.sec === "h2h") renderH2H(); else if (S.sec === "fame") renderFame(); else if (S.sec === "records") renderRecords(); else if (S.sec === "improved") renderImproved();
     var navSec = onP ? "rankings" : S.sec === "records" ? "records" : S.sec === "fame" ? "halloffame" : "rankings";
     ["rankings", "records", "halloffame"].forEach(function (k) { var a = document.getElementById("nav-" + k); if (a) { if (k === navSec) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); } });
     syncUrl();
   }
-  function openPlayer(name, tab) { if (!byName[name]) return; S.player = name; S.ptab = tab || "overview"; S.sim = {}; S.vs = null; route(); window.scrollTo(0, 0); }
+  function openPlayer(name, tab) { if (!byName[name]) return; S.rival = null; if (S.goal && S.goal.indexOf("p:") === 0) S.goal = null; S.player = name; S.ptab = tab || "overview"; S.sim = {}; S.vs = null; route(); window.scrollTo(0, 0); }
 
   // ======================= RANKINGS LIST =======================
   var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -925,9 +1658,10 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     times: '<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>',
     records: '<svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 6h3a3 3 0 0 1-3 4M7 6H4a3 3 0 0 0 3 4"/></svg>',
     h2h: '<svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2 20a6 6 0 0 1 12 0M10 20a6 6 0 0 1 12 0"/></svg>',
-    target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>'
+    target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+    tracking: '<svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 16l5-5 4 3 7-8"/><path d="M15 6h5v5"/></svg>'
   };
-  var PTABS = [["overview", "Overview"], ["times", "Map Times"], ["records", "Records"], ["h2h", "Head to Head"], ["target", "Target Times"]];
+  var PTABS = [["overview", "Overview"], ["times", "Map Times"], ["records", "Records"], ["h2h", "Head to Head"], ["target", "Target Times"], ["tracking", "Tracking"]];
   var SILHOUETTE = '<svg viewBox="0 0 100 120" aria-hidden="true"><circle cx="50" cy="38" r="22"/><path d="M8 120c0-26 19-44 42-44s42 18 42 44z"/></svg>';
   // Count-up for big numbers: <b data-count="12" data-dec="0">
   function countUp(root) {
@@ -1042,7 +1776,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
         '<div class="ip-sec"><h3>Year-end Ranking</h3>' + (ye.length ? '<table class="ip-ye"><thead><tr><th>Year</th><th>Oceania Ranking</th></tr></thead><tbody>' +
           ye.map(function (r, i) { return "<tr" + (i > 0 && !S.yeOpen ? " hidden" : "") + "><td>" + r[0] + "</td><td>" + r[1] + "</td></tr>"; }).join("") + "</tbody></table>" +
           (ye.length > 1 ? '<button type="button" class="ip-more" id="ye-more" aria-expanded="' + !!S.yeOpen + '" aria-label="Show all years"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>' : "") : '<p class="muted">No full year ranked yet.</p>') + "</div>" +
-        graphCard(p) +
+        graphCard(p) + impCard(p) +
         '<div class="ip-sec"><div class="ip-head"><h3>Map matchups</h3><span class="muted" style="font-size:.82rem">Each map is a matchup: the faster time wins</span></div>' +
           wl.map(function (x) {
             var tot = x[2].w + x[2].l, pc = tot ? Math.round(100 * x[2].w / tot) : 0;
@@ -1108,6 +1842,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       var V = byName[S.vs];
       body = '<div class="h2h-pick" style="grid-template-columns:1fr"><label>Compare ' + esc(p.name) + ' with<input class="field" id="p-vs" list="names" placeholder="Type a name" autocomplete="off" value="' + esc(S.vs || "") + '"></label></div>' +
         (V ? h2hHTML(p, V) : '<p class="empty">Type a player\'s name to see the head-to-head.</p>');
+    } else if (S.ptab === "tracking") {
+      body = trackingHTML(p);
     } else if (S.ptab === "target") {
       body = '<div class="sim-sum" id="sim-sum"></div><div class="card"><h3>Target times</h3><p class="muted" style="font-size:.9rem">Type a target time for any map to see what your total and ranking would be. Tap OR to try the Oceania record. Maps without a time count as 60 seconds.</p><div class="sim-grid">' +
         MAPS.map(function (name, m) {
@@ -1118,6 +1854,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     }
     $("pbody").innerHTML = (S.ptab === "overview" || S.ptab === "matchups" ? "" : title) + body;
     if (S.ptab === "target") updateSim();
+    if (S.ptab === "tracking") loadTrends(byName[S.player]);
     countUp($("v-profile"));
     animateGauge();
     requestAnimationFrame(function () { document.querySelectorAll(".ip-bar i").forEach(function (i) { i.style.width = i.dataset.w + "%"; }); });
@@ -1293,6 +2030,9 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var gm = t.closest("[data-gmode]"); if (gm) { S.gmode = gm.dataset.gmode; var gw = document.querySelector(".ip-gauge"); var p0 = byName[S.player]; if (gw && p0) { gw.querySelector("svg").outerHTML = gaugeSVG(p0, S.gmode); gw.querySelectorAll("[data-gmode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.gmode === S.gmode)); }); countUp(gw); animateGauge(); } return; }
     if (t.closest("#ye-more")) { S.yeOpen = !S.yeOpen; document.querySelectorAll(".ip-ye tbody tr").forEach(function (r, i) { if (i > 0) r.hidden = !S.yeOpen; }); $("ye-more").setAttribute("aria-expanded", String(!!S.yeOpen)); return; }
     if (t.closest("[data-sharex]")) { window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(S.player + " on the Oceania LOLBeans rankings") + "&url=" + encodeURIComponent(location.origin + urlFor()), "_blank", "noopener"); return; }
+    if (t.closest("#trk-share")) { shareCard(); return; }
+    var ir = t.closest("[data-irange]"); if (ir) { S.irange = ir.dataset.irange; renderImproved(); return; }
+    var ipl = t.closest(".imp-list [data-player], .trk-cls [data-player], .trk-like [data-player], .tal-list [data-player]"); if (ipl) { openPlayer(ipl.dataset.player); return; }
     var pt = t.closest("[data-ptab]"); if (pt) { S.ptab = pt.dataset.ptab; renderProfile(); syncUrl(); if (S.ptab === "h2h" && $("p-vs")) $("p-vs").focus(); return; }
     var fill = t.closest("[data-fill]"); if (fill) { var m = +fill.dataset.fill; S.sim[m] = OR.t[m]; var inp = $("sim-" + m); inp.value = OR.t[m].toFixed(3); inp.classList.add("changed"); updateSim(); return; }
     var pl0 = t.closest("[data-player]"); if (pl0 && t.closest(".rec-t, .rec-sum")) { e.preventDefault(); openPlayer(pl0.dataset.player); return; }
@@ -1304,7 +2044,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-player][tabindex]")) { e.preventDefault(); openPlayer(e.target.dataset.player); }
     if (e.key === "Enter" && e.target.id === "p-vs") { var hit = findPlayer(e.target.value); if (hit) { S.vs = hit.name; renderProfile(); syncUrl(); } }
   });
-  document.addEventListener("change", function (e) { if (e.target.id === "rsort") { S.rsort = e.target.value; renderRecords(); return; } if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } });
+  document.addEventListener("change", function (e) { if (e.target.id === "rsort") { S.rsort = e.target.value; renderRecords(); return; } if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } if (e.target.id === "trange") { S.trange = e.target.value; renderProfile(); } if (e.target.id === "goal") { S.goal = e.target.value; renderProfile(); } if (e.target.id === "rival") { S.rival = e.target.value; renderProfile(); } });
   document.addEventListener("input", function (e) {
     if (e.target.id === "p-vs") { var v = e.target.value.trim(); if (byName[v]) { S.vs = v; renderProfile(); syncUrl(); } return; }
     if (!e.target.dataset || e.target.dataset.sim == null) return;
@@ -1326,8 +2066,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // ======================= LOAD =======================
   function get(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); }); }
   function opt(url) { return get(url).then(parseCSV, function () { return []; }); }
-  Promise.all([get(RANKINGS_URL), opt(CAREER_URL), opt(HIST_URL), opt(ONE_URL), opt(REC_URL), opt(ALIAS_URL), opt(PHOTO_URL)])
-    .then(function (res) { window.__photos = res[6]; load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4], alias: res[5], photo: res[6] }); $("status").hidden = true; })
+  Promise.all([get(RANKINGS_URL), opt(CAREER_URL), opt(HIST_URL), opt(ONE_URL), opt(REC_URL), opt(ALIAS_URL), opt(PHOTO_URL), opt(TIME_URL)])
+    .then(function (res) { window.__photos = res[6]; load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4], alias: res[5], photo: res[6], time: res[7] }); $("status").hidden = true; loadWorld(); })
     .catch(function () {
       var sample = /github\.io$/.test(location.hostname) ? [] : (window.RANKINGS_SAMPLE || []);
       if (sample.length) {
