@@ -773,7 +773,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     $("improved-body").innerHTML = head +
       '<p class="muted imp-note">Seconds taken off their total time, ' + when + '. Only maps a player already had a time on are counted, so new maps never count against anyone.</p>' +
       '<div class="card imp-list">' + (list.length ? list.map(function (x, i) {
-        return '<div class="fline"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(x.p.name) + '" tabindex="0" role="link">' + flag(x.p.country) + " " + esc(x.p.name) + "</b><small>#" + x.p.place + " in Oceania · improved on " + x.c + (x.c === 1 ? " map" : " maps") + '</small><div class="imp-bar"><i style="width:' + Math.max(3, Math.round(100 * x.s / top)) + '%"></i></div></div><div class="v imp-v">' + secs(x.s) + "</div></div>";
+        return '<div class="fline"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(x.p.name) + '" tabindex="0" role="link">' + flag(x.p.country) + " " + esc(x.p.name) + "</b><small>#" + x.p.place + " in Oceania · " + x.c + (x.c === 1 ? " new PB" : " new PBs") + '</small><div class="imp-bar"><i style="width:' + Math.max(3, Math.round(100 * x.s / top)) + '%"></i></div></div><div class="v imp-v">' + secs(x.s) + "</div></div>";
       }).join("") : '<p class="muted">Nobody improved a time in this period.</p>') + "</div>";
   }
   function impCard(p) {
@@ -781,7 +781,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var title = "<h3>Time improvement</h3>";
     if (!tweeks.length) return '<div class="card">' + title + '<p class="muted">Time history is still being collected.</p></div>';
     if (L.length < 2) return '<div class="card">' + title + '<p class="muted">Not enough history yet. Improvement is saved every Monday' + (L.length ? ", starting " + niceDate(L[0].w) : "") + ".</p></div>";
-    var stat = function (lbl, n) { var s = impSum(k, tcut(n)); return "<div><span>" + lbl + "</span><b>" + secs(s.s) + "</b><small>" + s.c + (s.c === 1 ? " map" : " maps") + " improved</small></div>"; };
+    var stat = function (lbl, n) { var s = impSum(k, tcut(n)); return "<div><span>" + lbl + "</span><b>" + secs(s.s) + "</b><small>" + s.c + (s.c === 1 ? " new PB" : " new PBs") + "</small></div>"; };
     var stats = '<div class="imp-stats">' + stat("Last week", 1) + stat("Last 4 weeks", 4) + stat("Last 12 months", 52) + stat("All time", 0) + "</div>";
     // cumulative seconds taken off, one point per week from the first tracked week
     var by = {}; L.forEach(function (e) { by[e.w] = e.s; });
