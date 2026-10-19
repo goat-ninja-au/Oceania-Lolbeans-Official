@@ -384,7 +384,7 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .trk-like .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--row); } .trk-like .row:last-child { border-bottom: 0; } .trk-like .up { color: #2a9d5c; font-weight: 800; } .trk-like .down { color: #d9505c; font-weight: 800; } .trk-like b[data-player] { cursor: pointer; }
 .trk-like h4 { margin: 16px 0 0; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
 .trk-acc p { margin: 6px 0; } .trk-acc ul { margin: 6px 0 0 18px; padding: 0; } .trk-acc li { margin: 4px 0; color: var(--muted); }
-.trk-qs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 215px), 1fr)); gap: 10px; margin: 0 0 16px; }
+.trk-qs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 10px; margin: 0 0 16px; }
 .trk-qs div { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 12px 52px; min-height: 74px; transition: transform .15s, box-shadow .15s; }
 .trk-qs div:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(7, 17, 28, .18); }
 .trk-qs i { position: absolute; left: 12px; top: 14px; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--soft); font-style: normal; font-size: 1rem; }
@@ -393,6 +393,8 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .trk-status.g { background: linear-gradient(135deg, color-mix(in srgb, #2a9d5c 16%, var(--card)), var(--card) 70%); } .trk-status.y { background: linear-gradient(135deg, color-mix(in srgb, #e0a526 16%, var(--card)), var(--card) 70%); } .trk-status.r { background: linear-gradient(135deg, color-mix(in srgb, #d9505c 16%, var(--card)), var(--card) 70%); }
 #pbody .trk-grid > .card, #pbody .trk-tabs-card, #pbody .trk-maps, #pbody .trk-like { border-radius: 16px; transition: box-shadow .15s; } #pbody .trk-grid > .card:hover, #pbody .trk-tabs-card:hover { box-shadow: 0 10px 28px rgba(7, 17, 28, .14); }
 .trk-ch .r { grid-template-columns: 70px minmax(0, 1fr) 58px; row-gap: 2px; } .trk-ch .r small { grid-column: 2 / -1; font-size: .78rem; color: var(--muted); } .trk-ch .r small.imp { color: #d9505c; }
+.trk-pot { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 10px; margin: 0 0 12px; } .trk-pot div { background: color-mix(in srgb, #7950f2 10%, var(--soft)); border-radius: 12px; padding: 12px; }
+.trk-pot span { display: block; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); } .trk-pot b { display: block; font-size: 1.3rem; font-family: var(--mono); } .trk-pot small { color: var(--muted); font-size: .78rem; }
 .testbar { background: #f0b429; color: #222; text-align: center; font-weight: 700; padding: 8px 12px; font-size: .9rem; }
 .fline.rec { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
 .fline .pic { width: 52px; height: 34px; border-radius: 6px; overflow: hidden; background: var(--soft); }
@@ -798,7 +800,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // ---- Time improvement (from the "Time history" tab) ----
   var timp = {}, tweeks = [];
   function loadTime(rows) {
-    timp = {}; tweeks = []; var seen = {}; SIM = null; TAL = null; BT = null;
+    timp = {}; tweeks = []; var seen = {}; SIM = null; TAL = null; BT = null; UT = {};
     if (!header(rows, "week", "name")) return;
     rows.slice(1).forEach(function (r) {
       var w = String(r[0]).trim(), n = canon(r[1]).toLowerCase(), s = parseFloat(r[2]), c = parseInt(r[3], 10) || 0;
@@ -1130,6 +1132,47 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       "<li>Filling in a missing map (60s) drops your total straight away but isn't counted as pace.</li></ul></div>";
   }
 
+  // ---- Untapped time: maps where a player's time is well below their level on the other maps ----
+  // level = the middle of where they rank across their maps; "your level" time on a map = the time at that same spot on the map
+  var UT = {};
+  function levelTime(m, s) { var a = sorted[m]; if (!a.length) return null; var x = s * (a.length - 1), lo = Math.floor(x), hi = Math.ceil(x); return a[lo] + (a[hi] - a[lo]) * (x - lo); }
+  function untapped(p) {
+    if (UT[p.name]) return UT[p.name];
+    var ps = [];
+    MAPS.forEach(function (n, m) { if (p.t[m] != null && sorted[m].length >= 10) ps.push((mapRank(m, p.t[m]) - 1) / (sorted[m].length - 1)); });
+    var res = { ok: ps.length >= 10, maps: [], miss: [], s: 0, sum: 0, missSum: 0 };
+    if (res.ok) {
+      ps.sort(function (a, b) { return a - b; }); res.s = ps[ps.length >> 1];
+      MAPS.forEach(function (n, m) {
+        if (sorted[m].length < 10) return;
+        var lv = levelTime(m, res.s); if (lv == null) return;
+        if (p.t[m] == null) { res.miss.push({ m: m, lv: lv, g: MISSING - lv }); res.missSum += MISSING - lv; return; }
+        var pc = (mapRank(m, p.t[m]) - 1) / (sorted[m].length - 1);
+        if (pc - res.s > 0.2 && p.t[m] - lv > 0.0005) res.maps.push({ m: m, t: p.t[m], lv: lv, g: p.t[m] - lv, r: mapRank(m, p.t[m]), lr: Math.round(res.s * (sorted[m].length - 1)) + 1 });
+      });
+      res.maps.sort(function (a, b) { return b.g - a.g; });
+      res.sum = res.maps.reduce(function (a, x) { return a + x.g; }, 0);
+    }
+    return (UT[p.name] = res);
+  }
+  function rankAt(p, total) { var r = 1; players.forEach(function (o) { if (o !== p && o.total < total - 1e-9) r++; }); return r; }
+  function untappedHTML(p) {
+    var U = untapped(p);
+    if (!U.ok) return '<div class="card trk-tabs-card"><h3>🎯 Below your level</h3><p class="muted">Needs times on at least 10 maps to work out your level.</p></div>';
+    var all = U.sum + U.missSum, pot = rankAt(p, p.total - all), potMaps = rankAt(p, p.total - U.sum);
+    var act = weeklyOf(p).slice(-8).some(function (x) { return x.s > 0.0005; });
+    var head = '<p class="muted" style="font-size:.85rem;margin:4px 0 10px">Maps where your time is well below your level on your other maps (you usually rank around the top ' + Math.max(1, Math.round(U.s * 100)) + "% of Oceania). These are usually the easiest seconds to grab" + (act ? ", and you're still setting PBs" : "") + ".</p>";
+    var potLine = all > 0.0005 ? '<div class="trk-pot"><div><span>Untapped time</span><b>−' + all.toFixed(3) + 's</b><small>' + (U.missSum ? U.sum.toFixed(1) + "s on weak maps + " + U.missSum.toFixed(1) + "s on maps with no time" : "on " + U.maps.length + (U.maps.length === 1 ? " map" : " maps")) + "</small></div>" +
+      "<div><span>Your potential rank</span><b>#" + pot + "</b><small>" + (pot < p.place ? "up " + (p.place - pot) + " from #" + p.place + " if every map was at your level" : "you're already at your level") + "</small></div>" +
+      (U.missSum && U.sum ? "<div><span>Weak maps only</span><b>#" + potMaps + "</b><small>fixing just the maps you've already played</small></div>" : "") + "</div>" : "";
+    var rows = U.maps.slice(0, 8).map(function (x) {
+      return '<div class="row"><b>' + esc(MAPS[x.m]) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span><small>You " + fmt(x.t) + " (" + ordinal(x.r) + ") · your level ≈ " + fmt(x.lv) + " (around " + ordinal(x.lr) + ")</small></div>";
+    }).concat(U.miss.map(function (x) {
+      return '<div class="row miss"><b>' + esc(MAPS[x.m]) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span><small>No time yet (counts as " + MISSING + "s) · your level ≈ " + fmt(x.lv) + "</small></div>";
+    })).join("");
+    return '<div class="card trk-tabs-card trk-maps"><h3>🎯 Below your level</h3>' + head + potLine + (rows || '<p class="muted">Every map is at your level. Nice and consistent! 💪</p>') + "</div>";
+  }
+
   // ---- Quick stats strip ----
   function quickStatsHTML(p) {
     var above = players[p.place - 2], below = players[p.place], k = p.name.toLowerCase();
@@ -1148,6 +1191,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       tile("🎯", "Top-10 maps", top10 + " / " + MAPS.length, "maps where you're top 10") +
       tile("⏳", "Ranked for", wr ? wr + " weeks" : "New", first ? "since " + niceDate(first) : "") +
       tile("📉", "All-time drop", all > 0.0005 ? "−" + all.toFixed(1) + "s" : "–", "seconds taken off") +
+      (function () { var U = untapped(p), u = U.sum + U.missSum; return tile("🎯", "Untapped time", U.ok && u > 0.0005 ? "−" + u.toFixed(1) + "s" : "–", U.ok ? (u > 0.0005 ? "below your level (potential #" + rankAt(p, p.total - u) + ")" : "every map at your level") : "needs 10+ maps"); })() +
       "</div>";
   }
 
@@ -1272,6 +1316,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       "<div><span>" + (G.defend ? "Your lead" : "Gap to goal") + "</span><b>" + Math.abs(gap).toFixed(3) + "s</b><small>vs " + esc(G.who.name) + " (#" + G.who.place + ")</small></div>" +
       "<div><span>Your expected pace</span><b>" + (my ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, from your last " + PACE_WEEKS + " weeks</small></div>" +
       "<div><span>" + (G.n ? "Top-" + G.n + " expected pace" : "Their expected pace") + "</span><b>" + (gp ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>expected per week</small></div></div>";
+    var UU = untapped(p), uu = UU.sum + UU.missSum;
+    if (UU.ok && uu > 1 && weeklyOf(p).slice(-8).some(function (x) { return x.s > 0.0005; }) && !(G.defend)) txt += " You also have " + uu.toFixed(1) + "s on maps below your level. Grab those and you'd be about #" + rankAt(p, p.total - uu) + ".";
     if (tracked && wksTracked < 8) txt += " Based on only " + wksTracked + (wksTracked === 1 ? " week" : " weeks") + " of history, so it's a rough guess for now.";
     var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + (tracked ? chanceLine(p, G, gap) : "") + nums + "</div>";
 
@@ -1315,7 +1361,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     S.trk = { name: p.name, place: p.place, total: p.total, big: big, my: my, gap: gap, defend: !!G.defend, goal: G.label, who: G.who.name, p12: predictRank(p, 12), form: F, rival: RV ? RV.o.name : "", country: p.country };
     return sel + status + quickStatsHTML(p) +
       '<div class="trk-grid">' + formHTML(p, F) + rivalHTML(p, RV) + "</div>" +
-      chart + milestonesHTML(p) + maps + strengthsHTML(p) +
+      chart + untappedHTML(p) + milestonesHTML(p) + maps + strengthsHTML(p) +
       '<div class="card trk-tabs-card" id="trk-trends"><h3>📉 Map trends</h3><p class="muted">Loading map history…</p></div>' +
       '<div class="trk-grid">' + pred + chancesHTML(p) + "</div>" + likeYouHTML(p) + recordsHTML(p) + accuracyHTML() +
       '<p class="muted" style="font-size:.8rem;margin-top:10px">Pace only counts PBs on maps you already had a time on. Filling in a missing map drops your total straight away but isn\'t counted as pace.</p>';
