@@ -1051,6 +1051,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     return TAL;
   }
   function talOf(p) { return talents()[p.name.toLowerCase()]; }
+  window.__olb = { players: function () { return players; }, talOf: talOf, tierChance: tierChance, backtest: backtest, weeklyOf: weeklyOf, paceOf: paceOf };
   function clsName(y) { return y <= 2024 ? "Class of 2024 (originals)" : "Class of " + y; }
   function talentHTML(p) { var t = talOf(p); return '<div class="trk-talent"><span class="trk-tal ' + t.tag[1] + '">' + t.tag[0] + "</span><p class=\"muted\">" + t.tag[2] + " · " + clsName(t.cls) + "</p></div>"; }
   function classHTML(p) {
