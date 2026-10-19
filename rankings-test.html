@@ -917,7 +917,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     return '<div class="card"><div class="ip-head"><h3>Rival</h3>' + selR + "</div>" +
       '<div class="trk-vs"><div><b>' + flag(p.country) + " " + esc(p.name) + "</b><small>#" + p.place + " · " + fmt(p.total) + '</small></div><div class="x">VS</div><div><b>' + flag(o.country) + " " + esc(o.name) + "</b><small>#" + o.place + " · " + fmt(o.total) + "</small></div></div>" +
       '<div class="trk-kv"><div><span>Gap</span><b>' + who + "</b></div><div><span>Pace</span><b>" + trend + "</b></div>" +
-      "<div><span>Last 4 weeks</span><b>You −" + m4.toFixed(2) + "s · them −" + o4.toFixed(2) + "s</b></div></div>" +
+      "<div><span>Last 4 weeks</span><b>You " + (m4 > 0.0005 ? "−" + m4.toFixed(2) + "s" : "no PBs") + " · them " + (o4 > 0.0005 ? "−" + o4.toFixed(2) + "s" : "no PBs") + "</b></div></div>" +
       '<p style="margin:12px 0 0"><button type="button" class="ip-link" data-vs="' + esc(o.name) + '">Full head to head ›</button></p></div>';
   }
 
@@ -1013,7 +1013,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var c = goalChance(p, G); if (!c) return "";
     if (G.defend) return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> " + esc(G.who.name) + " passes you in the next 12 months" + (c.pct >= 10 && c.med ? ". If it happens, most likely around <b>" + wkDate(c.med) + "</b>." : ".") + "</p>";
     if (c.pct < 1) return '<p class="trk-chance">🎲 <b>Under 1% chance</b> in the next 12 months at the current pace.</p>';
-    var when = c.med ? (c.pct >= 50 ? " · most likely around <b>" + wkDate(c.med) + "</b>" : " · if it happens, most likely around <b>" + wkDate(c.med) + "</b>") + (c.lo !== c.hi ? " (half the simulations land between " + wkDate(c.lo) + " and " + wkDate(c.hi) + ")" : "") : "";
+    var when = c.med ? (c.pct >= 50 ? " · half the simulations land between <b>" + wkDate(c.lo) + "</b> and <b>" + wkDate(c.hi) + "</b>" : " · if it happens, most likely around <b>" + wkDate(c.med) + "</b>" + (c.lo !== c.hi ? " (between " + wkDate(c.lo) + " and " + wkDate(c.hi) + ")" : "")) : "";
     return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> in the next 12 months" + when + ".</p>";
   }
   function chancesHTML(p) {
@@ -1215,13 +1215,15 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var wksTracked = myL.length ? tweeks.length - 1 - tweeks.indexOf(myL[0].w) : 0;
     var gap = G.defend ? G.who.total - p.total : p.total - G.who.total; // defend: your lead; otherwise: how far behind
     var close = G.defend ? my - gp : my - gp; // seconds per week you gain on them
-    var cls, big, txt;
+    var cls, big, txt, GC = null;
     if (!tracked) { cls = "y"; big = "Not enough history yet"; txt = "Your expected pace is worked out from your PBs over the last " + PACE_WEEKS + " weeks. Check back after a few Mondays."; }
     else if (G.defend) {
       if (close >= -0.05) { cls = "g"; big = "🟢 Safe at #1 for now"; txt = "You lead by " + gap.toFixed(3) + "s and you're improving at least as fast as " + esc(G.who.name) + "."; }
       else { var wl = gap / -close; cls = wl < 12 ? "r" : "y"; big = (wl < 12 ? "🔴 " : "🟡 ") + esc(G.who.name) + " is closing in"; txt = "They're gaining " + (-close).toFixed(2) + "s a week. At this pace they'd catch you around " + monthYear(wl) + "."; }
     } else if (gap <= 0) { cls = "g"; big = "🟢 You're already there"; txt = "You're " + (-gap).toFixed(3) + "s ahead of " + esc(G.who.name) + ". Keep it up to stay ahead."; }
-    else if (close > 0.05) { var w = gap / close; cls = w <= 52 ? "g" : "y"; big = (w <= 52 ? "🟢 On track" : "🟡 Slowly closing") + ": around " + monthYear(w); txt = "You're gaining " + close.toFixed(2) + "s a week on " + (G.n ? "the top " + G.n : esc(G.who.name)) + ". At this pace you'd close the " + gap.toFixed(3) + "s gap in about " + Math.ceil(w) + " weeks."; }
+    else if ((GC = goalChance(p, G)) && GC.pct >= 50) { cls = "g"; big = "🟢 On track: most likely around " + wkDate(GC.med); txt = "You're gaining " + Math.max(close, 0).toFixed(2) + "s a week on " + (G.n ? "the top " + G.n : esc(G.who.name)) + " at your expected pace, with a " + gap.toFixed(3) + "s gap to close."; }
+    else if (GC && GC.pct >= 15) { cls = "y"; big = "🟡 Possible: " + GC.pct + "% chance in the next 12 months"; txt = (close > 0.05 ? "You're gaining " + close.toFixed(2) + "s a week on " + (G.n ? "the top " + G.n : esc(G.who.name)) + ", but the " + gap.toFixed(3) + "s gap needs a few good weeks to close." : "The " + gap.toFixed(3) + "s gap is closeable, but it needs a burst of PBs."); }
+    else if (close > 0.05) { cls = "y"; big = "🟡 Slowly closing"; txt = "You're gaining " + close.toFixed(2) + "s a week on " + (G.n ? "the top " + G.n : esc(G.who.name)) + ", but the " + gap.toFixed(3) + "s gap would take about " + Math.ceil(gap / close) + " weeks at this pace."; }
     else if (close >= -0.05) { cls = "y"; big = "🟡 Holding steady"; txt = "You're keeping up with " + (G.n ? "the top " + G.n : esc(G.who.name)) + " but not closing the " + gap.toFixed(3) + "s gap yet. A few more PBs a week would change that."; }
     else { cls = "r"; big = "🔴 Falling behind"; txt = (G.n ? "The top " + G.n + " is" : esc(G.who.name) + " is") + " improving " + (-close).toFixed(2) + "s a week faster than you, so the " + gap.toFixed(3) + "s gap is growing."; }
     var nums = '<div class="trk-nums">' +
