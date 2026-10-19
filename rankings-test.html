@@ -824,12 +824,12 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       }).join("") : '<p class="muted">Nobody improved a time in this period.</p>') + "</div>";
   }
   // ======================= TRACKING =======================
-  var PACE_WEEKS = 8;
+  var PACE_WEEKS = 26, PACE_K = 0.3, GRAPH_WEEKS = 8; // expected pace = 30% of your 26-week average: this matched what really happened best when tested on past weeks
   function paceOf(name) {
     var k = String(name).toLowerCase(), L = timp[k] || [];
     if (L.length < 2 || !tweeks.length) return 0;
     var span = Math.min(PACE_WEEKS, tweeks.length - 1 - tweeks.indexOf(L[0].w));
-    return span >= 1 ? impSum(k, tcut(PACE_WEEKS)).s / Math.max(span, 4) : 0; // at least 4 weeks, so one big week isn't treated as a trend
+    return span >= 1 ? PACE_K * impSum(k, tcut(PACE_WEEKS)).s / Math.max(span, 8) : 0; // at least 8 weeks, so one big week isn't treated as a trend
   }
   function tv(p, m) { return p.t[m] == null ? MISSING : p.t[m]; }
   function goalsFor(p) {
@@ -968,7 +968,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // ---- Chances: simulate the next 52 weeks many times, each player drawing PB weeks from their own recent history ----
   var SIM = null, SIM_N = 400, SIM_W = 52, TIERS = [1, 3, 5, 10, 25, 50, 100];
   function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  function samplesOf(p) { var W = weeklyOf(p).slice(-26).map(function (x) { return x.s; }); while (W.length < 8) W.push(0); return W; }
+  function samplesOf(p) { var W = weeklyOf(p).slice(-PACE_WEEKS).map(function (x) { return x.s * PACE_K; }); while (W.length < 8) W.push(0); return W; }
   function floorT() { return OR && OR.total ? OR.total : Math.min.apply(null, players.map(function (p) { return p.total; })) * 0.95; }
   function stepT(cur, start, g, fl) { if (!(g > 0)) return cur; var room = (cur - fl) / Math.max(start - fl, 1); return cur - g * Math.max(0, Math.min(1, room)); } // gains shrink as you get closer to record pace
   function runSim() {
@@ -1020,7 +1020,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var tiers = TIERS.filter(function (n) { return n < p.place || (n === 1 && p.place === 1); });
     if (!tiers.length) return "";
     var rows = tiers.map(function (n) { var c = tierChance(p, n); return '<div class="r"><span>' + (n === 1 ? "#1" : "Top " + n) + '</span><div class="bar"><i style="width:' + Math.max(c.pct, 1) + '%"></i></div><b>' + (c.pct >= 99 ? "99%" : c.pct < 1 ? "<1%" : c.pct + "%") + "</b></div>"; }).join("");
-    return '<div class="card"><h3>Your chances</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Chance of reaching each spot at some point in the next 12 months. Worked out by playing out the next year ' + SIM_N + " times, with every player setting PBs like they have recently.</p>" + '<div class="trk-ch">' + rows + "</div></div>";
+    return '<div class="card"><h3>Your chances</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Chance of reaching each spot at some point in the next 12 months. Worked out by playing out the next year ' + SIM_N + " times, with every player setting PBs like they have over the last 6 months (scaled to what really happened when we tested it on past weeks).</p>" + '<div class="trk-ch">' + rows + "</div></div>";
   }
 
   // ---- Talent tiers and classes (the year a player first appeared in the rankings) ----
@@ -1033,19 +1033,23 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       for (var i = 0; i < weeks.length; i++) if (hist[weeks[i]][k] != null) { first = i; break; }
       if (first < 0) first = lw;
       var back = Math.max(first, lw - 26), then = (hist[weeks[back]] || {})[k] || p.place;
-      var W = weeklyOf(p).slice(-8), act = W.filter(function (x) { return x.s > 0.0005; }).length;
-      var rise = Math.log(Math.max(then, 1) / p.place) / Math.LN2, score = rise * (0.4 + 0.6 * act / 8);
-      TAL[k] = { joined: weeks[first], cls: +weeks[first].slice(0, 4), wks: lw - first, then: then, span: lw - back, act: act, rise: rise, score: score };
+      var W = weeklyOf(p), act = W.slice(-26).filter(function (x) { return x.s > 0.0005; }).length, act8 = W.slice(-8).filter(function (x) { return x.s > 0.0005; }).length;
+      var rise = Math.log(Math.max(then, 1) / p.place) / Math.LN2, score = rise * (0.4 + 0.6 * Math.min(1, act / 8));
+      TAL[k] = { joined: weeks[first], cls: +weeks[first].slice(0, 4), wks: lw - first, then: then, span: lw - back, act: act, act8: act8, rise: rise, score: score };
     });
+    // generational: at most 3 per class, climbing fast, near the top and still setting PBs lately
+    var gen = {}, byCls = {};
+    players.forEach(function (p) { var t = TAL[p.name.toLowerCase()]; if (t.wks >= 6 && t.score >= 1 && p.place <= 40 && t.act >= 4 && t.act8 >= 1) (byCls[t.cls] = byCls[t.cls] || []).push(p); });
+    Object.keys(byCls).forEach(function (c) { byCls[c].sort(function (a, b) { return TAL[b.name.toLowerCase()].score - TAL[a.name.toLowerCase()].score; }).slice(0, 3).forEach(function (p) { gen[p.name.toLowerCase()] = 1; }); });
     players.forEach(function (p) {
       var t = TAL[p.name.toLowerCase()], tag;
       if (t.wks < 6) tag = ["🆕 New", "new", "Joined the rankings " + niceDate(t.joined) + ". Talent shows up after 6 weeks."];
-      else if (t.score >= 1.5 && p.place <= 30 && t.act >= 4) tag = ["🌟 Generational talent", "gen", "Climbed from #" + t.then + " to #" + p.place + " in " + t.span + " weeks and still setting PBs in " + t.act + " of the last 8 weeks."];
-      else if (t.score >= 0.7 && t.act >= 3) tag = ["🚀 Rising star", "star", "Climbed from #" + t.then + " to #" + p.place + " in " + t.span + " weeks, with PBs in " + t.act + " of the last 8 weeks."];
+      else if (gen[p.name.toLowerCase()]) tag = ["🌟 Generational talent", "gen", "Climbed from #" + t.then + " to #" + p.place + " in " + t.span + " weeks, with PBs in " + t.act + " of the last 26 weeks and still going."];
+      else if (t.score >= 0.45 && t.act >= 3 && t.act8 >= 1) tag = ["🚀 Rising star", "star", "Climbed from #" + t.then + " to #" + p.place + " in " + t.span + " weeks, with PBs in " + t.act + " of the last 26 weeks."];
       else if (p.place <= 5) tag = ["👑 Elite", "elite", "Already at the very top of Oceania."];
-      else if (t.act >= 2) tag = ["📈 Steady improver", "steady", "PBs in " + t.act + " of the last 8 weeks."];
-      else if (t.act === 0) tag = ["💤 Quiet", "quiet", "No PBs in the last 8 weeks."];
-      else tag = ["➖ Cruising", "quiet", "A PB here and there lately."];
+      else if (t.act >= 3) tag = ["📈 Steady improver", "steady", "PBs in " + t.act + " of the last 26 weeks."];
+      else if (t.act === 0) tag = ["💤 Quiet", "quiet", "No PBs in the last 26 weeks."];
+      else tag = ["➖ Cruising", "quiet", "A PB here and there (" + t.act + " in the last 26 weeks)."];
       t.tag = tag;
     });
     return TAL;
@@ -1083,13 +1087,13 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   function backtest() {
     if (BT !== null) return BT; BT = false;
     var h = 12; if (tweeks.length < h + 10) return BT;
-    var W0 = tweeks[tweeks.length - 1 - h], Wb = tweeks[tweeks.length - 1 - h - 8], hw = hist[W0]; if (!hw) return BT;
+    var W0 = tweeks[tweeks.length - 1 - h], Wb = tweeks[Math.max(0, tweeks.length - 1 - h - PACE_WEEKS)], hw = hist[W0]; if (!hw) return BT;
     var rows = [];
     players.forEach(function (p) {
       var k = p.name.toLowerCase(); if (hw[k] == null) return;
       var L = timp[k] || [], since = 0, before = 0, st = L.length ? L[0].w : W0;
       L.forEach(function (e, i) { if (!i) return; if (e.w > W0) since += e.s; else if (e.w > Wb) before += e.s; });
-      var span = Math.min(8, tweeks.indexOf(W0) - tweeks.indexOf(st)), pace = span >= 1 ? before / Math.max(span, 4) : 0;
+      var span = Math.min(PACE_WEEKS, tweeks.indexOf(W0) - tweeks.indexOf(st)), pace = span >= 1 ? PACE_K * before / Math.max(span, 8) : 0;
       var then = p.total + since; rows.push({ then: then, pred: then - pace * h, now: p.total });
     });
     if (rows.length < 20) return BT;
@@ -1212,7 +1216,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var gap = G.defend ? G.who.total - p.total : p.total - G.who.total; // defend: your lead; otherwise: how far behind
     var close = G.defend ? my - gp : my - gp; // seconds per week you gain on them
     var cls, big, txt;
-    if (!tracked) { cls = "y"; big = "Not enough history yet"; txt = "Your pace is worked out from the last " + PACE_WEEKS + " weeks of PBs. Check back after a few Mondays."; }
+    if (!tracked) { cls = "y"; big = "Not enough history yet"; txt = "Your expected pace is worked out from your PBs over the last " + PACE_WEEKS + " weeks. Check back after a few Mondays."; }
     else if (G.defend) {
       if (close >= -0.05) { cls = "g"; big = "🟢 Safe at #1 for now"; txt = "You lead by " + gap.toFixed(3) + "s and you're improving at least as fast as " + esc(G.who.name) + "."; }
       else { var wl = gap / -close; cls = wl < 12 ? "r" : "y"; big = (wl < 12 ? "🔴 " : "🟡 ") + esc(G.who.name) + " is closing in"; txt = "They're gaining " + (-close).toFixed(2) + "s a week. At this pace they'd catch you around " + monthYear(wl) + "."; }
@@ -1222,13 +1226,13 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     else { cls = "r"; big = "🔴 Falling behind"; txt = (G.n ? "The top " + G.n + " is" : esc(G.who.name) + " is") + " improving " + (-close).toFixed(2) + "s a week faster than you, so the " + gap.toFixed(3) + "s gap is growing."; }
     var nums = '<div class="trk-nums">' +
       "<div><span>" + (G.defend ? "Your lead" : "Gap to goal") + "</span><b>" + Math.abs(gap).toFixed(3) + "s</b><small>vs " + esc(G.who.name) + " (#" + G.who.place + ")</small></div>" +
-      "<div><span>Your pace</span><b>" + (my ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, last " + PACE_WEEKS + " weeks</small></div>" +
-      "<div><span>" + (G.n ? "Top-" + G.n + " pace" : "Their pace") + "</span><b>" + (gp ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>per week, last " + PACE_WEEKS + " weeks</small></div></div>";
-    if (tracked && wksTracked < 4) txt += " Based on only " + wksTracked + (wksTracked === 1 ? " week" : " weeks") + " of history, so it's a rough guess for now.";
+      "<div><span>Your expected pace</span><b>" + (my ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, from your last " + PACE_WEEKS + " weeks</small></div>" +
+      "<div><span>" + (G.n ? "Top-" + G.n + " expected pace" : "Their expected pace") + "</span><b>" + (gp ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>expected per week</small></div></div>";
+    if (tracked && wksTracked < 8) txt += " Based on only " + wksTracked + (wksTracked === 1 ? " week" : " weeks") + " of history, so it's a rough guess for now.";
     var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + (tracked ? chanceLine(p, G, gap) : "") + nums + talentHTML(p) + "</div>";
 
     // projection chart: last 8 weeks (estimated) + future
-    var past = pastTotals(p, PACE_WEEKS + 1), gpast = pastTotals(G.who, PACE_WEEKS + 1);
+    var past = pastTotals(p, GRAPH_WEEKS + 1), gpast = pastTotals(G.who, GRAPH_WEEKS + 1);
     var eta = (!G.defend && gap > 0 && close > 0.05) ? gap / close : (G.defend && close < -0.05 ? gap / -close : null);
     var H2 = Math.min(Math.max(eta ? Math.ceil(eta) + 4 : 12, 12), 26), nP = past.length - 1;
     var ys = [], W = 720, H = 300, Lm = 70, R = 24, T = 20, B = 52;
@@ -1247,7 +1251,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(p.total - my * H2) + (p.total - my * H2 > G.who.total - gp * H2 ? 18 : -10)).toFixed(1) + '" text-anchor="end" style="fill:var(--blue)">' + esc(p.name) + "</text>";
     svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(G.who.total - gp * H2) + (p.total - my * H2 > G.who.total - gp * H2 ? -10 : 18)).toFixed(1) + '" text-anchor="end" style="fill:#8a96a3">' + esc(G.who.name) + "</text>";
     svg += '<text class="axt" transform="translate(16 ' + ((T + H - B) / 2) + ') rotate(-90)" text-anchor="middle">Total time</text>';
-    var chart = '<div class="card"><h3>Projection</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Solid lines: the last ' + nP + ' weeks. Dashed: where you\'d both be if you keep your current pace.</p><div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projected total time for ' + esc(p.name) + " and " + esc(G.who.name) + '">' + svg + "</svg></div></div>";
+    var chart = '<div class="card"><h3>Projection</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Solid lines: the last ' + nP + ' weeks. Dashed: where you\'d both be at your expected pace.</p><div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projected total time for ' + esc(p.name) + " and " + esc(G.who.name) + '">' + svg + "</svg></div></div>";
 
     // where to find time
     var rows = MAPS.map(function (name, m) { var r = G.ref(m); if (r == null) return null; var mine = tv(p, m); return { m: m, name: name, mine: mine, r: r, g: mine - r, miss: p.t[m] == null }; }).filter(function (x) { return x && x.g > 0.0005; }).sort(function (a, b) { return b.g - a.g; });
@@ -1260,7 +1264,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       }).join("") : '<p class="muted">You\'re at or ahead of ' + esc(G.refLbl) + " on every map. 🔥</p>") + "</div>";
 
     // predicted ranking
-    var pred = '<div class="card"><h3>Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their pace from the last ' + PACE_WEEKS + " weeks.</p><div class=\"trk-pred\">" +
+    var pred = '<div class="card"><h3>Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their expected pace.</p><div class=\"trk-pred\">" +
       "<div><span>Now</span><b>#" + p.place + "</b></div>" + [4, 12, 26].map(function (w) { var r = predictRank(p, w), d = p.place - r; return "<div><span>In " + w + " weeks</span><b>#" + r + "</b><small>" + (d > 0 ? "↑ " + d : d < 0 ? "↓ " + (-d) : "no change") + "</small></div>"; }).join("") + "</div></div>";
 
     var F = formInfo(p), RV = rivalFor(p);
