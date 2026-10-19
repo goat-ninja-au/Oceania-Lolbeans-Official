@@ -340,6 +340,18 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .imp-stats div { background: var(--soft); border-radius: 10px; padding: 10px 12px; } .imp-stats span { display: block; font-size: .75rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
 .imp-stats b { font-family: var(--mono); font-size: 1.15rem; color: #2a9d5c; } .imp-stats small { display: block; color: var(--muted); font-size: .76rem; }
 .graph .ln.imp { stroke: #2a9d5c; } .graph .dt.imp { fill: #2a9d5c; }
+.trk-goal { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; } .trk-goal label { font-weight: 700; }
+.trk-status { border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; border: 1px solid var(--line); background: var(--card); }
+.trk-status .big { font-size: 1.25rem; font-weight: 800; margin: 2px 0 4px; } .trk-status p { margin: 0; color: var(--muted); }
+.trk-status.g { border-color: #2a9d5c; background: color-mix(in srgb, #2a9d5c 12%, var(--card)); } .trk-status.y { border-color: #e0a526; background: color-mix(in srgb, #e0a526 12%, var(--card)); } .trk-status.r { border-color: #d9505c; background: color-mix(in srgb, #d9505c 12%, var(--card)); }
+.trk-nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 14px 0 4px; }
+.trk-nums div { background: var(--soft); border-radius: 10px; padding: 10px 12px; } .trk-nums span { display: block; font-size: .74rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; } .trk-nums b { font-family: var(--mono); font-size: 1.1rem; } .trk-nums small { display: block; color: var(--muted); font-size: .76rem; }
+.trk-maps .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 9px 0; border-bottom: 1px solid var(--row); } .trk-maps .row:last-child { border-bottom: 0; }
+.trk-maps .row small { color: var(--muted); grid-column: 1 / -1; font-size: .8rem; } .trk-maps .v { font-family: var(--mono); font-weight: 800; color: #d9505c; }
+.trk-maps .bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--soft); overflow: hidden; } .trk-maps .bar i { display: block; height: 100%; background: #d9505c; border-radius: 3px; }
+.trk-maps .row.miss .v, .trk-maps .row.miss .bar i { color: #e0a526; background: #e0a526; } .trk-maps .row.miss .v { background: none; }
+.trk-pred { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; } .trk-pred div { background: var(--soft); border-radius: 10px; padding: 12px; text-align: center; } .trk-pred span { display: block; font-size: .78rem; color: var(--muted); font-weight: 700; } .trk-pred b { font-size: 1.6rem; } .trk-pred small { display: block; font-size: .78rem; color: var(--muted); }
+.graph .ln.you { stroke: var(--blue); } .graph .ln.goal { stroke: #8a96a3; } .graph .ln.fut { stroke-dasharray: 6 6; } .graph .eta { fill: #2a9d5c; } .graph .lg { font-size: 12px; font-weight: 700; }
 .testbar { background: #f0b429; color: #222; text-align: center; font-weight: 700; padding: 8px 12px; font-size: .9rem; }
 .fline.rec { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
 .fline .pic { width: 52px; height: 34px; border-radius: 6px; overflow: hidden; background: var(--soft); }
@@ -534,7 +546,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     </div>
   </div>
 
-  <div class="testbar" style="border-radius:10px;margin:0 0 14px">TEST VERSION · new "Most Improved" tab + time improvement on player profiles. Only people with this link can see it.</div>
+  <div class="testbar" style="border-radius:10px;margin:0 0 14px">TEST VERSION · new "Most Improved" tab, time improvement on profiles, and a new Tracking tab on player profiles. Only people with this link can see it.</div>
   <div id="status" class="status"><b>Loading rankings…</b><span class="muted">Getting the latest times from the rankings spreadsheet.</span></div>
 
   <!-- RANKINGS LIST -->
@@ -775,6 +787,110 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       '<div class="card imp-list">' + (list.length ? list.map(function (x, i) {
         return '<div class="fline"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(x.p.name) + '" tabindex="0" role="link">' + flag(x.p.country) + " " + esc(x.p.name) + "</b><small>#" + x.p.place + " in Oceania · " + x.c + (x.c === 1 ? " new PB" : " new PBs") + '</small><div class="imp-bar"><i style="width:' + Math.max(3, Math.round(100 * x.s / top)) + '%"></i></div></div><div class="v imp-v">' + secs(x.s) + "</div></div>";
       }).join("") : '<p class="muted">Nobody improved a time in this period.</p>') + "</div>";
+  }
+  // ======================= TRACKING =======================
+  var PACE_WEEKS = 8;
+  function paceOf(name) {
+    var k = String(name).toLowerCase(), L = timp[k] || [];
+    if (L.length < 2 || !tweeks.length) return 0;
+    var span = Math.min(PACE_WEEKS, tweeks.length - 1 - tweeks.indexOf(L[0].w));
+    return span >= 1 ? impSum(k, tcut(PACE_WEEKS)).s / span : 0;
+  }
+  function tv(p, m) { return p.t[m] == null ? MISSING : p.t[m]; }
+  function goalsFor(p) {
+    var g = [];
+    if (p.place === 1) { if (players[1]) g.push({ id: "next", label: "Stay ahead of #2 (" + players[1].name + ")", who: players[1], defend: true }); return g; }
+    [1, 3, 5, 10, 25, 50, 100].forEach(function (n) { if (p.place > n && players[n - 1]) g.push({ id: "top" + n, label: n === 1 ? "Become #1" : "Reach the top " + n, n: n, who: players[n - 1] }); });
+    var above = players[p.place - 2]; if (above) g.push({ id: "next", label: "Pass the next player (#" + above.place + " " + above.name + ")", who: above });
+    return g;
+  }
+  function pickGoal(p) {
+    var g = goalsFor(p), want = S.goal;
+    var pick = g.filter(function (x) { return x.id === want; })[0];
+    if (!pick && want && want.indexOf("p:") === 0 && byName[want.slice(2)] && byName[want.slice(2)].place < p.place) { var w = byName[want.slice(2)]; pick = { id: want, label: "Catch " + w.name + " (#" + w.place + ")", who: w }; }
+    if (!pick) pick = g.filter(function (x) { return x.n && x.n < p.place && p.place <= x.n * 3; }).pop() || g.filter(function (x) { return x.id === "next"; })[0] || g[0];
+    if (!pick) return null;
+    // pace of the goal: for a top-N goal, the average pace of the players around #N (they're the ones you need to pass)
+    var around = pick.n ? players.filter(function (o) { return Math.abs(o.place - pick.n) <= 2 && o !== p; }) : [pick.who];
+    pick.pace = around.reduce(function (a, o) { return a + paceOf(o.name); }, 0) / Math.max(around.length, 1);
+    pick.ref = pick.n ? function (m) { var a = players.slice(0, pick.n).map(function (o) { return o.t[m]; }).filter(function (v) { return v != null; }); return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : null; } : function (m) { return tv(pick.who, m); };
+    pick.refLbl = pick.n ? "the top-" + pick.n + " average" : pick.who.name;
+    return pick;
+  }
+  function pastTotals(p, n) { // estimated total at each of the last n Mondays (now last); only counts improvements, so new maps don't distort it
+    var k = p.name.toLowerCase(), by = {}; (timp[k] || []).forEach(function (e, i) { if (i) by[e.w] = e.s; });
+    var ws = tweeks.slice(-n), out = [], tot = p.total;
+    for (var i = ws.length - 1; i >= 0; i--) { out.unshift({ w: ws[i], v: tot }); tot += by[ws[i]] || 0; }
+    return out;
+  }
+  function monthYear(weeks) { var d = new Date(); d.setDate(d.getDate() + Math.round(weeks * 7)); return MONTHS[d.getMonth()] + " " + d.getFullYear(); }
+  function predictRank(p, weeks) {
+    var me = p.total - paceOf(p.name) * weeks, better = 0;
+    players.forEach(function (o) { if (o !== p && o.total - paceOf(o.name) * weeks < me) better++; });
+    return better + 1;
+  }
+  function trackingHTML(p) {
+    if (!tweeks.length) return '<div class="card"><p class="muted">Tracking needs the time history, which is still loading. Try again in a minute.</p></div>';
+    var G = pickGoal(p);
+    if (!G) return '<div class="card"><p class="muted">No goal to track yet.</p></div>';
+    var opts = goalsFor(p), isCustom = G.id.indexOf("p:") === 0;
+    var sel = '<div class="trk-goal"><label for="goal">Goal</label><select class="gsel" id="goal">' + opts.map(function (o) { return '<option value="' + o.id + '"' + (o.id === G.id ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") +
+      '<optgroup label="Catch a player">' + players.filter(function (o) { return o.place < p.place && o.place >= Math.max(1, p.place - 40); }).map(function (o) { var id = "p:" + o.name; return '<option value="' + esc(id) + '"' + (id === G.id ? " selected" : "") + ">#" + o.place + " " + esc(o.name) + "</option>"; }).join("") + "</optgroup></select></div>";
+    var my = paceOf(p.name), gp = G.pace, tracked = (timp[p.name.toLowerCase()] || []).length >= 2;
+    var gap = G.defend ? G.who.total - p.total : p.total - G.who.total; // defend: your lead; otherwise: how far behind
+    var close = G.defend ? my - gp : my - gp; // seconds per week you gain on them
+    var cls, big, txt;
+    if (!tracked) { cls = "y"; big = "Not enough history yet"; txt = "Your pace is worked out from the last " + PACE_WEEKS + " weeks of PBs. Check back after a few Mondays."; }
+    else if (G.defend) {
+      if (close >= -0.05) { cls = "g"; big = "🟢 Safe at #1 for now"; txt = "You lead by " + gap.toFixed(3) + "s and you're improving at least as fast as " + esc(G.who.name) + "."; }
+      else { var wl = gap / -close; cls = wl < 12 ? "r" : "y"; big = (wl < 12 ? "🔴 " : "🟡 ") + esc(G.who.name) + " is closing in"; txt = "They're gaining " + (-close).toFixed(2) + "s a week. At this pace they'd catch you around " + monthYear(wl) + "."; }
+    } else if (gap <= 0) { cls = "g"; big = "🟢 You're already there"; txt = "You're " + (-gap).toFixed(3) + "s ahead of " + esc(G.who.name) + ". Keep it up to stay ahead."; }
+    else if (close > 0.05) { var w = gap / close; cls = w <= 52 ? "g" : "y"; big = (w <= 52 ? "🟢 On track" : "🟡 Slowly closing") + ": around " + monthYear(w); txt = "You're gaining " + close.toFixed(2) + "s a week on " + (G.n ? "the top " + G.n : esc(G.who.name)) + ". At this pace you'd close the " + gap.toFixed(3) + "s gap in about " + Math.ceil(w) + " weeks."; }
+    else if (close >= -0.05) { cls = "y"; big = "🟡 Holding steady"; txt = "You're keeping up with " + (G.n ? "the top " + G.n : esc(G.who.name)) + " but not closing the " + gap.toFixed(3) + "s gap yet. A few more PBs a week would change that."; }
+    else { cls = "r"; big = "🔴 Falling behind"; txt = (G.n ? "The top " + G.n + " is" : esc(G.who.name) + " is") + " improving " + (-close).toFixed(2) + "s a week faster than you, so the " + gap.toFixed(3) + "s gap is growing."; }
+    var nums = '<div class="trk-nums">' +
+      "<div><span>" + (G.defend ? "Your lead" : "Gap to goal") + "</span><b>" + Math.abs(gap).toFixed(3) + "s</b><small>vs " + esc(G.who.name) + " (#" + G.who.place + ")</small></div>" +
+      "<div><span>Your pace</span><b>" + (my ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, last " + PACE_WEEKS + " weeks</small></div>" +
+      "<div><span>" + (G.n ? "Top-" + G.n + " pace" : "Their pace") + "</span><b>" + (gp ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>per week, last " + PACE_WEEKS + " weeks</small></div></div>";
+    var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + nums + "</div>";
+
+    // projection chart: last 8 weeks (estimated) + future
+    var past = pastTotals(p, PACE_WEEKS + 1), gpast = pastTotals(G.who, PACE_WEEKS + 1);
+    var eta = (!G.defend && gap > 0 && close > 0.05) ? gap / close : (G.defend && close < -0.05 ? gap / -close : null);
+    var H2 = Math.min(Math.max(eta ? Math.ceil(eta) + 4 : 12, 12), 26), nP = past.length - 1;
+    var ys = [], W = 720, H = 300, Lm = 70, R = 24, T = 20, B = 52;
+    past.forEach(function (q) { ys.push(q.v); }); gpast.forEach(function (q) { ys.push(q.v); });
+    for (var f = 0; f <= H2; f++) { ys.push(p.total - my * f); ys.push(G.who.total - gp * f); }
+    var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys), pad = Math.max((hi - lo) * 0.08, 0.5); lo -= pad; hi += pad;
+    var X = function (i) { return Lm + (i + nP) / (nP + H2) * (W - Lm - R); }, Y = function (v) { return T + (hi - v) / (hi - lo) * (H - T - B); };
+    var svg = "", raw = (hi - lo) / 5, mag = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).filter(function (v) { return v >= raw; })[0];
+    for (var t = Math.ceil(lo / step) * step; t <= hi; t += step) svg += '<line class="grid" x1="' + Lm + '" x2="' + (W - R) + '" y1="' + Y(t).toFixed(1) + '" y2="' + Y(t).toFixed(1) + '"/><text x="' + (Lm - 10) + '" y="' + (Y(t) + 4).toFixed(1) + '" text-anchor="end">' + (+t.toFixed(2)) + "s</text>";
+    svg += '<line class="grid" x1="' + X(0) + '" x2="' + X(0) + '" y1="' + T + '" y2="' + (H - B) + '" style="stroke-dasharray:3 4"/><text x="' + X(0) + '" y="' + (H - B + 22) + '" text-anchor="middle">Now</text>';
+    svg += '<text x="' + X(-nP) + '" y="' + (H - B + 22) + '" text-anchor="start">' + nP + " weeks ago</text>" + '<text x="' + X(H2) + '" y="' + (H - B + 22) + '" text-anchor="end">+' + H2 + " weeks</text>";
+    var line = function (arr, cls2) { return '<path class="ln ' + cls2 + '" d="' + arr.map(function (q, i) { return (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" ") + '"/>'; };
+    svg += line(past.map(function (q, i) { return [X(i - nP), Y(q.v)]; }), "you") + line(gpast.map(function (q, i) { return [X(i - nP), Y(q.v)]; }), "goal");
+    svg += line([[X(0), Y(p.total)], [X(H2), Y(p.total - my * H2)]], "you fut") + line([[X(0), Y(G.who.total)], [X(H2), Y(G.who.total - gp * H2)]], "goal fut");
+    if (eta && eta <= H2) { var ex = X(eta), ey = Y(p.total - my * eta); svg += '<circle class="eta" cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="7"><title>Around ' + monthYear(eta) + "</title></circle>" + '<text class="lg" x="' + ex.toFixed(1) + '" y="' + (ey - 14).toFixed(1) + '" text-anchor="middle" style="fill:#2a9d5c">' + monthYear(eta) + "</text>"; }
+    svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(p.total - my * H2) + (p.total - my * H2 > G.who.total - gp * H2 ? 18 : -10)).toFixed(1) + '" text-anchor="end" style="fill:var(--blue)">' + esc(p.name) + "</text>";
+    svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(G.who.total - gp * H2) + (p.total - my * H2 > G.who.total - gp * H2 ? -10 : 18)).toFixed(1) + '" text-anchor="end" style="fill:#8a96a3">' + esc(G.who.name) + "</text>";
+    svg += '<text class="axt" transform="translate(16 ' + ((T + H - B) / 2) + ') rotate(-90)" text-anchor="middle">Total time</text>';
+    var chart = '<div class="card"><h3>Projection</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Solid lines: the last ' + nP + ' weeks. Dashed: where you\'d both be if you keep your current pace.</p><div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projected total time for ' + esc(p.name) + " and " + esc(G.who.name) + '">' + svg + "</svg></div></div>";
+
+    // where to find time
+    var rows = MAPS.map(function (name, m) { var r = G.ref(m); if (r == null) return null; var mine = tv(p, m); return { m: m, name: name, mine: mine, r: r, g: mine - r, miss: p.t[m] == null }; }).filter(function (x) { return x && x.g > 0.0005; }).sort(function (a, b) { return b.g - a.g; });
+    var atLevel = MAPS.length - rows.length, topG = rows.length ? rows[0].g : 1, sum = rows.reduce(function (a, x) { return a + x.g; }, 0);
+    var maps = '<div class="card trk-maps"><div class="ip-head"><h3>Where to find time</h3><span class="muted" style="font-size:.82rem">vs ' + esc(G.refLbl) + "</span></div>" +
+      '<p class="muted" style="font-size:.85rem;margin:4px 0 8px">' + (rows.length ? "Your biggest gaps first. Matching " + esc(G.refLbl) + " on every map would take " + sum.toFixed(3) + "s off. " : "") + (atLevel ? "You're already at that level on " + atLevel + " of " + MAPS.length + " maps." : "") + "</p>" +
+      (rows.length ? rows.slice(0, 8).map(function (x) {
+        return '<div class="row' + (x.miss ? " miss" : "") + '"><b>' + esc(x.name) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span>" + '<div class="bar"><i style="width:' + Math.max(3, Math.round(100 * x.g / topG)) + '%"></i></div>' +
+          "<small>" + (x.miss ? "No time yet (counts as " + MISSING + "s). Any run here is a big drop." : "You " + fmt(x.mine) + " · " + esc(G.refLbl) + " " + fmt(x.r)) + "</small></div>";
+      }).join("") : '<p class="muted">You\'re at or ahead of ' + esc(G.refLbl) + " on every map. 🔥</p>") + "</div>";
+
+    // predicted ranking
+    var pred = '<div class="card"><h3>Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their pace from the last ' + PACE_WEEKS + " weeks.</p><div class=\"trk-pred\">" +
+      "<div><span>Now</span><b>#" + p.place + "</b></div>" + [4, 12, 26].map(function (w) { var r = predictRank(p, w), d = p.place - r; return "<div><span>In " + w + " weeks</span><b>#" + r + "</b><small>" + (d > 0 ? "↑ " + d : d < 0 ? "↓ " + (-d) : "no change") + "</small></div>"; }).join("") + "</div></div>";
+
+    return sel + status + chart + maps + pred + '<p class="muted" style="font-size:.8rem;margin-top:10px">Pace only counts PBs on maps you already had a time on. Filling in a missing map drops your total straight away but isn\'t counted as pace.</p>';
   }
   function impCard(p) {
     var k = p.name.toLowerCase(), L = timp[k] || [];
@@ -1020,9 +1136,10 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     times: '<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>',
     records: '<svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 6h3a3 3 0 0 1-3 4M7 6H4a3 3 0 0 0 3 4"/></svg>',
     h2h: '<svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2 20a6 6 0 0 1 12 0M10 20a6 6 0 0 1 12 0"/></svg>',
-    target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>'
+    target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+    tracking: '<svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 16l5-5 4 3 7-8"/><path d="M15 6h5v5"/></svg>'
   };
-  var PTABS = [["overview", "Overview"], ["times", "Map Times"], ["records", "Records"], ["h2h", "Head to Head"], ["target", "Target Times"]];
+  var PTABS = [["overview", "Overview"], ["times", "Map Times"], ["records", "Records"], ["h2h", "Head to Head"], ["target", "Target Times"], ["tracking", "Tracking"]];
   var SILHOUETTE = '<svg viewBox="0 0 100 120" aria-hidden="true"><circle cx="50" cy="38" r="22"/><path d="M8 120c0-26 19-44 42-44s42 18 42 44z"/></svg>';
   // Count-up for big numbers: <b data-count="12" data-dec="0">
   function countUp(root) {
@@ -1203,6 +1320,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       var V = byName[S.vs];
       body = '<div class="h2h-pick" style="grid-template-columns:1fr"><label>Compare ' + esc(p.name) + ' with<input class="field" id="p-vs" list="names" placeholder="Type a name" autocomplete="off" value="' + esc(S.vs || "") + '"></label></div>' +
         (V ? h2hHTML(p, V) : '<p class="empty">Type a player\'s name to see the head-to-head.</p>');
+    } else if (S.ptab === "tracking") {
+      body = trackingHTML(p);
     } else if (S.ptab === "target") {
       body = '<div class="sim-sum" id="sim-sum"></div><div class="card"><h3>Target times</h3><p class="muted" style="font-size:.9rem">Type a target time for any map to see what your total and ranking would be. Tap OR to try the Oceania record. Maps without a time count as 60 seconds.</p><div class="sim-grid">' +
         MAPS.map(function (name, m) {
@@ -1401,7 +1520,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("[data-player][tabindex]")) { e.preventDefault(); openPlayer(e.target.dataset.player); }
     if (e.key === "Enter" && e.target.id === "p-vs") { var hit = findPlayer(e.target.value); if (hit) { S.vs = hit.name; renderProfile(); syncUrl(); } }
   });
-  document.addEventListener("change", function (e) { if (e.target.id === "rsort") { S.rsort = e.target.value; renderRecords(); return; } if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } if (e.target.id === "trange") { S.trange = e.target.value; renderProfile(); } });
+  document.addEventListener("change", function (e) { if (e.target.id === "rsort") { S.rsort = e.target.value; renderRecords(); return; } if (e.target.id === "grange") { S.grange = e.target.value; renderProfile(); } if (e.target.id === "trange") { S.trange = e.target.value; renderProfile(); } if (e.target.id === "goal") { S.goal = e.target.value; renderProfile(); } });
   document.addEventListener("input", function (e) {
     if (e.target.id === "p-vs") { var v = e.target.value.trim(); if (byName[v]) { S.vs = v; renderProfile(); syncUrl(); } return; }
     if (!e.target.dataset || e.target.dataset.sim == null) return;
