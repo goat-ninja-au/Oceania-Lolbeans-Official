@@ -384,6 +384,15 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .trk-like .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--row); } .trk-like .row:last-child { border-bottom: 0; } .trk-like .up { color: #2a9d5c; font-weight: 800; } .trk-like .down { color: #d9505c; font-weight: 800; } .trk-like b[data-player] { cursor: pointer; }
 .trk-like h4 { margin: 16px 0 0; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
 .trk-acc p { margin: 6px 0; } .trk-acc ul { margin: 6px 0 0 18px; padding: 0; } .trk-acc li { margin: 4px 0; color: var(--muted); }
+.trk-qs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px; margin: 0 0 16px; }
+.trk-qs div { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 12px 52px; min-height: 74px; transition: transform .15s, box-shadow .15s; }
+.trk-qs div:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(7, 17, 28, .18); }
+.trk-qs i { position: absolute; left: 12px; top: 14px; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--soft); font-style: normal; font-size: 1rem; }
+.trk-qs span { display: block; font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); } .trk-qs b { display: block; font-size: 1.02rem; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .trk-qs small { display: block; color: var(--muted); font-size: .74rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trk-status { border-radius: 18px; padding: 20px 22px; box-shadow: 0 10px 30px rgba(7, 17, 28, .12); } .trk-status .big { font-size: 1.4rem; letter-spacing: -.01em; }
+.trk-status.g { background: linear-gradient(135deg, color-mix(in srgb, #2a9d5c 16%, var(--card)), var(--card) 70%); } .trk-status.y { background: linear-gradient(135deg, color-mix(in srgb, #e0a526 16%, var(--card)), var(--card) 70%); } .trk-status.r { background: linear-gradient(135deg, color-mix(in srgb, #d9505c 16%, var(--card)), var(--card) 70%); }
+#pbody .trk-grid > .card, #pbody .trk-tabs-card, #pbody .trk-maps, #pbody .trk-like { border-radius: 16px; transition: box-shadow .15s; } #pbody .trk-grid > .card:hover, #pbody .trk-tabs-card:hover { box-shadow: 0 10px 28px rgba(7, 17, 28, .14); }
+.trk-ch .r { grid-template-columns: 70px minmax(0, 1fr) 58px; row-gap: 2px; } .trk-ch .r small { grid-column: 2 / -1; font-size: .78rem; color: var(--muted); } .trk-ch .r small.imp { color: #d9505c; }
 .testbar { background: #f0b429; color: #222; text-align: center; font-weight: 700; padding: 8px 12px; font-size: .9rem; }
 .fline.rec { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
 .fline .pic { width: 52px; height: 34px; border-radius: 6px; overflow: hidden; background: var(--soft); }
@@ -817,7 +826,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var tl = players.filter(function (o) { var t = talOf(o); return t.tag[1] === "gen" || t.tag[1] === "star"; }).sort(function (a, b) { return talOf(b).score - talOf(a).score; }).slice(0, 10);
     var watch = tl.length ? '<div class="card tal-list trk-cls" style="margin-bottom:16px"><h3>🌟 Talents to watch</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Players climbing the fastest right now and still setting PBs most weeks.</p>' +
       tl.map(function (o, i) { var t = talOf(o); return '<div class="row"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(o.name) + '">' + flag(o.country) + " " + esc(o.name) + "</b><small>#" + t.then + " → #" + o.place + " in " + t.span + " weeks · " + clsName(t.cls) + '</small></div><span class="trk-tal ' + t.tag[1] + '">' + t.tag[0] + "</span></div>"; }).join("") + "</div>" : "";
-    $("improved-body").innerHTML = watch + head +
+    $("improved-body").innerHTML = head +
       '<p class="muted imp-note">Seconds taken off their total time, ' + when + '. Only maps a player already had a time on are counted, so new maps never count against anyone.</p>' +
       '<div class="card imp-list">' + (list.length ? list.map(function (x, i) {
         return '<div class="fline"><span class="n">' + (i + 1) + '</span><div><b data-player="' + esc(x.p.name) + '" tabindex="0" role="link">' + flag(x.p.country) + " " + esc(x.p.name) + "</b><small>#" + x.p.place + " in Oceania · " + x.c + (x.c === 1 ? " new PB" : " new PBs") + '</small><div class="imp-bar"><i style="width:' + Math.max(3, Math.round(100 * x.s / top)) + '%"></i></div></div><div class="v imp-v">' + secs(x.s) + "</div></div>";
@@ -896,7 +905,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
         '<div class="trk-bars" role="img" aria-label="Seconds taken off each week, last ' + last.length + ' weeks">' + last.map(function (x) { return '<i class="' + (x.s > 0.0005 ? "" : "z") + '" style="height:' + Math.max(3, Math.round(100 * x.s / mx)) + '%" title="Week of ' + niceDate(x.w) + ": " + (x.s > 0.0005 ? "−" + x.s.toFixed(3) + "s" : "no PB") + '"></i>'; }).join("") + "</div>" +
         '<div class="trk-bars-l"><span>' + last.length + " weeks ago</span><span>This week</span></div>";
     }
-    return '<div class="card"><h3>Form</h3>' + body + "</div>";
+    return '<div class="card"><h3>🔥 Form</h3>' + body + "</div>";
   }
 
   // 2. Rival
@@ -914,7 +923,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var who = gap > 0 ? "You're " + gap.toFixed(3) + "s behind" : "You're " + (-gap).toFixed(3) + "s ahead";
     var trend = Math.abs(d) < 0.05 ? "Neck and neck on pace" : d > 0 ? (gap > 0 ? "You're catching them: " : "You're pulling away: ") + d.toFixed(2) + "s a week" : (gap > 0 ? "They're pulling away: " : "They're catching you: ") + (-d).toFixed(2) + "s a week";
     var selR = '<select class="gsel" id="rival" aria-label="Choose a rival" style="max-width:100%">' + RV.near.map(function (x) { return '<option value="' + esc(x.name) + '"' + (x === o ? " selected" : "") + ">#" + x.place + " " + esc(x.name) + "</option>"; }).join("") + "</select>";
-    return '<div class="card"><div class="ip-head"><h3>Rival</h3>' + selR + "</div>" +
+    return '<div class="card"><div class="ip-head"><h3>🥊 Rival</h3>' + selR + "</div>" +
       '<div class="trk-vs"><div><b>' + flag(p.country) + " " + esc(p.name) + "</b><small>#" + p.place + " · " + fmt(p.total) + '</small></div><div class="x">VS</div><div><b>' + flag(o.country) + " " + esc(o.name) + "</b><small>#" + o.place + " · " + fmt(o.total) + "</small></div></div>" +
       '<div class="trk-kv"><div><span>Gap</span><b>' + who + "</b></div><div><span>Pace</span><b>" + trend + "</b></div>" +
       "<div><span>Last 4 weeks</span><b>You " + (m4 > 0.0005 ? "−" + m4.toFixed(2) + "s" : "no PBs") + " · them " + (o4 > 0.0005 ? "−" + o4.toFixed(2) + "s" : "no PBs") + "</b></div></div>" +
@@ -924,7 +933,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // 3. Milestones
   function milestonesHTML(p) {
     var next = [], done = [], my = paceOf(p.name), k = p.name.toLowerCase();
-    var eta = function (g) { return my > 0.05 ? " · about " + Math.ceil(g / my) + (Math.ceil(g / my) === 1 ? " week" : " weeks") + " at your pace" : ""; };
+    var eta = function (g) { return my > 0.05 ? " · " + exactDate(g / my) + " at your expected pace" : " · impossible at your current pace"; };
     var round = Math.floor((p.total - 0.0005) / 10) * 10;
     next.push(["⏱️", "Sub-" + round + "s total", "Your total is " + fmt(p.total) + eta(p.total - round), (p.total - round).toFixed(3) + "s"]);
     var tier = [100, 50, 25, 10, 5, 3, 1].filter(function (n) { return n < p.place && players[n - 1]; })[0];
@@ -946,7 +955,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     if (in10) done.push(["🎯", "Top 10 on " + in10 + " map" + (in10 === 1 ? "" : "s"), "", "Now"]);
     if (!miss) done.push(["🗺️", "A time on every map", "", "Done"]);
     var row = function (x, isDone) { return '<div class="m' + (isDone ? " done" : "") + '"><span class="ic">' + x[0] + "</span><div><b>" + x[1] + "</b>" + (x[2] ? "<small>" + x[2] + "</small>" : "") + '</div><span class="v">' + x[3] + "</span></div>"; };
-    return '<div class="card trk-tabs-card"><h3>Milestones</h3><div class="trk-ms"><h4>Next up</h4>' + next.map(function (x) { return row(x, false); }).join("") +
+    return '<div class="card trk-tabs-card"><h3>🏁 Milestones</h3><div class="trk-ms"><h4>Next up</h4>' + next.map(function (x) { return row(x, false); }).join("") +
       (done.length ? "<h4>Achieved</h4>" + done.slice(0, 6).map(function (x) { return row(x, true); }).join("") : "") + "</div></div>";
   }
 
@@ -958,7 +967,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     }).sort(function (a, b) { return b.pct - a.pct; });
     var cls = function (x) { return x.miss ? "n" : x.pct >= 0.9 ? "e" : x.pct >= 0.65 ? "g" : x.pct >= 0.35 ? "m" : "w"; };
     var have = rows.filter(function (x) { return !x.miss; }), best = have[0], worst = have[have.length - 1];
-    return '<div class="card trk-tabs-card"><h3>Map strengths</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">Where you rank in Oceania on each map' + (best ? ". Best: " + esc(best.n) + " (" + ordinal(best.r) + "). Weakest: " + esc(worst.n) + " (" + ordinal(worst.r) + ")." : ".") + "</p>" +
+    return '<div class="card trk-tabs-card"><h3>💪 Map strengths</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">Where you rank in Oceania on each map' + (best ? ". Best: " + esc(best.n) + " (" + ordinal(best.r) + "). Weakest: " + esc(worst.n) + " (" + ordinal(worst.r) + ")." : ".") + "</p>" +
       '<div class="trk-legend"><span style="--c:#2a9d5c">Top 10%</span><span style="--c:var(--blue)">Strong</span><span style="--c:#e0a526">Middle</span><span style="--c:#d9505c">Weak</span></div>' +
       '<div class="trk-str">' + rows.map(function (x) {
         return '<div class="r ' + cls(x) + '"><b>' + esc(x.n) + "</b><small>" + (x.miss ? "no time" : ordinal(x.r) + " of " + x.tot) + '</small><div class="bar"><i style="width:' + (x.miss ? 0 : Math.max(3, Math.round(100 * x.pct))) + '%"></i></div></div>';
@@ -966,7 +975,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   }
 
   // ---- Chances: simulate the next 52 weeks many times, each player drawing PB weeks from their own recent history ----
-  var SIM = null, SIM_N = 400, SIM_W = 52, TIERS = [1, 3, 5, 10, 25, 50, 100];
+  var SIM = null, SIM_N = 1000, SIM_W = 52, TIERS = [1, 3, 5, 10, 25, 50, 100];
   function rng(seed) { return function () { seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function samplesOf(p) { var W = weeklyOf(p).slice(-PACE_WEEKS).map(function (x) { return x.s * PACE_K; }); while (W.length < 8) W.push(0); return W; }
   function floorT() { return OR && OR.total ? OR.total : Math.min.apply(null, players.map(function (p) { return p.total; })) * 0.95; }
@@ -999,11 +1008,16 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   function summarize(arr) {
     var hits = Array.prototype.filter.call(arr, function (w) { return w >= 0; }).sort(function (x, y) { return x - y; });
     var q = function (f) { return hits[Math.min(hits.length - 1, Math.floor(f * hits.length))]; };
-    return { pct: Math.round(100 * hits.length / arr.length), med: hits.length ? q(0.5) : null, lo: hits.length ? q(0.25) : null, hi: hits.length ? q(0.75) : null };
+    return { pct: 100 * hits.length / arr.length, med: hits.length ? q(0.5) : null, lo: hits.length ? q(0.25) : null, hi: hits.length ? q(0.75) : null };
   }
   function tierChance(p, n) { var i = players.indexOf(p), t = TIERS.indexOf(n); if (i < 0 || t < 0) return null; return summarize(runSim().first[i][t]); }
-  function wkDate(w) { var d = new Date(); d.setDate(d.getDate() + w * 7); return d.getDate() + " " + MON[d.getMonth()] + (d.getFullYear() !== new Date().getFullYear() ? " " + d.getFullYear() : ""); }
-  function pctTxt(x) { return x.pct >= 99 ? "99%+" : x.pct < 1 ? "under 1%" : x.pct + "%"; }
+  function wkDate(w) { return exactDate(w); }
+  function fmtPct(v) { if (v <= 0) return "0%"; if (v >= 100) return "100%"; if (v < 1 || v > 99) return (Math.round(v * 10) / 10) + "%"; return Math.round(v) + "%"; }
+  function pctTxt(x) { return fmtPct(x.pct); }
+  function exactDate(weeks) { var d = new Date(); d.setDate(d.getDate() + Math.round(weeks * 7)); return d.getDate() + " " + MON[d.getMonth()] + " " + d.getFullYear(); }
+  // weeks until p catches a total that improves `tp` a week (null = impossible at the current pace)
+  function detWeeks(p, tot, tp) { var gap = p.total - tot, cl = paceOf(p.name) - tp; return gap <= 0 ? 0 : cl > 0.05 ? gap / cl : null; }
+  function tierPace(n, p) { var ar = players.filter(function (o) { return Math.abs(o.place - n) <= 2 && o !== p; }); return ar.reduce(function (a, o) { return a + paceOf(o.name); }, 0) / Math.max(ar.length, 1); }
   function goalChance(p, G) {
     if (G.n) return tierChance(p, G.n);
     return G.defend ? summarize(pairSim(G.who, p)) : summarize(pairSim(p, G.who));
@@ -1011,16 +1025,20 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   function chanceLine(p, G, gap) {
     if (!G.defend && gap <= 0) return "";
     var c = goalChance(p, G); if (!c) return "";
-    if (G.defend) return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> " + esc(G.who.name) + " passes you in the next 12 months" + (c.pct >= 10 && c.med ? ". If it happens, most likely around <b>" + wkDate(c.med) + "</b>." : ".") + "</p>";
-    if (c.pct < 1) return '<p class="trk-chance">🎲 <b>Under 1% chance</b> in the next 12 months at the current pace.</p>';
+    if (G.defend) return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> " + esc(G.who.name) + " passes you in the next 12 months" + (c.med ? ". If it happens, most likely around <b>" + wkDate(c.med) + "</b>." : ".") + "</p>";
+    if (c.pct <= 0) return '<p class="trk-chance">🎲 <b>0% chance</b> in the next 12 months: none of the ' + SIM_N + " simulated years got there.</p>";
     var when = c.med ? (c.pct >= 50 ? " · half the simulations land between <b>" + wkDate(c.lo) + "</b> and <b>" + wkDate(c.hi) + "</b>" : " · if it happens, most likely around <b>" + wkDate(c.med) + "</b>" + (c.lo !== c.hi ? " (between " + wkDate(c.lo) + " and " + wkDate(c.hi) + ")" : "")) : "";
     return '<p class="trk-chance">🎲 <b>' + pctTxt(c) + " chance</b> in the next 12 months" + when + ".</p>";
   }
   function chancesHTML(p) {
     var tiers = TIERS.filter(function (n) { return n < p.place || (n === 1 && p.place === 1); });
     if (!tiers.length) return "";
-    var rows = tiers.map(function (n) { var c = tierChance(p, n); return '<div class="r"><span>' + (n === 1 ? "#1" : "Top " + n) + '</span><div class="bar"><i style="width:' + Math.max(c.pct, 1) + '%"></i></div><b>' + (c.pct >= 99 ? "99%" : c.pct < 1 ? "<1%" : c.pct + "%") + "</b></div>"; }).join("");
-    return '<div class="card"><h3>Your chances</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Chance of reaching each spot at some point in the next 12 months. Worked out by playing out the next year ' + SIM_N + " times, with every player setting PBs like they have over the last 6 months (scaled to what really happened when we tested it on past weeks).</p>" + '<div class="trk-ch">' + rows + "</div></div>";
+    var rows = tiers.map(function (n) {
+      var c = tierChance(p, n), dw = c.pct >= 50 ? c.med : detWeeks(p, players[n - 1].total, tierPace(n, p));
+      var when = p.place <= n ? "You're there now" : dw == null ? "Impossible at your current pace" : (c.pct >= 50 ? "Most likely " : "At your expected pace: ") + exactDate(dw);
+      return '<div class="r"><span>' + (n === 1 ? "#1" : "Top " + n) + '</span><div class="bar"><i style="width:' + Math.max(c.pct, 0.5) + '%"></i></div><b>' + fmtPct(c.pct) + '</b><small class="' + (dw == null && p.place > n ? "imp" : "") + '">' + when + "</small></div>";
+    }).join("");
+    return '<div class="card"><h3>🎲 Your chances</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Chance of reaching each spot at some point in the next 12 months. Worked out by playing out the next year ' + SIM_N + " times, with every player setting PBs like they have over the last 6 months (scaled to what really happened when we tested it on past weeks).</p>" + '<div class="trk-ch">' + rows + "</div></div>";
   }
 
   // ---- Talent tiers and classes (the year a player first appeared in the rankings) ----
@@ -1079,7 +1097,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
         '<div class="head"><b data-player="' + esc(h.o.name) + '">' + esc(h.o.name) + "</b> was <b>#" + h.then + "</b> " + x[1].toLowerCase() + (h.then === p.place ? ", exactly where you are now" : ", right around where you are now (#" + p.place + ")") + ". Now they're <b>#" + h.o.place + "</b>" + (d > 0 ? " (up " + d + " places)." : d < 0 ? " (down " + (-d) + ")." : ".") + "</div>" +
         grp.slice(1, 6).map(line).join(""));
     });
-    return '<div class="card trk-like"><h3>Players like you</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">Players who were at your rank (#' + p.place + ") before, and where they are today.</p>" + (parts.length ? parts.join("") : '<p class="muted">Not enough history at this rank yet.</p>') + "</div>";
+    return '<div class="card trk-like"><h3>👥 Players like you</h3><p class="muted" style="font-size:.85rem;margin:4px 0 0">Players who were at your rank (#' + p.place + ") before, and where they are today.</p>" + (parts.length ? parts.join("") : '<p class="muted">Not enough history at this rank yet.</p>') + "</div>";
   }
 
   // ---- How accurate is this? Test the pace prediction on the past ----
@@ -1105,11 +1123,32 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   }
   function accuracyHTML() {
     var b = backtest();
-    return '<div class="card trk-acc trk-tabs-card"><h3>How accurate is this?</h3>' +
+    return '<div class="card trk-acc trk-tabs-card"><h3>✅ How accurate is this?</h3>' +
       (b ? "<p>We tested the predictions on the past: starting from " + niceDate(b.from) + " and predicting " + b.h + " weeks ahead for " + b.n + " players, the predicted rank was within <b>3 places for " + b.pred.w3 + "%</b> and within <b>10 places for " + b.pred.w10 + "%</b> of players (typical miss: " + b.pred.med + (b.pred.med === 1 ? " place" : " places") + "). Just guessing nobody moves got " + b.naive.w3 + "% within 3 places.</p>" : "") +
       "<ul><li>Past numbers (PBs, pace, map trends) come straight from saved versions of the rankings sheet each Monday, so they're as accurate as the sheet was.</li>" +
       "<li>Predictions and chances assume you keep improving like you have recently. A new strat, a break or a new map can change things fast.</li>" +
       "<li>Filling in a missing map (60s) drops your total straight away but isn't counted as pace.</li></ul></div>";
+  }
+
+  // ---- Quick stats strip ----
+  function quickStatsHTML(p) {
+    var above = players[p.place - 2], below = players[p.place], k = p.name.toLowerCase();
+    var W = weeklyOf(p).slice(-26), pbw = W.filter(function (x) { return x.s > 0.0005; }), avg = pbw.length ? pbw.reduce(function (a, x) { return a + x.s; }, 0) / pbw.length : 0;
+    var mr = MAPS.map(function (n, m) { return p.t[m] != null ? { n: n, r: mapRank(m, p.t[m]) } : null; }).filter(Boolean).sort(function (a, b) { return a.r - b.r; });
+    var top10 = mr.filter(function (x) { return x.r <= 10; }).length, first = null;
+    for (var i = 0; i < weeks.length; i++) if (hist[weeks[i]][k] != null) { first = weeks[i]; break; }
+    var wr = first ? Math.round((dnum(weeks[weeks.length - 1]) - dnum(first)) / 6048e5) : 0, all = weeklyOf(p).reduce(function (a, x) { return a + x.s; }, 0);
+    var tile = function (ic, l, v, s) { return '<div><i aria-hidden="true">' + ic + "</i><span>" + l + "</span><b>" + v + "</b><small>" + s + "</small></div>"; };
+    return '<div class="trk-qs">' +
+      tile("⬆️", "Next place", above ? "+" + (p.total - above.total).toFixed(3) + "s" : "–", above ? "to pass #" + above.place + " " + esc(above.name) : "You're #1") +
+      tile("⬇️", "Your lead", below ? (below.total - p.total).toFixed(3) + "s" : "–", below ? "over #" + below.place + " " + esc(below.name) : "Nobody behind") +
+      tile("📅", "PB weeks", pbw.length + " / " + W.length, "weeks with a PB lately") +
+      tile("⚡", "Avg PB week", avg ? "−" + avg.toFixed(2) + "s" : "–", "seconds per PB week") +
+      tile("💪", "Best map", mr.length ? esc(mr[0].n) : "–", mr.length ? ordinal(mr[0].r) + " in Oceania" : "") +
+      tile("🎯", "Top-10 maps", top10 + " / " + MAPS.length, "maps where you're top 10") +
+      tile("⏳", "Ranked for", wr ? wr + " weeks" : "New", first ? "since " + niceDate(first) : "") +
+      tile("📉", "All-time drop", all > 0.0005 ? "−" + all.toFixed(1) + "s" : "–", "seconds taken off") +
+      "</div>";
   }
 
   // 6. Personal records
@@ -1121,7 +1160,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var bm = Object.keys(byM).sort(function (a, b) { return byM[b] - byM[a]; })[0];
     var all = W.reduce(function (a, x) { return a + x.s; }, 0);
     var cell = function (l, v, s) { return "<div><span>" + l + "</span><b>" + v + "</b><small>" + s + "</small></div>"; };
-    return '<div class="card trk-tabs-card"><h3>Personal records</h3><div class="trk-rec">' +
+    return '<div class="card trk-tabs-card"><h3>🏆 Personal records</h3><div class="trk-rec">' +
       cell("Best week", bw.s > 0.0005 ? "−" + bw.s.toFixed(3) + "s" : "–", bw.s > 0.0005 ? "Week of " + niceDate(bw.w) : "No PBs yet") +
       cell("Most PBs in a week", mp.c || "–", mp.c ? "Week of " + niceDate(mp.w) : "") +
       cell("Best month", bm && byM[bm] > 0.0005 ? "−" + byM[bm].toFixed(3) + "s" : "–", bm ? MONTHS[+bm.slice(5) - 1] + " " + bm.slice(0, 4) : "") +
@@ -1141,7 +1180,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     get(DATA + "&sheet=" + encodeURIComponent("Map history") + "&tq=" + encodeURIComponent("select * where " + where)).then(function (t) {
       var rows = parseCSV(t); MT[nm] = header(rows, "week", "name") ? rows.slice(1) : [];
       if (S.player === nm && S.ptab === "tracking") { var b2 = $("trk-trends"); if (b2) b2.innerHTML = trendsHTML(p, MT[nm]); }
-    }, function () { var b2 = $("trk-trends"); if (b2) b2.innerHTML = "<h3>Map trends</h3><p class=\"muted\">Couldn't load map history right now.</p>"; });
+    }, function () { var b2 = $("trk-trends"); if (b2) b2.innerHTML = "<h3>📉 Map trends</h3><p class=\"muted\">Couldn't load map history right now.</p>"; });
   }
   function trendsHTML(p, rows) {
     var by = {};
@@ -1152,7 +1191,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       var before3 = a.filter(function (x) { return x.w < cut3; }).pop(), d3 = before3 ? before3.t - cur : 0;
       return { m: m, a: a, cur: cur, first: a[0], d3: d3, all: a[0].t - cur, pbs: a.length - 1 };
     }).sort(function (x, y) { return y.d3 - x.d3 || y.all - x.all; });
-    if (!list.length) return '<h3>Map trends</h3><p class="muted">Map history is still being collected. It goes back to 2024 once it finishes, and adds a new week every Monday.</p>';
+    if (!list.length) return '<h3>📉 Map trends</h3><p class="muted">Map history is still being collected. It goes back to 2024 once it finishes, and adds a new week every Monday.</p>';
     var spark = function (a, cur) {
       var pts = a.map(function (x) { return x.t; }); pts.push(cur);
       var mn = Math.min.apply(null, pts), mx = Math.max.apply(null, pts), n = pts.length, w = 200, h = 38;
@@ -1161,7 +1200,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       pts.forEach(function (v, i) { d += (i ? "H" + X(i).toFixed(1) + "V" : "M" + X(i).toFixed(1) + " ") + Y(v).toFixed(1); });
       return '<svg viewBox="0 0 200 38" aria-hidden="true"><path d="' + d + '"/><circle cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(cur).toFixed(1) + '" r="3"/></svg>';
     };
-    return '<h3>Map trends</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Your time on each map over time, most improved in the last 3 months first. Lower is faster.</p><div class="trk-tr">' +
+    return '<h3>📉 Map trends</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">Your time on each map over time, most improved in the last 3 months first. Lower is faster.</p><div class="trk-tr">' +
       list.map(function (x) {
         return '<div class="t"><b>' + esc(MAPS[x.m]) + '</b><span class="d' + (x.d3 > 0.0005 ? "" : " z") + '">' + (x.d3 > 0.0005 ? "−" + x.d3.toFixed(3) + "s" : "no change") + '</span> <small style="display:inline">last 3 months</small>' + spark(x.a, x.cur) +
           "<small>" + fmt(x.first.t) + " → " + fmt(x.cur) + " since " + niceDate(x.first.w) + " · " + x.pbs + (x.pbs === 1 ? " PB" : " PBs") + "</small></div>";
@@ -1186,7 +1225,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       var tx = 60 + i * 275; x.fillStyle = "rgba(255,255,255,.1)"; x.beginPath(); if (x.roundRect) x.roundRect(tx, 360, 255, 130, 16); else x.rect(tx, 360, 255, 130); x.fill();
       x.fillStyle = "#9fd0f5"; x.font = "700 20px " + F; x.fillText(t[0], tx + 22, 400); x.fillStyle = "#fff"; x.font = "800 40px " + F; x.fillText(t[1], tx + 22, 456);
     });
-    x.fillStyle = "#cfe6f7"; x.font = "600 24px " + F; x.fillText(T.talent + "   ·   Goal: " + T.goal + (T.rival ? "   ·   Rival: " + T.rival : ""), 60, 545);
+    x.fillStyle = "#cfe6f7"; x.font = "600 24px " + F; x.fillText("Goal: " + T.goal + (T.rival ? "   ·   Rival: " + T.rival : ""), 60, 545);
     x.fillStyle = "#9fd0f5"; x.font = "600 22px " + F; x.fillText("goat-ninja-au.github.io/Oceania-Lolbeans-Official", 60, 590);
     c.toBlob(function (blob) {
       var url = URL.createObjectURL(blob), file = new File([blob], "tracking-" + T.name.replace(/[^\w-]+/g, "_") + ".png", { type: "image/png" });
@@ -1216,22 +1255,25 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var gap = G.defend ? G.who.total - p.total : p.total - G.who.total; // defend: your lead; otherwise: how far behind
     var close = G.defend ? my - gp : my - gp; // seconds per week you gain on them
     var cls, big, txt, GC = null;
+    var who2 = G.n ? "the top " + G.n : esc(G.who.name);
     if (!tracked) { cls = "y"; big = "Not enough history yet"; txt = "Your expected pace is worked out from your PBs over the last " + PACE_WEEKS + " weeks. Check back after a few Mondays."; }
     else if (G.defend) {
-      if (close >= -0.05) { cls = "g"; big = "🟢 Safe at #1 for now"; txt = "You lead by " + gap.toFixed(3) + "s and you're improving at least as fast as " + esc(G.who.name) + "."; }
-      else { var wl = gap / -close; cls = wl < 12 ? "r" : "y"; big = (wl < 12 ? "🔴 " : "🟡 ") + esc(G.who.name) + " is closing in"; txt = "They're gaining " + (-close).toFixed(2) + "s a week. At this pace they'd catch you around " + monthYear(wl) + "."; }
+      GC = goalChance(p, G); var dW = GC.pct >= 50 ? GC.med : (close < -0.05 ? gap / -close : null);
+      if (dW == null) { cls = "g"; big = "🟢 Safe at #1: impossible for " + esc(G.who.name) + " to catch you at the current pace"; txt = "You lead by " + gap.toFixed(3) + "s and you're improving at least as fast as them."; }
+      else { cls = dW < 12 ? "r" : "y"; big = (dW < 12 ? "🔴 " : "🟡 ") + esc(G.who.name) + " could catch you: " + exactDate(dW); txt = "They're gaining " + Math.max(-close, 0).toFixed(2) + "s a week on your " + gap.toFixed(3) + "s lead."; }
     } else if (gap <= 0) { cls = "g"; big = "🟢 You're already there"; txt = "You're " + (-gap).toFixed(3) + "s ahead of " + esc(G.who.name) + ". Keep it up to stay ahead."; }
-    else if ((GC = goalChance(p, G)) && GC.pct >= 50) { cls = "g"; big = "🟢 On track: most likely around " + wkDate(GC.med); txt = "You're gaining " + Math.max(close, 0).toFixed(2) + "s a week on " + (G.n ? "the top " + G.n : esc(G.who.name)) + " at your expected pace, with a " + gap.toFixed(3) + "s gap to close."; }
-    else if (GC && GC.pct >= 15) { cls = "y"; big = "🟡 Possible: " + GC.pct + "% chance in the next 12 months"; txt = (close > 0.05 ? "You're gaining " + close.toFixed(2) + "s a week on " + (G.n ? "the top " + G.n : esc(G.who.name)) + ", but the " + gap.toFixed(3) + "s gap needs a few good weeks to close." : "The " + gap.toFixed(3) + "s gap is closeable, but it needs a burst of PBs."); }
-    else if (close > 0.05) { cls = "y"; big = "🟡 Slowly closing"; txt = "You're gaining " + close.toFixed(2) + "s a week on " + (G.n ? "the top " + G.n : esc(G.who.name)) + ", but the " + gap.toFixed(3) + "s gap would take about " + Math.ceil(gap / close) + " weeks at this pace."; }
-    else if (close >= -0.05) { cls = "y"; big = "🟡 Holding steady"; txt = "You're keeping up with " + (G.n ? "the top " + G.n : esc(G.who.name)) + " but not closing the " + gap.toFixed(3) + "s gap yet. A few more PBs a week would change that."; }
-    else { cls = "r"; big = "🔴 Falling behind"; txt = (G.n ? "The top " + G.n + " is" : esc(G.who.name) + " is") + " improving " + (-close).toFixed(2) + "s a week faster than you, so the " + gap.toFixed(3) + "s gap is growing."; }
+    else {
+      GC = goalChance(p, G);
+      var detW = close > 0.05 ? gap / close : null, dateW = GC && GC.pct >= 50 ? GC.med : detW;
+      if (dateW == null) { cls = "r"; big = "🔴 Impossible at your current pace"; txt = close >= -0.05 ? "You're keeping up with " + who2 + " but not closing the " + gap.toFixed(3) + "s gap. You'd need to start setting PBs more often." : (G.n ? "The top " + G.n + " is" : esc(G.who.name) + " is") + " improving " + (-close).toFixed(2) + "s a week faster than you, so the " + gap.toFixed(3) + "s gap is growing."; }
+      else { cls = dateW <= 52 ? "g" : "y"; big = (dateW <= 52 ? "🟢 On track: " : "🟡 Slowly closing: ") + exactDate(dateW); txt = "You're gaining " + Math.max(close, 0).toFixed(2) + "s a week on " + who2 + " with a " + gap.toFixed(3) + "s gap to close. " + (GC && GC.pct >= 50 ? "This is the most likely date from the simulations." : "This is the date at your expected pace."); }
+    }
     var nums = '<div class="trk-nums">' +
       "<div><span>" + (G.defend ? "Your lead" : "Gap to goal") + "</span><b>" + Math.abs(gap).toFixed(3) + "s</b><small>vs " + esc(G.who.name) + " (#" + G.who.place + ")</small></div>" +
       "<div><span>Your expected pace</span><b>" + (my ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, from your last " + PACE_WEEKS + " weeks</small></div>" +
       "<div><span>" + (G.n ? "Top-" + G.n + " expected pace" : "Their expected pace") + "</span><b>" + (gp ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>expected per week</small></div></div>";
     if (tracked && wksTracked < 8) txt += " Based on only " + wksTracked + (wksTracked === 1 ? " week" : " weeks") + " of history, so it's a rough guess for now.";
-    var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + (tracked ? chanceLine(p, G, gap) : "") + nums + talentHTML(p) + "</div>";
+    var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + (tracked ? chanceLine(p, G, gap) : "") + nums + "</div>";
 
     // projection chart: last 8 weeks (estimated) + future
     var past = pastTotals(p, GRAPH_WEEKS + 1), gpast = pastTotals(G.who, GRAPH_WEEKS + 1);
@@ -1249,16 +1291,16 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var line = function (arr, cls2) { return '<path class="ln ' + cls2 + '" d="' + arr.map(function (q, i) { return (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" ") + '"/>'; };
     svg += line(past.map(function (q, i) { return [X(i - nP), Y(q.v)]; }), "you") + line(gpast.map(function (q, i) { return [X(i - nP), Y(q.v)]; }), "goal");
     svg += line([[X(0), Y(p.total)], [X(H2), Y(p.total - my * H2)]], "you fut") + line([[X(0), Y(G.who.total)], [X(H2), Y(G.who.total - gp * H2)]], "goal fut");
-    if (eta && eta <= H2) { var ex = X(eta), ey = Y(p.total - my * eta); svg += '<circle class="eta" cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="7"><title>Around ' + monthYear(eta) + "</title></circle>" + '<text class="lg" x="' + ex.toFixed(1) + '" y="' + (ey - 14).toFixed(1) + '" text-anchor="middle" style="fill:#2a9d5c">' + monthYear(eta) + "</text>"; }
+    if (eta && eta <= H2) { var ex = X(eta), ey = Y(p.total - my * eta); svg += '<circle class="eta" cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="7"><title>Around ' + exactDate(eta) + "</title></circle>" + '<text class="lg" x="' + ex.toFixed(1) + '" y="' + (ey - 14).toFixed(1) + '" text-anchor="middle" style="fill:#2a9d5c">' + exactDate(eta) + "</text>"; }
     svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(p.total - my * H2) + (p.total - my * H2 > G.who.total - gp * H2 ? 18 : -10)).toFixed(1) + '" text-anchor="end" style="fill:var(--blue)">' + esc(p.name) + "</text>";
     svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(G.who.total - gp * H2) + (p.total - my * H2 > G.who.total - gp * H2 ? -10 : 18)).toFixed(1) + '" text-anchor="end" style="fill:#8a96a3">' + esc(G.who.name) + "</text>";
     svg += '<text class="axt" transform="translate(16 ' + ((T + H - B) / 2) + ') rotate(-90)" text-anchor="middle">Total time</text>';
-    var chart = '<div class="card"><h3>Projection</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Solid lines: the last ' + nP + ' weeks. Dashed: where you\'d both be at your expected pace.</p><div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projected total time for ' + esc(p.name) + " and " + esc(G.who.name) + '">' + svg + "</svg></div></div>";
+    var chart = '<div class="card"><h3>📈 Projection</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Solid lines: the last ' + nP + ' weeks. Dashed: where you\'d both be at your expected pace.</p><div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projected total time for ' + esc(p.name) + " and " + esc(G.who.name) + '">' + svg + "</svg></div></div>";
 
     // where to find time
     var rows = MAPS.map(function (name, m) { var r = G.ref(m); if (r == null) return null; var mine = tv(p, m); return { m: m, name: name, mine: mine, r: r, g: mine - r, miss: p.t[m] == null }; }).filter(function (x) { return x && x.g > 0.0005; }).sort(function (a, b) { return b.g - a.g; });
     var atLevel = MAPS.length - rows.length, topG = rows.length ? rows[0].g : 1, sum = rows.reduce(function (a, x) { return a + x.g; }, 0);
-    var maps = '<div class="card trk-maps"><div class="ip-head"><h3>Where to find time</h3><span class="muted" style="font-size:.82rem">vs ' + esc(G.refLbl) + "</span></div>" +
+    var maps = '<div class="card trk-maps"><div class="ip-head"><h3>⏱️ Where to find time</h3><span class="muted" style="font-size:.82rem">vs ' + esc(G.refLbl) + "</span></div>" +
       '<p class="muted" style="font-size:.85rem;margin:4px 0 8px">' + (rows.length ? "Your biggest gaps first. Matching " + esc(G.refLbl) + " on every map would take " + sum.toFixed(3) + "s off. " : "") + (atLevel ? "You're already at that level on " + atLevel + " of " + MAPS.length + " maps." : "") + "</p>" +
       (rows.length ? rows.slice(0, 8).map(function (x) {
         return '<div class="row' + (x.miss ? " miss" : "") + '"><b>' + esc(x.name) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span>" + '<div class="bar"><i style="width:' + Math.max(3, Math.round(100 * x.g / topG)) + '%"></i></div>' +
@@ -1266,16 +1308,16 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       }).join("") : '<p class="muted">You\'re at or ahead of ' + esc(G.refLbl) + " on every map. 🔥</p>") + "</div>";
 
     // predicted ranking
-    var pred = '<div class="card"><h3>Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their expected pace.</p><div class="trk-pred">' +
+    var pred = '<div class="card"><h3>🔮 Predicted ranking</h3><p class="muted" style="font-size:.85rem;margin:4px 0 12px">If everyone keeps improving at their expected pace.</p><div class="trk-pred">' +
       "<div><span>Now</span><b>#" + p.place + "</b></div>" + [4, 12, 26].map(function (w) { var r = predictRank(p, w), d = p.place - r; return "<div><span>In " + w + " weeks</span><b>#" + r + "</b><small>" + (d > 0 ? "↑ " + d : d < 0 ? "↓ " + (-d) : "no change") + "</small></div>"; }).join("") + "</div></div>";
 
     var F = formInfo(p), RV = rivalFor(p);
-    S.trk = { name: p.name, place: p.place, total: p.total, big: big, my: my, gap: gap, defend: !!G.defend, goal: G.label, who: G.who.name, p12: predictRank(p, 12), form: F, rival: RV ? RV.o.name : "", country: p.country, talent: talOf(p).tag[0] };
-    return sel + status +
+    S.trk = { name: p.name, place: p.place, total: p.total, big: big, my: my, gap: gap, defend: !!G.defend, goal: G.label, who: G.who.name, p12: predictRank(p, 12), form: F, rival: RV ? RV.o.name : "", country: p.country };
+    return sel + status + quickStatsHTML(p) +
       '<div class="trk-grid">' + formHTML(p, F) + rivalHTML(p, RV) + "</div>" +
       chart + milestonesHTML(p) + maps + strengthsHTML(p) +
-      '<div class="card trk-tabs-card" id="trk-trends"><h3>Map trends</h3><p class="muted">Loading map history…</p></div>' +
-      '<div class="trk-grid">' + pred + chancesHTML(p) + "</div>" + likeYouHTML(p) + classHTML(p) + recordsHTML(p) + accuracyHTML() +
+      '<div class="card trk-tabs-card" id="trk-trends"><h3>📉 Map trends</h3><p class="muted">Loading map history…</p></div>' +
+      '<div class="trk-grid">' + pred + chancesHTML(p) + "</div>" + likeYouHTML(p) + recordsHTML(p) + accuracyHTML() +
       '<p class="muted" style="font-size:.8rem;margin-top:10px">Pace only counts PBs on maps you already had a time on. Filling in a missing map drops your total straight away but isn\'t counted as pace.</p>';
   }
   function impCard(p) {
