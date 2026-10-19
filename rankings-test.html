@@ -800,7 +800,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // ---- Time improvement (from the "Time history" tab) ----
   var timp = {}, tweeks = [];
   function loadTime(rows) {
-    timp = {}; tweeks = []; var seen = {}; SIM = null; TAL = null; BT = null; UT = {};
+    timp = {}; tweeks = []; var seen = {}; SIM = null; TAL = null; BT = null; UT = {}; ACT = {};
     if (!header(rows, "week", "name")) return;
     rows.slice(1).forEach(function (r) {
       var w = String(r[0]).trim(), n = canon(r[1]).toLowerCase(), s = parseFloat(r[2]), c = parseInt(r[3], 10) || 0;
@@ -871,8 +871,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   }
   function monthYear(weeks) { var d = new Date(); d.setDate(d.getDate() + Math.round(weeks * 7)); return MONTHS[d.getMonth()] + " " + d.getFullYear(); }
   function predictRank(p, weeks) {
-    var me = p.total - paceOf(p.name) * weeks, better = 0;
-    players.forEach(function (o) { if (o !== p && o.total - paceOf(o.name) * weeks < me) better++; });
+    var me = proj(p, weeks), better = 0;
+    players.forEach(function (o) { if (o !== p && proj(o, weeks) < me) better++; });
     return better + 1;
   }
   function lcPlayers() { var o = {}; players.forEach(function (x) { o[x.name.toLowerCase()] = x; }); return o; }
@@ -920,7 +920,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   }
   function rivalHTML(p, RV) {
     if (!RV) return '<div class="card"><h3>Rival</h3><p class="muted">No one close enough yet.</p></div>';
-    var o = RV.o, my = paceOf(p.name), op = paceOf(o.name), gap = p.total - o.total, d = my - op;
+    var o = RV.o, my = weeklyGain(p), op = weeklyGain(o), gap = p.total - o.total, d = my - op;
     var m4 = impSum(p.name.toLowerCase(), tcut(4)).s, o4 = impSum(o.name.toLowerCase(), tcut(4)).s;
     var who = gap > 0 ? "You're " + gap.toFixed(3) + "s behind" : "You're " + (-gap).toFixed(3) + "s ahead";
     var trend = Math.abs(d) < 0.05 ? "Neck and neck on pace" : d > 0 ? (gap > 0 ? "You're catching them: " : "You're pulling away: ") + d.toFixed(2) + "s a week" : (gap > 0 ? "They're pulling away: " : "They're catching you: ") + (-d).toFixed(2) + "s a week";
@@ -935,7 +935,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   // 3. Milestones
   function milestonesHTML(p) {
     var next = [], done = [], my = paceOf(p.name), k = p.name.toLowerCase();
-    var eta = function (g) { return my > 0.05 ? " · " + exactDate(g / my) + " at your expected pace" : " · impossible at your current pace"; };
+    var eta = function (g) { var w = catchWeeks(p, function () { return p.total - g; }); return w ? " · " + exactDate(w) + " at your expected pace" : " · impossible at your current pace"; };
     var round = Math.floor((p.total - 0.0005) / 10) * 10;
     next.push(["⏱️", "Sub-" + round + "s total", "Your total is " + fmt(p.total) + eta(p.total - round), (p.total - round).toFixed(3) + "s"]);
     var tier = [100, 50, 25, 10, 5, 3, 1].filter(function (n) { return n < p.place && players[n - 1]; })[0];
@@ -984,13 +984,13 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   function stepT(cur, start, g, fl) { if (!(g > 0)) return cur; var room = (cur - fl) / Math.max(start - fl, 1); return cur - g * Math.max(0, Math.min(1, room)); } // gains shrink as you get closer to record pace
   function runSim() {
     if (SIM) return SIM;
-    var n = players.length, R = rng(20261019), fl = floorT(), samp = players.map(samplesOf);
+    var n = players.length, R = rng(20261019), fl = floorT(), samp = players.map(samplesOf), cu = players.map(function (p) { var U = isActive(p) ? untapped(p) : { sum: 0, missSum: 0 }; return [U.sum, U.missSum]; }), uw = new Float64Array(n), um = new Float64Array(n);
     var first = players.map(function () { return TIERS.map(function () { var a = new Int16Array(SIM_N); a.fill(-1); return a; }); });
     var tot = new Float64Array(n), idx = []; for (var i = 0; i < n; i++) idx.push(i);
     for (var s = 0; s < SIM_N; s++) {
-      for (i = 0; i < n; i++) tot[i] = players[i].total;
+      for (i = 0; i < n; i++) { tot[i] = players[i].total; uw[i] = cu[i][0]; um[i] = cu[i][1]; }
       for (var w = 1; w <= SIM_W; w++) {
-        for (i = 0; i < n; i++) { var a = samp[i]; tot[i] = stepT(tot[i], players[i].total, a[(R() * a.length) | 0], fl); }
+        for (i = 0; i < n; i++) { var a = samp[i]; tot[i] = stepT(tot[i], players[i].total, a[(R() * a.length) | 0], fl); if (uw[i] || um[i]) { var gx = uw[i] * CU_RATE * 2 * R(), gy = um[i] * CU_MISS * 2 * R(); tot[i] -= gx + gy; uw[i] -= gx; um[i] -= gy; } }
         idx.sort(function (x, y) { return tot[x] - tot[y]; });
         for (var r = 0; r < Math.min(n, 100); r++) { var F = first[idx[r]]; for (var t = 0; t < TIERS.length; t++) if (r < TIERS[t] && F[t][s] < 0) F[t][s] = w; }
       }
@@ -1000,9 +1000,15 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   }
   function pairSim(a, b) { // weeks until a's total drops below b's, in each simulation (-1 = not within a year)
     var R = rng(7 + a.place * 131 + b.place), fl = floorT(), sa = samplesOf(a), sb = samplesOf(b), out = [];
+    var Ua = isActive(a) ? untapped(a) : { sum: 0, missSum: 0 }, Ub = isActive(b) ? untapped(b) : { sum: 0, missSum: 0 };
     for (var s = 0; s < SIM_N; s++) {
-      var ta = a.total, tb = b.total, hit = -1;
-      for (var w = 1; w <= SIM_W && hit < 0; w++) { ta = stepT(ta, a.total, sa[(R() * sa.length) | 0], fl); tb = stepT(tb, b.total, sb[(R() * sb.length) | 0], fl); if (ta < tb) hit = w; }
+      var ta = a.total, tb = b.total, hit = -1, aw = Ua.sum, am = Ua.missSum, bw = Ub.sum, bm = Ub.missSum;
+      for (var w = 1; w <= SIM_W && hit < 0; w++) {
+        ta = stepT(ta, a.total, sa[(R() * sa.length) | 0], fl); tb = stepT(tb, b.total, sb[(R() * sb.length) | 0], fl);
+        var g1 = aw * CU_RATE * 2 * R(), g2 = am * CU_MISS * 2 * R(), g3 = bw * CU_RATE * 2 * R(), g4 = bm * CU_MISS * 2 * R();
+        ta -= g1 + g2; aw -= g1; am -= g2; tb -= g3 + g4; bw -= g3; bm -= g4;
+        if (ta < tb) hit = w;
+      }
       out.push(hit);
     }
     return out;
@@ -1018,7 +1024,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   function pctTxt(x) { return fmtPct(x.pct); }
   function exactDate(weeks) { var d = new Date(); d.setDate(d.getDate() + Math.round(weeks * 7)); return d.getDate() + " " + MON[d.getMonth()] + " " + d.getFullYear(); }
   // weeks until p catches a total that improves `tp` a week (null = impossible at the current pace)
-  function detWeeks(p, tot, tp) { var gap = p.total - tot, cl = paceOf(p.name) - tp; return gap <= 0 ? 0 : cl > 0.05 ? gap / cl : null; }
+  function detWeeks(p, o) { return p.total <= o.total ? 0 : catchWeeks(p, function (w) { return proj(o, w); }); }
   function tierPace(n, p) { var ar = players.filter(function (o) { return Math.abs(o.place - n) <= 2 && o !== p; }); return ar.reduce(function (a, o) { return a + paceOf(o.name); }, 0) / Math.max(ar.length, 1); }
   function goalChance(p, G) {
     if (G.n) return tierChance(p, G.n);
@@ -1036,7 +1042,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var tiers = TIERS.filter(function (n) { return n < p.place || (n === 1 && p.place === 1); });
     if (!tiers.length) return "";
     var rows = tiers.map(function (n) {
-      var c = tierChance(p, n), dw = c.pct >= 50 ? c.med : detWeeks(p, players[n - 1].total, tierPace(n, p));
+      var c = tierChance(p, n), dw = c.pct >= 50 ? c.med : detWeeks(p, players[n - 1]);
       var when = p.place <= n ? "You're there now" : dw == null ? "Impossible at your current pace" : (c.pct >= 50 ? "Most likely " : "At your expected pace: ") + exactDate(dw);
       return '<div class="r"><span>' + (n === 1 ? "#1" : "Top " + n) + '</span><div class="bar"><i style="width:' + Math.max(c.pct, 0.5) + '%"></i></div><b>' + fmtPct(c.pct) + '</b><small class="' + (dw == null && p.place > n ? "imp" : "") + '">' + when + "</small></div>";
     }).join("");
@@ -1075,7 +1081,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     return TAL;
   }
   function talOf(p) { return talents()[p.name.toLowerCase()]; }
-  window.__olb = { players: function () { return players; }, talOf: talOf, tierChance: tierChance, backtest: backtest, weeklyOf: weeklyOf, paceOf: paceOf };
+  window.__olb = { untapped: function (p) { return untapped(p); }, proj: function (p, w) { return proj(p, w); }, world: function () { return WORLD; }, players: function () { return players; }, talOf: talOf, tierChance: tierChance, backtest: backtest, weeklyOf: weeklyOf, paceOf: paceOf };
   function clsName(y) { return y <= 2024 ? "Class of 2024 (originals)" : "Class of " + y; }
   function talentHTML(p) { var t = talOf(p); return '<div class="trk-talent"><span class="trk-tal ' + t.tag[1] + '">' + t.tag[0] + "</span><p class=\"muted\">" + t.tag[2] + " · " + clsName(t.cls) + "</p></div>"; }
   function classHTML(p) {
@@ -1128,16 +1134,56 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     return '<div class="card trk-acc trk-tabs-card"><h3>✅ How accurate is this?</h3>' +
       (b ? "<p>We tested the predictions on the past: starting from " + niceDate(b.from) + " and predicting " + b.h + " weeks ahead for " + b.n + " players, the predicted rank was within <b>3 places for " + b.pred.w3 + "%</b> and within <b>10 places for " + b.pred.w10 + "%</b> of players (typical miss: " + b.pred.med + (b.pred.med === 1 ? " place" : " places") + "). Just guessing nobody moves got " + b.naive.w3 + "% within 3 places.</p>" : "") +
       "<ul><li>Past numbers (PBs, pace, map trends) come straight from saved versions of the rankings sheet each Monday, so they're as accurate as the sheet was.</li>" +
+      "<li>For players who are still setting PBs, predictions also expect them to grab the time they have on maps below their level, about 5% of what's left each week (roughly what active players actually did in the history). The level comes from players around the world with a similar total.</li>" +
       "<li>Predictions and chances assume you keep improving like you have recently. A new strat, a break or a new map can change things fast.</li>" +
       "<li>Filling in a missing map (60s) drops your total straight away but isn't counted as pace.</li></ul></div>";
   }
 
   // ---- Untapped time: maps where a player's time is well below their level on the other maps ----
   // level = the middle of where they rank across their maps; "your level" time on a map = the time at that same spot on the map
-  var UT = {};
+  var UT = {}, ACT = {}, WORLD = null, CU_RATE = 0.05, CU_MISS = 0.025;
+  var WORLD_URL = "https://script.google.com/macros/s/AKfycbxJunGL8SSr1lI6Cb4DezG9q98l-Lt2EbFoZjIrwlZa2imRKseKqkiaJ3JCzKhqv2BL-w/exec";
+  function loadWorld() {
+    fetch(WORLD_URL).then(function (r) { return r.json(); }).then(function (j) {
+      var names = j.courseNames || MAPS;
+      WORLD = (j.data || []).map(function (d) { return { name: String(d.name || ""), total: +d.score, t: MAPS.map(function (n, m) { var v = d.courses && d.courses[names[m]]; return typeof v === "number" && v > 0 && v < MISSING - EPS ? v : null; }) }; }).filter(function (w) { return w.total > 0; });
+      UT = {}; SIM = null; if (S.player && S.ptab === "tracking") renderProfile();
+    }).catch(function () {});
+  }
+  function median(a) { a = a.slice().sort(function (x, y) { return x - y; }); return a.length ? (a.length % 2 ? a[a.length >> 1] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2) : null; }
+  function isActive(p) { var k = p.name; if (ACT[k] == null) ACT[k] = weeklyOf(p).slice(-8).some(function (x) { return x.s > 0.0005; }); return ACT[k]; }
+  // expected total after w weeks: expected pace, plus (for active players) gradually grabbing untapped time
+  function proj(p, w) {
+    var t = p.total - paceOf(p.name) * w;
+    if (w > 0 && isActive(p)) { var U = untapped(p); t -= U.sum * (1 - Math.pow(1 - CU_RATE, w)) + U.missSum * (1 - Math.pow(1 - CU_MISS, w)); }
+    return t;
+  }
+  function weeklyGain(p) { return (p.total - proj(p, 12)) / 12; }
+  function catchWeeks(a, target, max) { for (var w = 1; w <= (max || 520); w++) if (proj(a, w) < target(w) - 1e-9) return w; return null; }
   function levelTime(m, s) { var a = sorted[m]; if (!a.length) return null; var x = s * (a.length - 1), lo = Math.floor(x), hi = Math.ceil(x); return a[lo] + (a[hi] - a[lo]) * (x - lo); }
   function untapped(p) {
     if (UT[p.name]) return UT[p.name];
+    var have = MAPS.map(function (n, m) { return m; }).filter(function (m) { return p.t[m] != null; });
+    if (WORLD && WORLD.length > 50 && have.length >= 10) {
+      var me = p.name.toLowerCase();
+      // world players with a similar total on the same maps this player has played
+      var near = WORLD.filter(function (w) { return w.name.toLowerCase() !== me && have.every(function (m) { return w.t[m] != null; }); })
+        .map(function (w) { var d = 0; have.forEach(function (m) { d += p.t[m] - w.t[m]; }); return { w: w, d: Math.abs(d) }; })
+        .sort(function (a, b) { return a.d - b.d; }).slice(0, 15).map(function (x) { return x.w; });
+      if (near.length >= 8) {
+        var resW = { ok: true, world: true, maps: [], miss: [], sum: 0, missSum: 0, n: near.length, lvTotal: median(near.map(function (w) { return have.reduce(function (a, m) { return a + w.t[m]; }, 0); })) };
+        MAPS.forEach(function (n, m) {
+          var vals = near.map(function (w) { return w.t[m]; }).filter(function (v) { return v != null; }); if (vals.length < 6) return;
+          var lv = median(vals);
+          if (p.t[m] == null) { resW.miss.push({ m: m, lv: lv, g: MISSING - lv }); resW.missSum += MISSING - lv; return; }
+          var g = p.t[m] - lv;
+          if (g > Math.max(0.5, 0.06 * lv)) resW.maps.push({ m: m, t: p.t[m], lv: lv, g: g, r: mapRank(m, p.t[m]) });
+        });
+        resW.maps.sort(function (a, b) { return b.g - a.g; });
+        resW.sum = resW.maps.reduce(function (a, x) { return a + x.g; }, 0);
+        return (UT[p.name] = resW);
+      }
+    }
     var ps = [];
     MAPS.forEach(function (n, m) { if (p.t[m] != null && sorted[m].length >= 10) ps.push((mapRank(m, p.t[m]) - 1) / (sorted[m].length - 1)); });
     var res = { ok: ps.length >= 10, maps: [], miss: [], s: 0, sum: 0, missSum: 0 };
@@ -1161,14 +1207,14 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     if (!U.ok) return '<div class="card trk-tabs-card"><h3>🎯 Below your level</h3><p class="muted">Needs times on at least 10 maps to work out your level.</p></div>';
     var all = U.sum + U.missSum, pot = rankAt(p, p.total - all), potMaps = rankAt(p, p.total - U.sum);
     var act = weeklyOf(p).slice(-8).some(function (x) { return x.s > 0.0005; });
-    var head = '<p class="muted" style="font-size:.85rem;margin:4px 0 10px">Maps where your time is well below your level on your other maps (you usually rank around the top ' + Math.max(1, Math.round(U.s * 100)) + "% of Oceania). These are usually the easiest seconds to grab" + (act ? ", and you're still setting PBs" : "") + ".</p>";
+    var head = '<p class="muted" style="font-size:.85rem;margin:4px 0 10px">' + (U.world ? "Maps where you're clearly slower than the " + U.n + ' players around the world with a total most like yours on the same maps (from the <a href="https://tanabesan.github.io/probeans/total-scores.html" target="_blank" rel="noopener">ProBeans world rankings</a>)' : "Maps where your time is well below your level on your other maps (you usually rank around the top " + Math.max(1, Math.round(U.s * 100)) + "% of Oceania)") + ". These are usually the easiest seconds to grab" + (act ? ", and since you're still setting PBs, your predictions expect you to grab them gradually" : "") + ".</p>";
     var potLine = all > 0.0005 ? '<div class="trk-pot"><div><span>Untapped time</span><b>−' + all.toFixed(3) + 's</b><small>' + (U.missSum && U.sum > 0.05 ? U.sum.toFixed(1) + "s on weak maps + " + U.missSum.toFixed(1) + "s on maps with no time" : U.missSum ? "on " + U.miss.length + (U.miss.length === 1 ? " map" : " maps") + " with no time yet" : "on " + U.maps.length + (U.maps.length === 1 ? " weak map" : " weak maps")) + "</small></div>" +
       "<div><span>Your potential rank</span><b>#" + pot + "</b><small>" + (pot < p.place ? "up " + (p.place - pot) + " from #" + p.place + " if every map was at your level" : "you're already at your level") + "</small></div>" +
       (U.missSum && U.sum ? "<div><span>Weak maps only</span><b>#" + potMaps + "</b><small>fixing just the maps you've already played</small></div>" : "") + "</div>" : "";
     var rows = U.maps.slice(0, 8).map(function (x) {
-      return '<div class="row"><b>' + esc(MAPS[x.m]) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span><small>You " + fmt(x.t) + " (" + ordinal(x.r) + ") · your level ≈ " + fmt(x.lv) + " (around " + ordinal(x.lr) + ")</small></div>";
+      return '<div class="row"><b>' + esc(MAPS[x.m]) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span><small>You " + fmt(x.t) + " (" + ordinal(x.r) + " in Oceania) · " + (U.world ? "players at your level usually get " + fmt(x.lv) : "your level ≈ " + fmt(x.lv) + " (around " + ordinal(x.lr) + ")") + "</small></div>";
     }).concat(U.miss.map(function (x) {
-      return '<div class="row miss"><b>' + esc(MAPS[x.m]) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span><small>No time yet (counts as " + MISSING + "s) · your level ≈ " + fmt(x.lv) + "</small></div>";
+      return '<div class="row miss"><b>' + esc(MAPS[x.m]) + '</b><span class="v">+' + x.g.toFixed(3) + "s</span><small>No time yet (counts as " + MISSING + "s) · " + (U.world ? "players at your level usually get " : "your level ≈ ") + fmt(x.lv) + "</small></div>";
     })).join("");
     return '<div class="card trk-tabs-card trk-maps"><h3>🎯 Below your level</h3>' + head + potLine + (rows || '<p class="muted">Every map is at your level. Nice and consistent! 💪</p>') + "</div>";
   }
@@ -1294,7 +1340,9 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var opts = goalsFor(p), isCustom = G.id.indexOf("p:") === 0;
     var sel = '<div class="trk-goal"><label for="goal">Goal</label><select class="gsel" id="goal">' + opts.map(function (o) { return '<option value="' + o.id + '"' + (o.id === G.id ? " selected" : "") + ">" + esc(o.label) + "</option>"; }).join("") +
       '<optgroup label="Catch a player">' + players.filter(function (o) { return o.place < p.place && o.place >= Math.max(1, p.place - 40); }).map(function (o) { var id = "p:" + o.name; return '<option value="' + esc(id) + '"' + (id === G.id ? " selected" : "") + ">#" + o.place + " " + esc(o.name) + "</option>"; }).join("") + "</optgroup></select><button type=\"button\" class=\"btn trk-share\" id=\"trk-share\">📤 Share my tracking</button></div>";
-    var my = paceOf(p.name), gp = G.pace, myL = timp[p.name.toLowerCase()] || [], tracked = myL.length >= 2;
+    var my = weeklyGain(p), myL = timp[p.name.toLowerCase()] || [], tracked = myL.length >= 2;
+    var aroundG = G.n ? players.filter(function (o) { return Math.abs(o.place - G.n) <= 2 && o !== p; }) : [G.who];
+    var gp = aroundG.reduce(function (a, o) { return a + weeklyGain(o); }, 0) / Math.max(aroundG.length, 1);
     var wksTracked = myL.length ? tweeks.length - 1 - tweeks.indexOf(myL[0].w) : 0;
     var gap = G.defend ? G.who.total - p.total : p.total - G.who.total; // defend: your lead; otherwise: how far behind
     var close = G.defend ? my - gp : my - gp; // seconds per week you gain on them
@@ -1302,32 +1350,32 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var who2 = G.n ? "the top " + G.n : esc(G.who.name);
     if (!tracked) { cls = "y"; big = "Not enough history yet"; txt = "Your expected pace is worked out from your PBs over the last " + PACE_WEEKS + " weeks. Check back after a few Mondays."; }
     else if (G.defend) {
-      GC = goalChance(p, G); var dW = GC.pct >= 50 ? GC.med : (close < -0.05 ? gap / -close : null);
+      GC = goalChance(p, G); var dW = GC.pct >= 50 ? GC.med : catchWeeks(G.who, function (w) { return proj(p, w); });
       if (dW == null) { cls = "g"; big = "🟢 Safe at #1: impossible for " + esc(G.who.name) + " to catch you at the current pace"; txt = "You lead by " + gap.toFixed(3) + "s and you're improving at least as fast as them."; }
       else { cls = dW < 12 ? "r" : "y"; big = (dW < 12 ? "🔴 " : "🟡 ") + esc(G.who.name) + " could catch you: " + exactDate(dW); txt = "They're gaining " + Math.max(-close, 0).toFixed(2) + "s a week on your " + gap.toFixed(3) + "s lead."; }
     } else if (gap <= 0) { cls = "g"; big = "🟢 You're already there"; txt = "You're " + (-gap).toFixed(3) + "s ahead of " + esc(G.who.name) + ". Keep it up to stay ahead."; }
     else {
       GC = goalChance(p, G);
-      var detW = close > 0.05 ? gap / close : null, dateW = GC && GC.pct >= 50 ? GC.med : detW;
+      var detW = catchWeeks(p, function (w) { return proj(G.who, w); }), dateW = GC && GC.pct >= 50 ? GC.med : detW;
       if (dateW == null) { cls = "r"; big = "🔴 Impossible at your current pace"; txt = close >= -0.05 ? "You're keeping up with " + who2 + " but not closing the " + gap.toFixed(3) + "s gap. You'd need to start setting PBs more often." : (G.n ? "The top " + G.n + " is" : esc(G.who.name) + " is") + " improving " + (-close).toFixed(2) + "s a week faster than you, so the " + gap.toFixed(3) + "s gap is growing."; }
       else { cls = dateW <= 52 ? "g" : "y"; big = (dateW <= 52 ? "🟢 On track: " : "🟡 Slowly closing: ") + exactDate(dateW); txt = "You're gaining " + Math.max(close, 0).toFixed(2) + "s a week on " + who2 + " with a " + gap.toFixed(3) + "s gap to close. " + (GC && GC.pct >= 50 ? "This is the most likely date from the simulations." : "This is the date at your expected pace."); }
     }
     var nums = '<div class="trk-nums">' +
       "<div><span>" + (G.defend ? "Your lead" : "Gap to goal") + "</span><b>" + Math.abs(gap).toFixed(3) + "s</b><small>vs " + esc(G.who.name) + " (#" + G.who.place + ")</small></div>" +
-      "<div><span>Your expected pace</span><b>" + (my ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, from your last " + PACE_WEEKS + " weeks</small></div>" +
-      "<div><span>" + (G.n ? "Top-" + G.n + " expected pace" : "Their expected pace") + "</span><b>" + (gp ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>expected per week</small></div></div>";
+      "<div><span>Your expected pace</span><b>" + (my > 0.005 ? "−" + my.toFixed(2) : "0.00") + "s</b><small>per week, next 12 weeks" + (isActive(p) && (untapped(p).sum + untapped(p).missSum) > 0.5 ? " (incl. untapped maps)" : "") + "</small></div>" +
+      "<div><span>" + (G.n ? "Top-" + G.n + " expected pace" : "Their expected pace") + "</span><b>" + (gp > 0.005 ? "−" + gp.toFixed(2) : "0.00") + "s</b><small>per week, next 12 weeks</small></div></div>";
     var UU = untapped(p), uu = UU.sum + UU.missSum;
-    if (UU.ok && uu > 1 && weeklyOf(p).slice(-8).some(function (x) { return x.s > 0.0005; }) && !(G.defend)) txt += " You also have " + uu.toFixed(1) + "s on maps below your level. Grab those and you'd be about #" + rankAt(p, p.total - uu) + ".";
+    if (UU.ok && uu > 1 && isActive(p) && !(G.defend)) txt += " This includes gradually grabbing the " + uu.toFixed(1) + "s you have on maps below your level (that alone would make you about #" + rankAt(p, p.total - uu) + ").";
     if (tracked && wksTracked < 8) txt += " Based on only " + wksTracked + (wksTracked === 1 ? " week" : " weeks") + " of history, so it's a rough guess for now.";
     var status = '<div class="trk-status ' + cls + '"><div class="big">' + big + "</div><p>" + txt + "</p>" + (tracked ? chanceLine(p, G, gap) : "") + nums + "</div>";
 
     // projection chart: last 8 weeks (estimated) + future
     var past = pastTotals(p, GRAPH_WEEKS + 1), gpast = pastTotals(G.who, GRAPH_WEEKS + 1);
-    var eta = (!G.defend && gap > 0 && close > 0.05) ? gap / close : (G.defend && close < -0.05 ? gap / -close : null);
+    var eta = !G.defend && gap > 0 ? catchWeeks(p, function (w) { return proj(G.who, w); }, 26) : G.defend ? catchWeeks(G.who, function (w) { return proj(p, w); }, 26) : null;
     var H2 = Math.min(Math.max(eta ? Math.ceil(eta) + 4 : 12, 12), 26), nP = past.length - 1;
     var ys = [], W = 720, H = 300, Lm = 70, R = 24, T = 20, B = 52;
     past.forEach(function (q) { ys.push(q.v); }); gpast.forEach(function (q) { ys.push(q.v); });
-    for (var f = 0; f <= H2; f++) { ys.push(p.total - my * f); ys.push(G.who.total - gp * f); }
+    var fy = [], fg = []; for (var f = 0; f <= H2; f++) { fy.push(proj(p, f)); fg.push(proj(G.who, f)); ys.push(fy[f]); ys.push(fg[f]); }
     var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys), pad = Math.max((hi - lo) * 0.08, 0.5); lo -= pad; hi += pad;
     var X = function (i) { return Lm + (i + nP) / (nP + H2) * (W - Lm - R); }, Y = function (v) { return T + (hi - v) / (hi - lo) * (H - T - B); };
     var svg = "", raw = (hi - lo) / 5, mag = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).filter(function (v) { return v >= raw; })[0];
@@ -1336,12 +1384,12 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     svg += '<text x="' + X(-nP) + '" y="' + (H - B + 22) + '" text-anchor="start">' + nP + " weeks ago</text>" + '<text x="' + X(H2) + '" y="' + (H - B + 22) + '" text-anchor="end">+' + H2 + " weeks</text>";
     var line = function (arr, cls2) { return '<path class="ln ' + cls2 + '" d="' + arr.map(function (q, i) { return (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" ") + '"/>'; };
     svg += line(past.map(function (q, i) { return [X(i - nP), Y(q.v)]; }), "you") + line(gpast.map(function (q, i) { return [X(i - nP), Y(q.v)]; }), "goal");
-    svg += line([[X(0), Y(p.total)], [X(H2), Y(p.total - my * H2)]], "you fut") + line([[X(0), Y(G.who.total)], [X(H2), Y(G.who.total - gp * H2)]], "goal fut");
-    if (eta && eta <= H2) { var ex = X(eta), ey = Y(p.total - my * eta); svg += '<circle class="eta" cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="7"><title>Around ' + exactDate(eta) + "</title></circle>" + '<text class="lg" x="' + ex.toFixed(1) + '" y="' + (ey - 14).toFixed(1) + '" text-anchor="middle" style="fill:#2a9d5c">' + exactDate(eta) + "</text>"; }
-    svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(p.total - my * H2) + (p.total - my * H2 > G.who.total - gp * H2 ? 18 : -10)).toFixed(1) + '" text-anchor="end" style="fill:var(--blue)">' + esc(p.name) + "</text>";
-    svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(G.who.total - gp * H2) + (p.total - my * H2 > G.who.total - gp * H2 ? -10 : 18)).toFixed(1) + '" text-anchor="end" style="fill:#8a96a3">' + esc(G.who.name) + "</text>";
+    svg += line(fy.map(function (v, i) { return [X(i), Y(v)]; }), "you fut") + line(fg.map(function (v, i) { return [X(i), Y(v)]; }), "goal fut");
+    if (eta && eta <= H2) { var ex = X(eta), ey = Y(fy[eta]); svg += '<circle class="eta" cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="7"><title>Around ' + exactDate(eta) + "</title></circle>" + '<text class="lg" x="' + ex.toFixed(1) + '" y="' + (ey - 14).toFixed(1) + '" text-anchor="middle" style="fill:#2a9d5c">' + exactDate(eta) + "</text>"; }
+    svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(fy[H2]) + (fy[H2] > fg[H2] ? 18 : -10)).toFixed(1) + '" text-anchor="end" style="fill:var(--blue)">' + esc(p.name) + "</text>";
+    svg += '<text class="lg" x="' + (W - R) + '" y="' + (Y(fg[H2]) + (fy[H2] > fg[H2] ? -10 : 18)).toFixed(1) + '" text-anchor="end" style="fill:#8a96a3">' + esc(G.who.name) + "</text>";
     svg += '<text class="axt" transform="translate(16 ' + ((T + H - B) / 2) + ') rotate(-90)" text-anchor="middle">Total time</text>';
-    var chart = '<div class="card"><h3>📈 Projection</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Solid lines: the last ' + nP + ' weeks. Dashed: where you\'d both be at your expected pace.</p><div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projected total time for ' + esc(p.name) + " and " + esc(G.who.name) + '">' + svg + "</svg></div></div>";
+    var chart = '<div class="card"><h3>📈 Projection</h3><p class="muted" style="font-size:.85rem;margin:4px 0 10px">Solid lines: the last ' + nP + ' weeks. Dashed: where you\'d both be at your expected pace (for active players this includes grabbing untapped time).</p><div class="graph-wrap"><svg class="graph" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projected total time for ' + esc(p.name) + " and " + esc(G.who.name) + '">' + svg + "</svg></div></div>";
 
     // where to find time
     var rows = MAPS.map(function (name, m) { var r = G.ref(m); if (r == null) return null; var mine = tv(p, m); return { m: m, name: name, mine: mine, r: r, g: mine - r, miss: p.t[m] == null }; }).filter(function (x) { return x && x.g > 0.0005; }).sort(function (a, b) { return b.g - a.g; });
@@ -2019,7 +2067,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   function get(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); }); }
   function opt(url) { return get(url).then(parseCSV, function () { return []; }); }
   Promise.all([get(RANKINGS_URL), opt(CAREER_URL), opt(HIST_URL), opt(ONE_URL), opt(REC_URL), opt(ALIAS_URL), opt(PHOTO_URL), opt(TIME_URL)])
-    .then(function (res) { window.__photos = res[6]; load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4], alias: res[5], photo: res[6], time: res[7] }); $("status").hidden = true; })
+    .then(function (res) { window.__photos = res[6]; load(parseCSV(res[0]), res[1], { hist: res[2], one: res[3], rec: res[4], alias: res[5], photo: res[6], time: res[7] }); $("status").hidden = true; loadWorld(); })
     .catch(function () {
       var sample = /github\.io$/.test(location.hostname) ? [] : (window.RANKINGS_SAMPLE || []);
       if (sample.length) {
