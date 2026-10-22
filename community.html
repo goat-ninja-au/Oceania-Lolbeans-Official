@@ -289,6 +289,78 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   .olb-top nav[aria-label="Main"] a { padding: 12px; border-radius: 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
   .olb-top nav[aria-label="Main"] a:last-child { border-bottom: 0; }
 }
+/* ---------- chat v4: Discord-style look ---------- */
+.app { --dc-bg: #ffffff; --dc-side: #f2f3f5; --dc-input: #ebedef; --dc-hover: rgba(6,6,7,.035); --dc-line: #e1e2e4; --dc-text: #313338; --dc-muted: #5c5e66; --dc-spine: #c4c9ce; --dc-spoiler: #c4c9ce; --dc-code: #f2f3f5;
+  --panel: var(--dc-bg); --soft: var(--dc-side); --row: var(--dc-line); --line: var(--dc-line); --text: var(--dc-text); --muted: var(--dc-muted); --blue: #5865f2; --mine: transparent;
+  gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); color: var(--text); }
+:root[data-mode="dark"] .app { --dc-bg: #313338; --dc-side: #2b2d31; --dc-input: #383a40; --dc-hover: rgba(0,0,0,.09); --dc-line: #1f2023; --dc-text: #dbdee1; --dc-muted: #949ba4; --dc-spine: #4e5058; --dc-spoiler: #1e1f22; --dc-code: #2b2d31; }
+.app .pane { border: 0; border-radius: 0; }
+.app .pane.side, .app .pane.online { background: var(--dc-side); }
+.app .pane.conv { border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+.app .side .scroll { order: 1; flex: 1; }
+.app .side .me { order: 2; border-bottom: 0; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--dc-side) 88%, #000); padding: 8px 10px; }
+.app .item { border-radius: 6px; margin: 1px 8px; width: calc(100% - 16px); padding: 6px 8px; }
+.app .item:hover { background: color-mix(in srgb, var(--dc-muted) 14%, transparent); }
+.app .item[aria-current="true"] { background: color-mix(in srgb, var(--dc-muted) 24%, transparent); }
+.app .conv-top { background: var(--panel); border-bottom: 1px solid var(--line); box-shadow: 0 1px 2px rgba(0,0,0,.06); min-height: 52px; }
+.app .conv-top .hash, .app .item .hash { color: var(--muted); }
+.app .msgs { gap: 0; padding: 4px 0 18px; }
+.app .msg { position: relative; grid-template-columns: 40px minmax(0, 1fr); gap: 16px; padding: 2px 48px 2px 16px; margin-top: 17px; }
+.app .msg.cont { margin-top: 0; padding-top: 1px; padding-bottom: 1px; }
+.app .msg:hover { background: var(--dc-hover); }
+.app .msg .av { width: 40px; height: 40px; }
+.app .msg.hasrp > span:first-child { margin-top: 22px; }
+.app .msg .ht { font-size: .66rem; color: var(--muted); text-align: right; visibility: hidden; line-height: 1.55rem; white-space: nowrap; overflow: hidden; }
+.app .msg.cont:hover .ht, .app .msg.cont.tapped .ht { visibility: visible; }
+.app .msg .meta { gap: 8px; }
+.app .msg .meta b { font-weight: 700; }
+.app .msg .meta time { font-size: .74rem; cursor: default; }
+.app .msg .text { line-height: 1.45; }
+.app .msg.mine .bub { background: none; padding: 0; margin: 0; border-radius: 0; }
+.app .acts2 { position: absolute; top: -16px; right: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,.14); padding: 2px; z-index: 3; opacity: 0; pointer-events: none; }
+.app .acts2 button { padding: 5px 6px; }
+.app .acts2 button:hover { background: color-mix(in srgb, var(--dc-muted) 16%, transparent); }
+.app .msg:hover .acts2, .app .msg:focus-within .acts2, .app .msg.tapped .acts2 { opacity: 1; pointer-events: auto; }
+@media (hover: none) { .app .acts2 { opacity: 0; } .app .msg:hover .acts2 { opacity: 0; pointer-events: none; } .app .msg.tapped .acts2 { opacity: 1; pointer-events: auto; } }
+.app .msg.mentioned { margin-left: 0; padding-left: 13px; border-left: 3px solid #f0b232; background: color-mix(in srgb, #f0b232 10%, transparent); border-radius: 0; }
+.app .msg.mentioned:hover { background: color-mix(in srgb, #f0b232 14%, transparent); }
+.app .day { align-self: stretch; display: flex; align-items: center; gap: 8px; margin: 22px 16px 2px; background: none; padding: 0; font-size: .72rem; font-weight: 700; color: var(--muted); border-radius: 0; }
+.app .day::before, .app .day::after { content: ""; flex: 1; border-top: 1px solid color-mix(in srgb, var(--dc-muted) 30%, transparent); }
+.app .newline { margin: 10px 16px 0; gap: 0; }
+.app .newline::after { display: none; }
+.app .newline span { order: 2; background: var(--red); color: #fff; border-radius: 4px; padding: 0 5px; font-size: .62rem; letter-spacing: .04em; }
+.app .newline span::before { content: "NEW"; } .app .newline span { font-size: 0; } .app .newline span::before { font-size: .62rem; }
+.app .begin { margin: 14px 16px 4px; align-self: stretch; text-align: left; }
+.app .older { margin: 10px auto; }
+.app .callrow { margin: 10px 16px 0; }
+.app .replyq { position: relative; border-left: 0; padding-left: 0; margin: 0 0 3px; font-size: .8rem; overflow: visible; }
+.app .replyq::before { content: ""; position: absolute; left: -38px; top: 9px; width: 31px; height: 10px; border-left: 2px solid var(--dc-spine); border-top: 2px solid var(--dc-spine); border-top-left-radius: 6px; }
+.app .replyq:hover { color: var(--text); }
+.app .composer { border-top: 0; padding: 0 16px 8px; }
+.app .composer form { background: var(--dc-input); border-radius: 8px; padding: 4px 6px; align-items: center; gap: 2px; }
+.app .composer .tool { background: none; border: 0; width: 36px; height: 36px; border-radius: 6px; opacity: .8; }
+.app .composer .tool:hover { opacity: 1; background: color-mix(in srgb, var(--dc-muted) 16%, transparent); }
+.app #c-text { background: transparent; border: 0; box-shadow: none; outline: none; padding: 9px 6px; }
+.app .send { border-radius: 6px; height: 34px; }
+.app .composer .hint { font-size: .74rem; padding: 0 4px; }
+.app .rx { border-color: transparent; background: color-mix(in srgb, var(--dc-muted) 14%, transparent); border-radius: 8px; }
+.app .rx.me { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 15%, transparent); }
+.text code.ic { background: var(--dc-code); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-family: ui-monospace, Consolas, "Courier New", monospace; font-size: .85em; }
+.text code.cb { display: block; background: var(--dc-code); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; margin-top: 3px; font-family: ui-monospace, Consolas, "Courier New", monospace; font-size: .85em; white-space: pre-wrap; }
+.text .spoiler { background: var(--dc-spoiler, #c4c9ce); color: transparent; border-radius: 4px; cursor: pointer; padding: 0 2px; transition: background .1s; }
+.text .spoiler * { visibility: hidden; }
+.text .spoiler.shown { background: color-mix(in srgb, var(--dc-muted, #888) 20%, transparent); color: inherit; cursor: auto; }
+.text .spoiler.shown * { visibility: visible; }
+.text .quote { display: block; border-left: 4px solid var(--dc-spine, #ccc); padding-left: 10px; }
+.text.jumbo { font-size: 2.7rem; line-height: 1.2; letter-spacing: .02em; }
+.ctx { position: fixed; z-index: 70; min-width: 190px; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.28); display: grid; }
+.ctx button { display: flex; justify-content: space-between; gap: 14px; text-align: left; background: none; border: 0; padding: 7px 9px; border-radius: 4px; font: inherit; font-size: .88rem; color: inherit; }
+.ctx button:hover { background: #5865f2; color: #fff; }
+.ctx button.danger { color: var(--red); } .ctx button.danger:hover { background: var(--red); color: #fff; }
+.mutual { font-size: .88rem; }
+.mutual .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.mutual .chips button { border: 1px solid var(--line); background: var(--soft); border-radius: 999px; padding: 3px 10px; font: inherit; font-size: .82rem; color: inherit; }
+.mopt .cmd { font-family: ui-monospace, Consolas, monospace; }
 </style>
 <script>
 // Embedded on another page (e.g. the tournament site): ?embed=bubble (small chat window) or ?embed=page (full, without this site's header)
@@ -685,11 +757,29 @@ function mentionNames() {
 }
 function fmtText(t) {
   let h = esc(t);
+  const keep = [], ph = x => "\u0000" + (keep.push(x) - 1) + "\u0000";
+  h = h.replace(/\\([*_~|`\\>])/g, (m, c) => ph(c));                                   // \* shows a real *
+  h = h.replace(/```([^`]+?)```/g, (m, c) => ph('<code class="cb">' + c + "</code>"));
+  h = h.replace(/`([^`]+?)`/g, (m, c) => ph('<code class="ic">' + c + "</code>"));
   const re = mentionNames();
-  if (re) h = h.replace(re, (m) => '<span class="mention' + (S.me && m.slice(1).toLowerCase() === esc(S.me.name).toLowerCase() ? " me" : "") + '">' + m + "</span>");
-  h = h.replace(/@everyone(?![A-Za-z0-9_])/gi, '<span class="mention me everyone">@everyone</span>');
+  if (re) h = h.replace(re, (m) => ph('<span class="mention' + (S.me && m.slice(1).toLowerCase() === esc(S.me.name).toLowerCase() ? " me" : "") + '">' + m + "</span>"));
+  h = h.replace(/@everyone(?![A-Za-z0-9_])/gi, () => ph('<span class="mention me everyone">@everyone</span>'));
+  h = h.replace(/\*\*([^*]+?)\*\*/g, "<b>$1</b>").replace(/__([^_]+?)__/g, "<u>$1</u>").replace(/~~([^~]+?)~~/g, "<s>$1</s>")
+    .replace(/\|\|([^|]+?)\|\|/g, '<span class="spoiler" tabindex="0" title="Spoiler">$1</span>')
+    .replace(/(^|[^\w*])\*([^*\s][^*]*?)\*(?![\w*])/g, "$1<i>$2</i>").replace(/(^|[^\w])_([^_\s][^_]*?)_(?!\w)/g, "$1<i>$2</i>");
+  if (/^&gt; ./.test(h)) h = '<span class="quote">' + h.slice(5) + "</span>";
+  for (let i = 0; i < 3 && h.includes("\u0000"); i++) h = h.replace(/\u0000(\d+)\u0000/g, (m, n) => keep[n]);
   return h;
 }
+const EMOJI_ONLY = /^(?:\p{Extended_Pictographic}|\p{Emoji_Modifier}|\p{Regional_Indicator}|\u200d|\ufe0f|\s)+$/u;
+const isJumbo = t => !!t && EMOJI_ONLY.test(t) && Array.from(t.replace(/\s|\u200d|\ufe0f/g, "")).length <= 27;
+function discordTime(d) {
+  const t = new Date(), y = new Date(); y.setDate(t.getDate() - 1);
+  if (d.toDateString() === t.toDateString()) return "Today at " + timeLabel(d);
+  if (d.toDateString() === y.toDateString()) return "Yesterday at " + timeLabel(d);
+  return d.toLocaleDateString("en-AU", { day: "2-digit", month: "2-digit", year: "numeric" }) + " " + timeLabel(d);
+}
+const fullTime = d => d.toLocaleString([], { weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "numeric", minute: "2-digit" });
 const EVERY_RE = /@everyone(?![A-Za-z0-9_])/i;   // only admins can send it (main chat), and it pings everyone
 const mentionsMe = t => !!(S.me && t && (EVERY_RE.test(t) || new RegExp("@" + S.me.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![A-Za-z0-9_])", "i").test(t)));
 function currentList() { return S.older.concat(PUB[S.view] ? S.pubLive[S.view] : S.live); }
@@ -699,15 +789,17 @@ function renderMsgs(list) {
   const box = $("msgs");
   if (!list.length) { box.innerHTML = '<p class="empty" style="margin:auto">' + (S.loading ? "Loading…" : PUB[S.view] ? "No messages yet. Say hi!" : "No messages yet. Say hi 👋") + "</p>"; return; }
   let html = S.cursor ? '<button class="older" type="button" id="load-older">Load older messages</button>' : '<p class="begin">' + (PUB[S.view] ? "This is the start of " + (S.view === "main" ? "the main chat" : "the " + PUB[S.view].title + " channel") + "." : "This is the start of your conversation.") + "</p>";
-  let last = "", divided = false, myLast = null;
+  let last = "", divided = false, myLast = null, prev = null;
   for (const m of list) if (m.uid === S.uid && !m.call) myLast = m;
   for (const m of list) {
     if (S.blocked[m.uid] && kindOf(S.view) !== "dm") continue;
     const d = m.at || new Date(), day = dayLabel(d);
-    if (day !== last) { html += '<span class="day">' + esc(day) + "</span>"; last = day; }
-    if (!divided && S.dividerAt && m.at && m.at.getTime() > S.dividerAt && m.uid !== S.uid) { html += '<div class="newline" id="newline"><span>New messages</span></div>'; divided = true; }
+    if (day !== last) { html += '<span class="day">' + esc(day) + "</span>"; last = day; prev = null; }
+    if (!divided && S.dividerAt && m.at && m.at.getTime() > S.dividerAt && m.uid !== S.uid) { html += '<div class="newline" id="newline"><span>New messages</span></div>'; divided = true; prev = null; }
     const u = S.users[m.uid] || { name: m.name || "?", uid: m.uid }, mine = m.uid === S.uid;
-    if (m.call) { html += callRow(m, u, mine, d); continue; }
+    if (m.call) { html += callRow(m, u, mine, d); prev = null; continue; }
+    const cont = !!(prev && prev.uid === m.uid && !(m.rp && m.rp.id) && d - prev.at < 7 * 60000);
+    prev = { uid: m.uid, at: d };
     const groups = {};
     Object.entries(m.rx || {}).forEach(([who, e]) => { if (typeof e === "string") (groups[e] = groups[e] || []).push(who); });
     const rx = Object.keys(groups).length ? '<div class="rxs">' + Object.entries(groups).map(([e, who]) => '<button type="button" class="rx' + (who.includes(S.uid) ? " me" : "") + '" data-react="' + esc(m.id) + '" data-e="' + esc(e) + '" title="' + esc(who.map(w => nameOf(w)).join(", ")) + '">' + esc(e) + " " + who.length + "</button>").join("") + "</div>" : "";
@@ -720,9 +812,11 @@ function renderMsgs(list) {
       (canPin() ? '<button type="button" title="' + (m.pinned ? "Unpin" : "Pin") + '" aria-label="' + (m.pinned ? "Unpin" : "Pin") + '" data-pin="' + esc(m.id) + '">📌</button>' : "") +
       (canDel ? '<button type="button" title="Delete" aria-label="Delete" data-delmsg="' + esc(m.id) + '">🗑</button>' : "") + "</div>";
     const seen = kindOf(S.view) === "dm" && m === myLast ? '<div class="seen">' + (S.otherSeen && m.at && S.otherSeen >= m.at.getTime() ? "Seen " + timeLabel(new Date(S.otherSeen)) : m.at ? "Sent" : "Sending…") + "</div>" : "";
-    html += '<div class="msg' + (mine ? " mine" : "") + (!mine && mentionsMe(m.text) ? " mentioned" : "") + (m.pinned ? " pinned" : "") + '" id="m-' + esc(m.id) + '"><span data-user="' + esc(m.uid) + '">' + avatar(u) + '</span><div class="bub">' + rp +
-      '<div class="meta"><b data-user="' + esc(m.uid) + '">' + esc(u.name || m.name) + "</b>" + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + "<time>" + timeLabel(d) + "</time>" + (m.edited ? '<span class="edited">(edited)</span>' : "") + (m.pinned ? '<span class="edited">📌</span>' : "") + "</div>" +
-      (m.text ? '<div class="text">' + fmtText(m.text) + "</div>" : "") + img + aud + rx + seen + "</div>" + acts + "</div>";
+    const cls = "msg" + (mine ? " mine" : "") + (cont ? " cont" : "") + (rp ? " hasrp" : "") + (!mine && mentionsMe(m.text) ? " mentioned" : "") + (m.pinned ? " pinned" : "");
+    const txt = m.text ? '<div class="text' + (isJumbo(m.text) ? " jumbo" : "") + '">' + fmtText(m.text) + (cont && m.edited ? ' <span class="edited">(edited)</span>' : "") + "</div>" : "";
+    html += '<div class="' + cls + '" id="m-' + esc(m.id) + '">' + (cont ? '<span class="ht" title="' + esc(fullTime(d)) + '">' + timeLabel(d) + "</span>" : '<span data-user="' + esc(m.uid) + '">' + avatar(u) + "</span>") + '<div class="bub">' + rp +
+      (cont ? "" : '<div class="meta"><b data-user="' + esc(m.uid) + '">' + esc(u.name || m.name) + "</b>" + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + '<time title="' + esc(fullTime(d)) + '">' + discordTime(d) + "</time>" + (m.edited ? '<span class="edited">(edited)</span>' : "") + (m.pinned ? '<span class="edited">📌</span>' : "") + "</div>") +
+      txt + img + aud + rx + seen + "</div>" + acts + "</div>";
   }
   const stick = S.stick || renderMsgs.first, keep = renderMsgs.keepFrom;
   const prevTop = box.scrollTop, prevH = box.scrollHeight;
@@ -777,15 +871,45 @@ function profileCard(uid) {
     if (S.admin) acts += '<button class="btn small danger" type="button" data-ban="' + uid + '">Ban</button>';
   } else acts = '<button class="btn small primary" type="button" id="edit-profile">Edit profile</button>';
   const bn = BANNERS[u.banner] || color(u.name);
+  const mg = me ? [] : Object.entries(S.groups).filter(([, g]) => (g.members || []).includes(uid) && (g.members || []).includes(S.uid));
+  const mutual = mg.length ? '<div class="mutual"><b>Mutual groups · ' + mg.length + '</b><div class="chips">' + mg.map(([id, g]) => '<button type="button" data-open="grp:' + esc(id) + '">👥 ' + esc(g.name || "Group") + "</button>").join("") + "</div></div>" : "";
   $("modal-card").innerHTML = '<div class="pbanner" style="background:linear-gradient(135deg,' + bn + "," + bn + 'cc)"></div><button class="x onbanner" type="button" data-close aria-label="Close">×</button>' + avatar(u, "xl pav") +
     "<div><h2 style=\"font-size:1.3rem\">" + esc(u.name) + "</h2>" + statusText(u) + "</div>" +
     (u.status ? '<p class="pstatus">' + esc(u.status) + "</p>" : "") + (u.bio ? '<p class="pbio">' + esc(u.bio) + "</p>" : "") +
     (u.player ? '<p><b>' + esc(u.player) + "</b>" + (RANKSET[u.playerLower] ? " · Oceania #" + RANKSET[u.playerLower].place : "") + '<br><a class="btn small" href="rankings.html?player=' + encodeURIComponent(u.player) + '">See ranking ›</a></p>' : '<p class="muted">Not linked to the rankings</p>') +
-    '<div class="acts">' + acts + "</div>";
+    mutual + '<div class="acts">' + acts + "</div>";
   $("modal-card").classList.add("prof"); $("modal").hidden = false;
 }
 function openModal(html) { $("modal-card").classList.remove("prof"); $("modal-card").innerHTML = '<button class="x" type="button" data-close aria-label="Close">×</button>' + html; $("modal").hidden = false; }
 setInterval(() => { if (S.uid) drawAll(); }, 30000);    // keeps "last online 5m ago" fresh
+
+// ---------- Discord-style extras: spoilers, right-click menu, tap for actions on phones ----------
+function closeCtx() { const c = document.querySelector(".ctx"); if (c) c.remove(); }
+document.addEventListener("click", e => {
+  const sp = e.target.closest(".spoiler"); if (sp && !sp.classList.contains("shown")) { sp.classList.add("shown"); e.stopPropagation(); e.preventDefault(); return; }
+  if (!e.target.closest(".ctx")) closeCtx();
+  const cp = e.target.closest("[data-copytext]");
+  if (cp) { const m = currentList().find(x => x.id === cp.dataset.copytext); if (m && navigator.clipboard) navigator.clipboard.writeText(m.text || "").then(() => toast("Copied")).catch(() => {}); closeCtx(); return; }
+  if (e.target.closest(".ctx button")) setTimeout(closeCtx, 0);
+  if (matchMedia("(hover: none)").matches) {
+    const msg = e.target.closest("#msgs .msg");
+    document.querySelectorAll("#msgs .msg.tapped").forEach(x => { if (x !== msg) x.classList.remove("tapped"); });
+    if (msg && !e.target.closest("button, a, img, audio, .spoiler, [data-user]")) msg.classList.toggle("tapped");
+  }
+}, true);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeCtx(); if (e.key === "Enter" && e.target.classList && e.target.classList.contains("spoiler")) e.target.classList.add("shown"); });
+$("msgs").addEventListener("scroll", closeCtx, { passive: true });
+$("msgs").addEventListener("contextmenu", e => {
+  const msg = e.target.closest(".msg"); if (!msg || e.target.closest("img, audio")) return;
+  const id = msg.id.slice(2), m = currentList().find(x => x.id === id), acts = msg.querySelector(".acts2"); if (!m || !acts) return;
+  e.preventDefault(); closeCtx();
+  const box = document.createElement("div"); box.className = "ctx"; box.setAttribute("role", "menu");
+  acts.querySelectorAll("button").forEach(b => { const c = b.cloneNode(true); c.innerHTML = "<span>" + esc(b.title) + "</span><span>" + b.innerHTML + "</span>"; c.setAttribute("role", "menuitem"); if (b.dataset.delmsg) c.classList.add("danger"); box.appendChild(c); });
+  if (m.text) { const c = document.createElement("button"); c.type = "button"; c.dataset.copytext = id; c.innerHTML = "<span>Copy text</span><span>📋</span>"; box.insertBefore(c, box.querySelector(".danger")); }
+  document.body.appendChild(box);
+  const w = box.offsetWidth, h = box.offsetHeight;
+  box.style.left = Math.max(6, Math.min(e.clientX, innerWidth - w - 6)) + "px"; box.style.top = Math.max(6, Math.min(e.clientY, innerHeight - h - 6)) + "px";
+});
 
 // ======================= FIREBASE =======================
 let fb, db, auth, F, R, rdb;
@@ -1004,7 +1128,37 @@ function mentionPool() {
   if (k === "grp") return (S.groups[gidOf(S.view)] || {}).members || [];
   return Array.from(new Set(Object.keys(S.status).concat(Object.keys(S.known), (S.pubLive[S.view] || S.pubLive.main).map(m => m.uid))));
 }
+const EMO = { skull: "💀", joy: "😂", sob: "😭", fire: "🔥", heart: "❤️", thumbsup: "👍", thumbsdown: "👎", pray: "🙏", clap: "👏", wave: "👋", eyes: "👀", smile: "😄", grin: "😁", sweat_smile: "😅", rofl: "🤣", wink: "😉", blush: "😊", sunglasses: "😎", thinking: "🤔", neutral_face: "😐", expressionless: "😑", unamused: "😒", rolling_eyes: "🙄", smirk: "😏", flushed: "😳", pleading: "🥺", cry: "😢", angry: "😠", rage: "😡", scream: "😱", exploding_head: "🤯", partying_face: "🥳", star_struck: "🤩", heart_eyes: "😍", kissing_heart: "😘", yum: "😋", zany: "🤪", nerd: "🤓", clown: "🤡", ghost: "👻", alien: "👽", robot: "🤖", poop: "💩", skull_crossbones: "☠️", muscle: "💪", ok_hand: "👌", v: "✌️", crossed_fingers: "🤞", point_up: "☝️", point_right: "👉", point_left: "👈", raised_hands: "🙌", handshake: "🤝", salute: "🫡", facepalm: "🤦", shrug: "🤷", 100: "💯", trophy: "🏆", first_place: "🥇", second_place: "🥈", third_place: "🥉", medal: "🏅", crown: "👑", goat: "🐐", bean: "🫘", rocket: "🚀", zap: "⚡", star: "⭐", sparkles: "✨", tada: "🎉", confetti: "🎊", gift: "🎁", gg: "🤝", stopwatch: "⏱️", timer: "⏲️", hourglass: "⏳", chart: "📈", checkmark: "✅", x: "❌", warning: "⚠️", question: "❓", exclamation: "❗", no_entry: "⛔", sus: "🤨", cap: "🧢", moai: "🗿", salt: "🧂", ice: "🧊", cold: "🥶", hot: "🥵", sleeping: "😴", zzz: "💤", sweat: "😓", money: "🤑", australia: "🇦🇺", nz: "🇳🇿", kangaroo: "🦘", kiwi: "🥝", koala: "🐨", pizza: "🍕", cookie: "🍪", coffee: "☕", gamepad: "🎮", keyboard: "⌨️", mouse: "🖱️", headphones: "🎧", microphone: "🎤", camera: "📷", movie: "🎬", heart_broken: "💔", purple_heart: "💜", blue_heart: "💙", green_heart: "💚", yellow_heart: "💛", black_heart: "🖤", white_heart: "🤍" };
+const CMDS = [["/shrug", "Add ¯\\_(ツ)_/¯ to your message"], ["/tableflip", "(╯°□°)╯︵ ┻━┻"], ["/unflip", "┬─┬ノ( º _ ºノ)"], ["/lenny", "( ͡° ͜ʖ ͡°)"], ["/me", "Say something in italics"], ["/spoiler", "Hide your message as a spoiler"], ["/rank", "Show someone's Oceania rank"]];
+function caretBefore() { const t = $("c-text"), pos = t.selectionStart == null ? t.value.length : t.selectionStart; return { t, pos, before: t.value.slice(0, pos) }; }
+function emoQuery() { const { pos, before } = caretBefore(), m = /(^|\s):([a-z0-9_+-]{2,20})$/i.exec(before); return m ? { q: m[2].toLowerCase(), start: pos - m[2].length - 1, end: pos } : null; }
+function cmdQuery() { const { t, pos, before } = caretBefore(), m = /^\/(\w*)$/.exec(before); return m && pos === t.value.length ? { q: m[1].toLowerCase() } : null; }
+function slashCmd(t) {
+  const m = /^\/(\w+)(?:\s+(.*))?$/.exec(t); if (!m) return t;
+  const c = m[1].toLowerCase(), a = (m[2] || "").trim(), pre = a ? a + " " : "";
+  if (c === "shrug") return pre + "¯\\\\\\_(ツ)\\_/¯";
+  if (c === "tableflip") return pre + "(╯°□°)╯︵ ┻━┻";
+  if (c === "unflip") return pre + "┬─┬ノ( º _ ºノ)";
+  if (c === "lenny") return pre + "( ͡° ͜ʖ ͡°)";
+  if (c === "me") { if (!a) { toast("Type something after /me"); return null; } return "*" + a.replace(/\*/g, "") + "*"; }
+  if (c === "spoiler") { if (!a) { toast("Type something after /spoiler"); return null; } return "||" + a.replace(/\|/g, "") + "||"; }
+  if (c === "rank") {
+    const who = (a || (S.me && S.me.player) || "").replace(/^@/, ""), r = RANKSET[who.toLowerCase()] || RANKSET[String((Object.values(S.users).find(u => u.name.toLowerCase() === who.toLowerCase()) || {}).playerLower || "")];
+    if (!r) { toast(who ? "Couldn't find " + who + " in the Oceania rankings." : "Type a name after /rank"); return null; }
+    return "📊 **" + r.name + "** is **#" + r.place + "** in the Oceania rankings";
+  }
+  return t;
+}
 function drawMentions() {
+  const pop0 = $("mention-pop"), cq = cmdQuery(), eq = !cq && emoQuery();
+  if (cq || eq) {
+    const items = cq ? CMDS.filter(([n]) => n.slice(1).startsWith(cq.q)).map(([n, d]) => ["cmd:" + n, '<span class="ev-ic cmd">/</span><b class="cmd">' + esc(n) + "</b><small>" + esc(d) + "</small>"])
+      : Object.keys(EMO).filter(k => k.startsWith(eq.q)).concat(Object.keys(EMO).filter(k => !k.startsWith(eq.q) && eq.q.length > 2 && k.includes(eq.q))).slice(0, 7).map(k => ["emo:" + k, '<span class="ev-ic">' + EMO[k] + "</span><b>:" + esc(k) + ":</b>"]);
+    if (!items.length) { pop0.hidden = true; return; }
+    S.mentionSel = Math.min(S.mentionSel || 0, items.length - 1);
+    pop0.innerHTML = items.map(([id, h], i) => '<button type="button" class="mopt' + (i === S.mentionSel ? " sel" : "") + '" data-mention="' + esc(id) + '">' + h + "</button>").join("");
+    pop0.hidden = false; return;
+  }
   const mq = mentionQuery(), pop = $("mention-pop");
   if (!mq) { pop.hidden = true; return; }
   const q = mq.q.toLowerCase();
@@ -1016,6 +1170,12 @@ function drawMentions() {
   pop.hidden = false;
 }
 function pickMention(uid) {
+  if (uid.startsWith("cmd:") || uid.startsWith("emo:")) {
+    const t = $("c-text"); let p;
+    if (uid.startsWith("cmd:")) { t.value = uid.slice(4) + " "; p = t.value.length; }
+    else { const eq = emoQuery(); if (!eq) return; const ins = EMO[uid.slice(4)] + " "; t.value = (t.value.slice(0, eq.start) + ins + t.value.slice(eq.end)).slice(0, 300); p = Math.min(300, eq.start + ins.length); }
+    t.focus(); t.setSelectionRange(p, p); $("mention-pop").hidden = true; S.mentionSel = 0; $("c-count").textContent = t.value.length + " / 300"; return;
+  }
   const mq = mentionQuery(), u = uid === "@everyone" ? { name: "everyone" } : S.users[uid]; if (!mq || !u) return;
   const t = $("c-text"), ins = "@" + u.name + " ";
   t.value = (t.value.slice(0, mq.start) + ins + t.value.slice(mq.end)).slice(0, 300);
@@ -1156,6 +1316,10 @@ function setEdit(id) {
 $("reply-x").addEventListener("click", clearReply);
 
 // ---------- sending ----------
+$("c-text").addEventListener("input", () => {
+  const t = $("c-text"), v = t.value, nv = v.replace(/:([a-z0-9_+-]{1,20}):/gi, (m, k) => EMO[k.toLowerCase()] || m);
+  if (nv !== v) { const p = (t.selectionStart || v.length) - (v.length - nv.length); t.value = nv; t.setSelectionRange(p, p); }
+});
 $("c-text").addEventListener("input", () => { $("c-count").textContent = $("c-text").value.length + " / 300"; sendTyping(); drawMentions(); });
 $("c-text").addEventListener("click", drawMentions);
 $("c-text").addEventListener("keydown", e => {
@@ -1186,8 +1350,9 @@ async function saveEdit() {
 async function sendMessage(extraIn) {
   if (!db) { toast("Sending works on the live website."); return; }
   const where = S.view, k = kindOf(where);
-  const text = extraIn.aud ? "" : clean($("c-text").value).slice(0, 300), img = extraIn.aud ? null : S.pendingImg;
+  let text = extraIn.aud ? "" : clean($("c-text").value).slice(0, 300), img = extraIn.aud ? null : S.pendingImg;
   if (!text && !img && !extraIn.aud) return;
+  if (text.startsWith("/")) { const out = slashCmd(text); if (out == null) return; text = out.slice(0, 300); }
   if (LINK.test(text)) { toast("Links aren't allowed."); return; }
   if (EVERY_RE.test(text) && !(S.admin && where === "main")) { toast("Only admins can ping @everyone, in the main chat."); return; }
   if (!viewOk(where)) { toast(k === "dm" ? "You need to be friends to message." : "You're not in this group."); return; }
