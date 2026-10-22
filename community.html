@@ -528,7 +528,8 @@ const FIREBASE = {
   appId: "1:186827295273:web:530769127fde65c829ea38"
 };
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
-const ADMINS = ["shinobilolbean@gmail.com"];     // these Google/email accounts get the mod tools
+const ADMINS = ["shinobilolbean@gmail.com"];
+const NAME_API = "https://script.google.com/macros/s/AKfycbzZiPoG41opXscV4iuSYMgJPOcuP0NPYDiAUl3Kqpj0Jd3IWBQN2tGyLTPOXStdCYebQQ/exec"; // username changes     // these Google/email accounts get the mod tools
 const MIN_GAP = 1100;                             // tiny anti-spam gap between sends (not a slowmode)
 const MAX_IMG = 380000;                           // biggest picture or voice clip after shrinking (characters)
 const MAX_VOICE = 60;                             // longest voice message, seconds
@@ -749,9 +750,10 @@ function renderConvTop() {
 
 // ======================= RENDER: messages =======================
 function mentionNames() {
-  if (mentionNames.key === Object.keys(S.users).length) return mentionNames.re;
+  const key = Object.values(S.users).map(u => u.name).join("|");      // changes when someone renames too
+  if (mentionNames.key === key) return mentionNames.re;
   const names = Object.values(S.users).map(u => u.name).filter(Boolean).sort((a, b) => b.length - a.length);
-  mentionNames.key = Object.keys(S.users).length;
+  mentionNames.key = key;
   mentionNames.re = names.length ? new RegExp("@(" + names.map(n => esc(n).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")(?![A-Za-z0-9_])", "gi") : null;
   return mentionNames.re;
 }
@@ -1425,6 +1427,7 @@ async function groupUpdate(gid, data, ok) { try { await F.updateDoc(F.doc(db, "g
 function editProfileForm() {
   const u = S.me || {};
   openModal('<h2 style="font-size:1.2rem">Edit profile</h2>' +
+    '<label class="flabel">Username<input class="field" id="p-name" maxlength="20" autocomplete="off" value="' + esc(u.name || "") + '"><small class="muted">3 to 20 characters: letters, numbers, spaces and _ . ( ) -. You can change it any time.</small></label>' +
     '<label class="flabel">Status<input class="field" id="p-status" maxlength="40" placeholder="e.g. 🏃 grinding maps" value="' + esc(u.status || "") + '"></label>' +
     '<label class="flabel">Bio<textarea class="field" id="p-bio" maxlength="160" placeholder="A bit about you">' + esc(u.bio || "") + "</textarea></label>" +
     '<div class="flabel">Banner colour<div class="swatches">' + BANNERS.map((c, i) => '<button type="button" class="sw' + ((u.banner || 0) === i ? " on" : "") + '" data-sw="' + i + '" style="background:' + c + '" aria-label="Colour ' + (i + 1) + '"></button>').join("") + "</div></div>" +
@@ -1434,8 +1437,18 @@ function editProfileForm() {
 async function saveProfile() {
   const status = clean($("p-status").value).slice(0, 40), bio = clean($("p-bio").value).slice(0, 160);
   if (LINK.test(status) || LINK.test(bio)) { $("p-msg").innerHTML = '<span class="err">No links in your profile.</span>'; return; }
-  if (!db) { Object.assign(S.me, { status, bio, banner: S.pickBanner }); $("modal").hidden = true; renderMe(); drawAll(); return; }
-  try { await F.updateDoc(F.doc(db, "users", S.uid), { status, bio, banner: S.pickBanner }); $("modal").hidden = true; toast("Profile saved"); } catch (e) { $("p-msg").innerHTML = '<span class="err">Couldn\'t save. Try again.</span>'; }
+  const name = String($("p-name").value || "").replace(/\s+/g, " ").trim(), renaming = S.me && name !== S.me.name;
+  if (renaming && !/^[A-Za-z0-9_ .()-]{3,20}$/.test(name)) { $("p-msg").innerHTML = '<span class="err">Usernames are 3 to 20 characters: letters, numbers, spaces and _ . ( ) -</span>'; return; }
+  if (renaming && clean(name) !== name) { $("p-msg").innerHTML = '<span class="err">Pick a different username.</span>'; return; }
+  if (!db) { Object.assign(S.me, { status, bio, banner: S.pickBanner }, renaming ? { name } : {}); $("modal").hidden = true; renderMe(); drawAll(); return; }
+  $("p-save").disabled = true; $("p-msg").textContent = "Saving…";
+  if (renaming) {
+    try {
+      const r = await fetch(NAME_API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "rename", name, idToken: await auth.currentUser.getIdToken() }) }).then(x => x.json());
+      if (!r.ok) { $("p-msg").innerHTML = '<span class="err">' + esc(r.error || "Couldn't change your username.") + "</span>"; $("p-save").disabled = false; return; }
+    } catch (e) { $("p-msg").innerHTML = '<span class="err">Couldn\'t change your username. Try again.</span>'; $("p-save").disabled = false; return; }
+  }
+  try { await F.updateDoc(F.doc(db, "users", S.uid), { status, bio, banner: S.pickBanner }); $("modal").hidden = true; toast(renaming ? "Saved. You're now " + name : "Profile saved"); } catch (e) { $("p-msg").innerHTML = '<span class="err">Couldn\'t save. Try again.</span>'; $("p-save").disabled = false; }
 }
 
 // ---------- sign in ----------
