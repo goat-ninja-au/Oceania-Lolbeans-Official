@@ -14,6 +14,7 @@
   // Top tabs. A tab with "cols" opens a big menu with columns: [heading, [[icon, title, description, link, isNew, search words, external]]]
   var CHAMPS = "https://goat-ninja-au.github.io/Oceania-championships-2026/";
   var G = [
+    { id: "home", label: "Home", href: "index.html", icon: "🏠", words: "start main" },
     { id: "rank", label: "Rankings", cols: [
       ["Oceania Rankings", [["🏆", "Overall rankings", "Every player, ranked by total time", "rankings.html", false, "leaderboard list total"], ["📈", "Most Improved", "Who has dropped the most time", "rankings.html?s=improved", false, "improvement progress"], ["⚔️", "Head to Head", "Compare any two players", "rankings.html?s=h2h", false, "versus compare h2h"]]],
       ["Records", [["⏱️", "Oceania records", "The fastest time on every map", "rankings.html?s=records", false, "or wr world record"], ["🗺️", "Map records", "Top times on each of the 27 maps", "rankings.html?s=maps", false, "maps best times"], ["👑", "Hall of Fame", "Legends and past champions", "rankings.html?s=fame", false, "legends champions history"]]],
@@ -41,6 +42,7 @@
     if (file === "news.html") return "news";
     if (file === "academy.html") return "acad";
     if (file === "index.html" && location.hash === "#tournaments") return "tour";
+    if (file === "index.html" || file === "") return "home";
     return "";
   }
   function activeItem(href) {
@@ -121,9 +123,10 @@
     "@media (max-width:1640px){header.olbx .olb-off{display:none}.olb-tab{padding:9px 10px}}",
     "@media (max-width:1300px){.olb-cta{padding:0 12px;font-size:13.5px}}",
     "@media (max-width:420px){.olb-cta{display:none!important}}",
-    "@media (max-width:1420px){.olb-tab{padding:9px 8px}.olb-tab .olb-new{display:none}}",
+    "@media (max-width:1660px){.olb-tab{padding:9px 7px}.olb-tab .olb-new{display:none}header.olbx .brand{font-size:15px}.olb-cta{padding:0 13px}}",
+    "@media (max-width:1460px){.olb-tab{padding:9px 6px;font-size:14px}header.olbx>.wrap{gap:8px!important}header.olbx .olb-right{gap:6px}}",
     "@media (max-width:1300px){.olb-tab{padding:9px 6px;font-size:14px}header.olbx .brand{font-size:15px}header.olbx>.wrap{gap:10px!important}}",
-    "@media (max-width:1260px){header.olbx .olb-tabs{display:none}.olb-burger{display:grid!important}header.olbx>.wrap{gap:8px!important;padding:7px 8px 7px 10px!important}header.olbx .brand{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:15px}.olb-sp{top:72px;left:10px;right:10px;width:auto}}",
+    "@media (max-width:1380px){header.olbx .olb-tabs{display:none}.olb-burger{display:grid!important}header.olbx>.wrap{gap:8px!important;padding:7px 8px 7px 10px!important}header.olbx .brand{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:15px}.olb-sp{top:72px;left:10px;right:10px;width:auto}}",
         "@media (max-width:420px){header.olbx .brand{font-size:0!important}header.olbx .brand img,header.olbx .brand .mark{font-size:14px}header.olbx{padding:8px 8px 0!important}}",
     "@media (prefers-reduced-motion:reduce){.olb-ink{transition:none}.olb-live:before{animation:none}}"
   ].join("\n");
@@ -203,7 +206,7 @@
 
   // ---------- phone menu ----------
   var drawer = document.createElement("div"); drawer.className = "olb-drawer"; drawer.hidden = true;
-  drawer.innerHTML = '<a href="index.html"' + (file === "index.html" && !location.hash ? ' class="on"' : "") + '><span class="i">🏠</span>Home</a><a href="apply.html"' + (file === "apply.html" ? ' class="on"' : "") + '><span class="i">📝</span>Get ranked</a>' + G.filter(function (g) { return !g.cols && g.id !== "records"; }).map(function (g) {
+  drawer.innerHTML = '<a href="index.html"' + (file === "index.html" && !location.hash ? ' class="on"' : "") + '><span class="i">🏠</span>Home</a><a href="apply.html"' + (file === "apply.html" ? ' class="on"' : "") + '><span class="i">📝</span>Get ranked</a>' + G.filter(function (g) { return !g.cols && g.id !== "records" && g.id !== "home"; }).map(function (g) {
     return '<a href="' + g.href + '"' + (g.id === act ? ' class="on"' : "") + '><span class="i">' + g.icon + "</span>" + g.label + (g.isNew ? ' <span class="olb-new">NEW</span>' : "") + "</a>";
   }).join("") + G.filter(function (g) { return g.cols; }).map(function (g) {
     return "<h6>" + g.label + "</h6>" + g.cols.map(function (c) { return c[1].map(function (it) { return '<a href="' + it[3] + '"' + (it[6] ? ' target="_blank" rel="noopener"' : "") + (activeItem(it[3]) ? ' class="on"' : "") + '><span class="i">' + it[0] + "</span>" + esc(it[1]) + (it[6] ? " ↗" : "") + (it[1] === "Community chat" ? ' <span class="olb-live" hidden>LIVE</span>' : "") + "</a>"; }).join(""); }).join("");
@@ -253,7 +256,7 @@
     }).catch(function () { players = []; render(); });
     return loading;
   }
-  var PAGES = [{ i: "🏠", t: "Home", h: "index.html", w: "home start" }];
+  var PAGES = [];
   G.forEach(function (g) { if (!g.cols) PAGES.push({ i: g.icon, t: g.label, h: g.href, w: g.words || "" }); });
   eachItem(function (it) { if (!PAGES.some(function (p) { return p.h === it[3]; })) PAGES.push({ i: it[0], t: it[1], h: it[3], w: (it[5] || "") + " " + it[2] }); });
   function mapFile(m) { return "maps/" + m.replace(/[\s']/g, "") + ".png"; }
