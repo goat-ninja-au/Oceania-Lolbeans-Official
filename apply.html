@@ -514,7 +514,7 @@ async function showStatus() {
 // ---------- step 1 ----------
 function setMode(m) {
   S.mode = m;
-  document.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-checked", String(b.dataset.mode === m)));
+  document.querySelectorAll(".ap-mode [data-mode]").forEach(b => b.setAttribute("aria-checked", String(b.dataset.mode === m)));
   $("f-current").hidden = m !== "update";
   $("t-title").textContent = m === "update" ? "Your new PBs" : "Your best times";
   $("t-sub").innerHTML = m === "update" ? "Only fill in the maps where you've set a <b>new PB</b>, to 3 decimal places (like <b>23.450</b>). Your current times are shown underneath." : "Type your best time on each map, to 3 decimal places (like <b>23.450</b>). Leave a map empty if you haven't played it. It counts as 60s.";
@@ -676,7 +676,7 @@ async function submit(e) {
 }
 
 // ---------- wire up ----------
-document.querySelectorAll("[data-mode]").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
+document.querySelectorAll(".ap-mode [data-mode]").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
 document.querySelectorAll("[data-c]").forEach(b => b.addEventListener("click", () => setCountry(b.dataset.c)));
 $("current").addEventListener("input", () => { checkName(); renderGrid(); update(); });
 $("name").addEventListener("input", checkName);
