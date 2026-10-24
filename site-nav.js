@@ -11,39 +11,44 @@
   var SHEET = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
   var FS = "https://firestore.googleapis.com/v1/projects/oceania-lolbeans/databases/(default)/documents/messages?orderBy=createdAt%20desc&pageSize=1&key=AIzaSyBNKv8QM7kR4Y_yA0djMPo87y7fqw2jseA";
   var MAPS = ["Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup", "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze", "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light", "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash", "Tricky Traps", "Tumble Town", "UFO Attack"];
-  // [icon, title, description, link, isNew, search words]
+  // Top tabs. A tab with "cols" opens a big menu with columns: [heading, [[icon, title, description, link, isNew, search words, external]]]
+  var CHAMPS = "https://goat-ninja-au.github.io/Oceania-championships-2026/";
   var G = [
-    { id: "home", label: "Home", href: "index.html", icon: "🏠" },
-    { id: "rank", label: "Rankings", items: [
-      ["🏆", "Rankings", "Every Oceania player, ranked by total time", "rankings.html", false, "leaderboard list total"],
-      ["👥", "Players", "Player cards, profiles and tracking", "players.html", true, "profiles cards everyone"],
-      ["⏱️", "Records", "Oceania and world records on every map", "rankings.html?s=records", false, "or wr world record"],
-      ["🗺️", "Map Records", "Top times on each of the 27 maps", "rankings.html?s=maps", false, "maps best times"],
-      ["👑", "Hall of Fame", "Legends and past champions", "rankings.html?s=fame", false, "legends champions history"]] },
+    { id: "rank", label: "Rankings", cols: [
+      ["Oceania Rankings", [["🏆", "Overall rankings", "Every player, ranked by total time", "rankings.html", false, "leaderboard list total"], ["📈", "Most Improved", "Who has dropped the most time", "rankings.html?s=improved", false, "improvement progress"], ["⚔️", "Head to Head", "Compare any two players", "rankings.html?s=h2h", false, "versus compare h2h"]]],
+      ["Records", [["⏱️", "Oceania records", "The fastest time on every map", "rankings.html?s=records", false, "or wr world record"], ["🗺️", "Map records", "Top times on each of the 27 maps", "rankings.html?s=maps", false, "maps best times"], ["👑", "Hall of Fame", "Legends and past champions", "rankings.html?s=fame", false, "legends champions history"]]],
+      ["Get ranked", [["📝", "Apply or update your times", "Join the rankings or send new PBs", "apply.html", false, "application ranked pb update"], ["ℹ️", "How the rankings work", "Rules, maps and how totals are counted", "rankings.html?s=info", false, "rules info help"]]]] },
+    { id: "players", label: "Players", href: "players.html", icon: "👥", isNew: true, words: "profiles cards everyone" },
+    { id: "records", label: "Records", href: "rankings.html?s=records", icon: "⏱️", words: "or wr world record" },
+    { id: "tour", label: "Tournaments", cols: [
+      ["Oceania Championships", [["🏆", "Oceania Championships 2026", "The top 10 battle it out in December", CHAMPS, false, "championships december top 10", true]]],
+      ["On this site", [["🏟️", "Tournaments", "Upcoming and past events", "index.html#tournaments", false, "events comp"], ["👑", "Past champions", "Everyone who has won", "rankings.html?s=fame", false, "winners"]]]] },
     { id: "acad", label: "Academy", href: "academy.html", icon: "🎓", words: "tutorials guides learn" },
-    { id: "tour", label: "Tournaments", href: "index.html#tournaments", icon: "🏟️", words: "championships events comp" },
-    { id: "comm", label: "Community", items: [
-      ["💬", "Chat", "Talk with the Oceania community", "community.html", false, "community messages dm friends"],
-      ["📰", "News", "Updates, results and announcements", "news.html", false, "updates announcements"],
-      ["🤝", "Join", "Get into the Discord server", "join.html", false, "discord invite server"],
-      ["📝", "Apply", "Get ranked, or update your times", "apply.html", false, "application ranked pb update"],
-      ["📱", "Get the app", "Install the website as an app", "app.html", false, "install phone pwa"]] }
+    { id: "news", label: "News", href: "news.html", icon: "📰", words: "updates announcements" },
+    { id: "comm", label: "Community", cols: [
+      ["Talk", [["💬", "Community chat", "Main chat, DMs, groups and calls", "community.html", false, "chat messages dm friends"], ["🤝", "Join the Discord", "Lobbies on our time zone", "join.html", false, "discord invite server"]]],
+      ["More", [["📱", "Get the app", "Install the website on your phone", "app.html", false, "install phone pwa"], ["📰", "News", "Updates, results and announcements", "news.html", false, "updates"]]]] }
   ];
+  function eachItem(fn) { G.forEach(function (g) { if (g.cols) g.cols.forEach(function (c) { c[1].forEach(function (it) { fn(it, g, c[0]); }); }); }); }
 
   // ---------- which tab is this page? ----------
   var file = (location.pathname.split("/").pop() || "index.html").toLowerCase(), qs = new URLSearchParams(location.search), sec = qs.get("s") || "";
   function activeGroup() {
-    if (/^(rankings|rankings-test|players|applications)\.html$/.test(file)) return "rank";
-    if (/^(community|chat|news|join|apply|app)\.html$/.test(file)) return "comm";
+    if (file === "players.html") return "players";
+    if (/^(rankings|rankings-test)\.html$/.test(file) && /^(records|maps)$/.test(sec)) return "records";
+    if (/^(rankings|rankings-test|applications|apply)\.html$/.test(file)) return "rank";
+    if (/^(community|chat|join|app)\.html$/.test(file)) return "comm";
+    if (file === "news.html") return "news";
     if (file === "academy.html") return "acad";
     if (file === "index.html" && location.hash === "#tournaments") return "tour";
-    if (file === "index.html" || file === "") return "home";
     return "";
   }
   function activeItem(href) {
-    var f = href.split("?")[0], s = (href.split("s=")[1] || "");
+    var f = href.split("#")[0].split("?")[0], s = (href.split("s=")[1] || "");
+    if (/^https?:/.test(href)) return false;
     if (f !== file && !(f === "rankings.html" && file === "rankings-test.html")) return false;
     if (f === "rankings.html") return s === sec || (!s && (sec === "" || sec === "list"));
+    if (f === "index.html") return location.hash === "#" + (href.split("#")[1] || "");
     return true;
   }
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
@@ -54,7 +59,7 @@
     "html{--nv:#2f9e1c;--nv-glow:rgba(47,158,28,.45);--gl-bg:rgba(255,255,255,.66);--gl-line:rgba(20,120,194,.22);--gl-text:#0c2a43;--gl-sub:#4d6f88;--gl-pop:rgba(255,255,255,.97);--gl-hl:rgba(47,158,28,.10);--gl-btn:rgba(255,255,255,.75)}",
     "header.olbx{position:sticky;top:0;z-index:60;background:transparent!important;border:0!important;box-shadow:none!important;padding:10px 12px 0!important;margin:0!important}",
     "html[data-mode=dark]{--nv:#9bf04a;--nv-glow:rgba(155,240,74,.7);--gl-bg:rgba(10,24,38,.62);--gl-line:rgba(255,255,255,.13);--gl-text:#e6f1f9;--gl-sub:#8fb0c6;--gl-pop:rgba(13,29,44,.97);--gl-hl:rgba(155,240,74,.10);--gl-btn:rgba(255,255,255,.06)}",
-    "header.olbx>.wrap{max-width:1240px!important;margin:0 auto!important;display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:14px!important;padding:8px 10px 8px 14px!important;border-radius:18px;background:var(--gl-bg);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border:1px solid var(--gl-line);box-shadow:0 12px 32px rgba(7,17,28,.16);color:var(--gl-text);position:relative;min-height:0!important}",
+    "header.olbx>.wrap{max-width:1660px!important;margin:0 auto!important;display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:14px!important;padding:8px 10px 8px 14px!important;border-radius:18px;background:var(--gl-bg);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border:1px solid var(--gl-line);box-shadow:0 12px 32px rgba(7,17,28,.16);color:var(--gl-text);position:relative;min-height:0!important}",
     "header.olbx .brand{flex:none;white-space:nowrap;color:var(--gl-text)!important;margin-right:0!important}",
     "header.olbx nav.olb-oldnav,header.olbx #menu,header.olbx .head-right{display:none!important}",
     "header.olbx .olb-tabs{display:flex;flex-wrap:nowrap;align-items:center;gap:2px;flex:none;position:relative;margin-left:4px}",
@@ -68,13 +73,18 @@
     ".olb-live{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:900;letter-spacing:.06em;color:#ff5d5d;background:rgba(255,93,93,.13);border-radius:999px;padding:2px 7px}",
     ".olb-live:before{content:'';width:6px;height:6px;border-radius:50%;background:#ff5d5d;box-shadow:0 0 8px #ff5d5d;animation:olbpulse 1.6s infinite}",
     "@keyframes olbpulse{50%{opacity:.35}}",
-    ".olb-menu{position:absolute;top:calc(100% + 12px);left:-8px;width:400px;max-width:calc(100vw - 24px);background:var(--gl-pop);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--gl-line);border-radius:16px;padding:8px;box-shadow:0 24px 50px rgba(7,17,28,.35);display:grid;gap:2px;z-index:70}",
-    ".olb-menu[hidden]{display:none}",
-    ".olb-menu a{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:8px 10px;border-radius:12px;color:var(--gl-text)!important;text-decoration:none!important}",
-    ".olb-menu a:hover,.olb-menu a:focus-visible{background:var(--gl-btn);outline:none}",
-    ".olb-menu a.on{background:var(--gl-hl);box-shadow:inset 3px 0 0 var(--nv)}",
-    ".olb-menu .e{width:42px;height:42px;border-radius:11px;background:var(--gl-btn);border:1px solid var(--gl-line);display:grid;place-items:center;font-size:20px}",
-    ".olb-menu b{display:block;font-size:15px}.olb-menu small{display:block;color:var(--gl-sub);font-size:13px;line-height:1.3}",
+    ".olb-mega{position:absolute;top:calc(100% + 10px);background:var(--gl-pop);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--gl-line);border-radius:18px;padding:22px 26px 16px;box-shadow:0 24px 50px rgba(7,17,28,.35);display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 34px;z-index:70;cursor:default}",
+    ".olb-mega[hidden]{display:none}",
+    ".olb-mega h5{font-size:16px;font-weight:800;margin:0 0 6px;color:var(--gl-text);letter-spacing:0}",
+    ".olb-mega .col{display:grid;align-content:start;gap:2px}",
+    ".olb-mega a{display:flex;align-items:center;gap:12px;padding:8px 10px;margin:0 -10px;border-radius:12px;color:var(--gl-text)!important;text-decoration:none!important}",
+    ".olb-mega a:hover,.olb-mega a:focus-visible{background:var(--gl-btn);outline:none}",
+    ".olb-mega a.on{background:var(--gl-hl);box-shadow:inset 3px 0 0 var(--nv)}",
+    ".olb-mega .e{width:36px;height:36px;border-radius:10px;background:var(--gl-btn);border:1px solid var(--gl-line);display:grid;place-items:center;font-size:18px;flex:none}",
+    ".olb-mega b{display:block;font-size:15px;font-weight:700}.olb-mega small{display:block;color:var(--gl-sub);font-size:12.5px;line-height:1.3}",
+    ".olb-mega .ext{font-size:12px;color:var(--gl-sub);margin-left:4px}",
+    ".olb-cta{display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:999px;background:var(--nv);color:#0b1622!important;font-weight:800;font-size:14.5px;text-decoration:none!important;white-space:nowrap;box-shadow:0 0 16px var(--nv-glow);flex:none}",
+    ".olb-cta:hover{filter:brightness(1.08)}",
     ".olb-new{font-size:10px;font-weight:900;color:#0b1622;background:var(--nv);border-radius:999px;padding:2px 7px}",
     "header.olbx .olb-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex:none}",
     ".olb-sbtn{display:flex;align-items:center;gap:9px;height:40px;padding:0 9px 0 12px;border-radius:12px;border:1px solid var(--gl-line);background:var(--gl-btn);color:var(--gl-sub);font-family:inherit;font-weight:500;font-size:14px;width:180px;cursor:pointer}",
@@ -107,10 +117,14 @@
     ".olb-drawer a{display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:10px;font-weight:700;font-size:15px;color:var(--gl-text)!important;text-decoration:none!important}",
     ".olb-drawer a.on{background:var(--gl-hl);box-shadow:inset 3px 0 0 var(--nv)}",
     ".olb-drawer a .i{width:28px;text-align:center}",
-    "@media (max-width:1480px){.olb-sbtn{width:40px;padding:0;justify-content:center}.olb-sbtn span,.olb-sbtn kbd{display:none}}",
-    "@media (max-width:1180px){.olb-tab{padding:9px 9px;font-size:14.5px}header.olbx .brand{font-size:15px}}",
-    "@media (max-width:980px){header.olbx .olb-tabs{display:none}.olb-burger{display:grid!important}header.olbx>.wrap{gap:8px!important;padding:7px 8px 7px 10px!important}header.olbx .brand{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:15px}.olb-sp{top:72px;left:10px;right:10px;width:auto}}",
-    "@media (max-width:420px){header.olbx .brand{font-size:0!important}header.olbx .brand img,header.olbx .brand .mark{font-size:14px}header.olbx{padding:8px 8px 0!important}}",
+    "@media (min-width:0px){.olb-sbtn{width:40px;padding:0;justify-content:center}.olb-sbtn span,.olb-sbtn kbd{display:none}}",
+    "@media (max-width:1640px){header.olbx .olb-off{display:none}.olb-tab{padding:9px 10px}}",
+    "@media (max-width:1300px){.olb-cta{padding:0 12px;font-size:13.5px}}",
+    "@media (max-width:420px){.olb-cta{display:none!important}}",
+    "@media (max-width:1420px){.olb-tab{padding:9px 8px}.olb-tab .olb-new{display:none}}",
+    "@media (max-width:1300px){.olb-tab{padding:9px 6px;font-size:14px}header.olbx .brand{font-size:15px}header.olbx>.wrap{gap:10px!important}}",
+    "@media (max-width:1260px){header.olbx .olb-tabs{display:none}.olb-burger{display:grid!important}header.olbx>.wrap{gap:8px!important;padding:7px 8px 7px 10px!important}header.olbx .brand{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:15px}.olb-sp{top:72px;left:10px;right:10px;width:auto}}",
+        "@media (max-width:420px){header.olbx .brand{font-size:0!important}header.olbx .brand img,header.olbx .brand .mark{font-size:14px}header.olbx{padding:8px 8px 0!important}}",
     "@media (prefers-reduced-motion:reduce){.olb-ink{transition:none}.olb-live:before{animation:none}}"
   ].join("\n");
   var st = document.createElement("style"); st.id = "olb-nav-css"; st.textContent = css; document.head.appendChild(st);
@@ -124,19 +138,22 @@
   var th = "";
   G.forEach(function (g) {
     var on = g.id === act ? " on" : "", live = g.id === "comm" ? '<span class="olb-live" hidden>LIVE</span>' : "";
-    if (!g.items) { th += '<div class="olb-it"><a class="olb-tab' + on + '" href="' + g.href + '"' + (on ? ' aria-current="page"' : "") + ">" + g.label + "</a></div>"; return; }
+    if (!g.cols) { th += '<div class="olb-it"><a class="olb-tab' + on + '" href="' + g.href + '"' + (on ? ' aria-current="page"' : "") + ">" + g.label + (g.isNew ? ' <span class="olb-new">NEW</span>' : "") + "</a></div>"; return; }
     th += '<div class="olb-it"><button type="button" class="olb-tab' + on + '" aria-expanded="false" aria-haspopup="true" data-dd="' + g.id + '">' + g.label + live + '<span class="chev"></span></button>' +
-      '<div class="olb-menu" id="olb-m-' + g.id + '" role="menu" hidden>' + g.items.map(function (it) {
-        var o = activeItem(it[3]);
-        return '<a role="menuitem" href="' + it[3] + '"' + (o ? ' class="on" aria-current="page"' : "") + '><span class="e">' + it[0] + "</span><span><b>" + esc(it[1]) + (it[1] === "Chat" ? ' <span class="olb-live" hidden>LIVE</span>' : "") + "</b><small>" + esc(it[2]) + "</small></span>" + (it[4] ? '<span class="olb-new">NEW</span>' : "<span></span>") + "</a>";
+      '<div class="olb-mega" id="olb-m-' + g.id + '" hidden>' + g.cols.map(function (c) {
+        return '<div class="col"><h5>' + esc(c[0]) + "</h5>" + c[1].map(function (it) {
+          var o = activeItem(it[3]);
+          return '<a href="' + it[3] + '"' + (it[6] ? ' target="_blank" rel="noopener"' : "") + (o ? ' class="on" aria-current="page"' : "") + '><span class="e">' + it[0] + "</span><span><b>" + esc(it[1]) + (it[6] ? '<span class="ext">↗</span>' : "") + (it[1] === "Community chat" ? ' <span class="olb-live" hidden>LIVE</span>' : "") + "</b><small>" + esc(it[2]) + "</small></span></a>";
+        }).join("") + "</div>";
       }).join("") + "</div></div>";
   });
   tabs.innerHTML = th + '<span class="olb-ink" style="opacity:0"></span>';
   var brand = header.querySelector(".brand");
   brand.insertAdjacentElement("afterend", tabs);
+  (function () { var n = Array.prototype.slice.call(brand.childNodes).reverse().find(function (x) { return x.nodeType === 3 && /Official/.test(x.textContent); }); if (n) { var sp = document.createElement("span"); sp.innerHTML = esc(n.textContent.replace(/\s*Official\s*$/, "").trim()) + '<span class="olb-off"> Official</span>'; n.replaceWith(sp); } })();
 
   var right = document.createElement("div"); right.className = "olb-right";
-  right.innerHTML = '<button type="button" class="olb-sbtn" aria-label="Search the site (press /)">' + SVG_S + "<span>Search…</span><kbd>/</kbd></button>";
+  right.innerHTML = '<a class="olb-cta" href="apply.html">Get ranked</a><button type="button" class="olb-sbtn" aria-label="Search the site (press /)">' + SVG_S + "<span>Search…</span><kbd>/</kbd></button>";
   tabs.insertAdjacentElement("afterend", right);
   var mode = document.getElementById("mode");
   function pullAcct() { var a = document.getElementById("olb-acct"); if (a && a.parentElement !== right) right.insertBefore(a, burger); }
@@ -163,7 +180,8 @@
   var closeT = null;
   function openMenu(btn, on) {
     tabs.querySelectorAll("[data-dd]").forEach(function (b) {
-      var o = on && b === btn; b.setAttribute("aria-expanded", String(o)); document.getElementById("olb-m-" + b.dataset.dd).hidden = !o;
+      var o = on && b === btn, m = document.getElementById("olb-m-" + b.dataset.dd); b.setAttribute("aria-expanded", String(o)); m.hidden = !o;
+      if (o) { var wr = wrap.getBoundingClientRect(), ir = b.parentElement.getBoundingClientRect(); m.style.left = (wr.left - ir.left) + "px"; m.style.width = wr.width + "px"; }
     });
     if (!on) inkHome(); else inkTo(btn);
   }
@@ -185,9 +203,10 @@
 
   // ---------- phone menu ----------
   var drawer = document.createElement("div"); drawer.className = "olb-drawer"; drawer.hidden = true;
-  drawer.innerHTML = G.map(function (g) {
-    if (!g.items) return '<a href="' + g.href + '"' + (g.id === act ? ' class="on"' : "") + '><span class="i">' + g.icon + "</span>" + g.label + "</a>";
-    return "<h6>" + g.label + "</h6>" + g.items.map(function (it) { return '<a href="' + it[3] + '"' + (activeItem(it[3]) ? ' class="on"' : "") + '><span class="i">' + it[0] + "</span>" + esc(it[1]) + (it[1] === "Chat" ? ' <span class="olb-live" hidden>LIVE</span>' : "") + (it[4] ? ' <span class="olb-new">NEW</span>' : "") + "</a>"; }).join("");
+  drawer.innerHTML = '<a href="index.html"' + (file === "index.html" && !location.hash ? ' class="on"' : "") + '><span class="i">🏠</span>Home</a><a href="apply.html"' + (file === "apply.html" ? ' class="on"' : "") + '><span class="i">📝</span>Get ranked</a>' + G.filter(function (g) { return !g.cols && g.id !== "records"; }).map(function (g) {
+    return '<a href="' + g.href + '"' + (g.id === act ? ' class="on"' : "") + '><span class="i">' + g.icon + "</span>" + g.label + (g.isNew ? ' <span class="olb-new">NEW</span>' : "") + "</a>";
+  }).join("") + G.filter(function (g) { return g.cols; }).map(function (g) {
+    return "<h6>" + g.label + "</h6>" + g.cols.map(function (c) { return c[1].map(function (it) { return '<a href="' + it[3] + '"' + (it[6] ? ' target="_blank" rel="noopener"' : "") + (activeItem(it[3]) ? ' class="on"' : "") + '><span class="i">' + it[0] + "</span>" + esc(it[1]) + (it[6] ? " ↗" : "") + (it[1] === "Community chat" ? ' <span class="olb-live" hidden>LIVE</span>' : "") + "</a>"; }).join(""); }).join("");
   }).join("");
   wrap.appendChild(drawer);
   function setDrawer(o) { drawer.hidden = !o; burger.textContent = o ? "✕" : "☰"; burger.setAttribute("aria-expanded", String(o)); burger.setAttribute("aria-label", o ? "Close menu" : "Open menu"); if (o) document.documentElement.classList.remove("olb-hidden"); }
@@ -235,7 +254,8 @@
     return loading;
   }
   var PAGES = [{ i: "🏠", t: "Home", h: "index.html", w: "home start" }];
-  G.forEach(function (g) { if (g.items) g.items.forEach(function (it) { PAGES.push({ i: it[0], t: it[1], h: it[3], w: (it[5] || "") + " " + it[2] }); }); else if (g.id !== "home") PAGES.push({ i: g.icon, t: g.label, h: g.href, w: g.words || "" }); });
+  G.forEach(function (g) { if (!g.cols) PAGES.push({ i: g.icon, t: g.label, h: g.href, w: g.words || "" }); });
+  eachItem(function (it) { if (!PAGES.some(function (p) { return p.h === it[3]; })) PAGES.push({ i: it[0], t: it[1], h: it[3], w: (it[5] || "") + " " + it[2] }); });
   function mapFile(m) { return "maps/" + m.replace(/[\s']/g, "") + ".png"; }
   function render() {
     var q = inp.value.trim().toLowerCase(), html = "", links = [];
@@ -256,7 +276,7 @@
       links.push("rankings.html?s=maps&map=" + encodeURIComponent(m));
       return '<a class="olb-r" href="' + links[links.length - 1] + '"><img class="mp" src="' + mapFile(m) + '" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">' + esc(m) + (or ? " <small>· OR " + or.toFixed(3) + "</small>" : "") + "</a>";
     }));
-    var pg = (q ? PAGES.filter(function (p) { return (p.t + " " + p.w).toLowerCase().indexOf(q) >= 0; }) : PAGES.filter(function (p) { return /Players|Records|Chat|Apply/.test(p.t); })).slice(0, q ? 5 : 4);
+    var pg = (q ? PAGES.filter(function (p) { return (p.t + " " + p.w).toLowerCase().indexOf(q) >= 0; }) : PAGES.filter(function (p) { return /^(Players|Records|Community chat|Apply or update your times)$/.test(p.t); })).slice(0, q ? 5 : 4);
     sect(q ? "Pages" : "Jump to", pg.map(function (p) { links.push(p.h); return '<a class="olb-r" href="' + p.h + '"><span class="pi">' + p.i + "</span>" + esc(p.t) + "</a>"; }));
     if (!html) html = '<div class="none">No results for “' + esc(inp.value.trim()) + '”</div>';
     res.innerHTML = html;
