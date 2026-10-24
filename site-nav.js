@@ -88,6 +88,7 @@
     ".olb-mega .ext{font-size:12px;color:var(--gl-sub);margin-left:4px}",
     ".olb-cta{display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:999px;background:var(--nv);color:#0b1622!important;font-weight:800;font-size:14.5px;text-decoration:none!important;white-space:nowrap;box-shadow:0 0 16px var(--nv-glow);flex:none}",
     ".olb-cta:hover{filter:brightness(1.08)}",
+    "html:not([data-mode=dark]) .olb-cta{color:#fff!important}",
     ".olb-new{font-size:10px;font-weight:900;color:#0b1622;background:var(--nv);border-radius:999px;padding:2px 7px}",
     "header.olbx .olb-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex:none}",
     ".olb-sbtn{display:flex;align-items:center;gap:9px;height:40px;padding:0 9px 0 12px;border-radius:12px;border:1px solid var(--gl-line);background:var(--gl-btn);color:var(--gl-sub);font-family:inherit;font-weight:500;font-size:14px;width:180px;cursor:pointer}",
