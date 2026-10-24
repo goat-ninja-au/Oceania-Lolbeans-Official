@@ -214,6 +214,17 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .ap-drop:hover, .ap-drop.drag { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 8%, var(--bg)); }
 .ap-drop .ic { font-size: 2rem; } .ap-drop img { max-width: 100%; max-height: 260px; border-radius: 12px; margin-top: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
 .ap-checks { display: grid; gap: 10px; }
+.ap-vid { margin: 16px 0; border: 1px solid #e0a21b; background: rgba(224,162,27,.08); border-radius: 16px; padding: 16px; display: grid; gap: 8px; }
+.ap-vid-top { display: flex; gap: 12px; align-items: flex-start; } .ap-vid-top .ic { font-size: 1.8rem; line-height: 1; } .ap-vid-top b { font-size: 1.05rem; }
+.ap-vid .flabel { font-weight: 700; font-size: .92rem; margin-top: 4px; }
+.ap-vid-steps { margin: 0; padding-left: 20px; display: grid; gap: 3px; font-size: .93rem; }
+.ap-vid input { width: 100%; font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; }
+.ap-steperr { margin: 16px 0 0; background: rgba(217,80,92,.12); border: 1px solid #d9505c; color: #c03844; border-radius: 12px; padding: 10px 14px; font-weight: 700; }
+:root[data-mode="dark"] .ap-steperr { color: #ff8a93; }
+.need { outline: 2px solid #d9505c; outline-offset: 4px; border-radius: 14px; }
+@keyframes apshake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+.shake { animation: apshake .4s; }
+@media (prefers-reduced-motion: reduce) { .shake { animation: none; } }
 .ap-check { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; cursor: pointer; font-size: .95rem; }
 .ap-check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--blue); }
 .ap-check a { color: var(--blue); font-weight: 700; }
@@ -357,6 +368,13 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
           <span class="ic">📸</span><b>Tap to add your ping screenshot</b><span class="muted">or drag it here</span>
           <img id="preview" alt="Your ping screenshot" hidden>
         </label>
+        <div class="ap-vid" id="vid-box" hidden>
+          <div class="ap-vid-top"><span class="ic">🎥</span><div><b>Top 20 video proof</b><p class="muted" id="vid-why">These times would put you in the top 20, so we need a video too.</p></div></div>
+          <ol class="ap-vid-steps"><li>Start a screen recording on the device you play on.</li><li>Open LOLBeans and go to your <b>stats / profile page</b>.</li><li><b>Reload the stats page</b> while recording, so we can see it's live.</li><li>Show your name and the times you're sending in, then stop the recording.</li><li>Upload it (YouTube unlisted, Google Drive, Medal or Streamable) and paste the link below.</li></ol>
+          <label class="flabel" for="vid-link">Video link</label>
+          <input id="vid-link" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/…  or a Google Drive / Medal link">
+          <small class="hint">Make sure anyone with the link can watch it.</small>
+        </div>
         <div class="ap-checks">
           <label class="ap-check"><input type="checkbox" id="video"><span>I've watched the video on how to see my times to <b>3 decimal places</b>, and my times are in that format.<a id="video-link" href="#" target="_blank" rel="noopener" hidden> Watch the video ↗</a></span></label>
           <label class="ap-check"><input type="checkbox" id="agree"><span>I agree that all times I submit are my own. Falsifying times or using someone else's account to get PBs is strictly prohibited and can lead to a suspension or a permanent ban from the Oceania Rankings.</span></label>
@@ -544,6 +562,8 @@ function check(m) {
   else h.textContent = "";
   return st;
 }
+function needVideo() { const P = projected(); return P.filled > 0 && P.rank <= 20; }
+function showVideoBox() { const need = needVideo(), P = projected(); $("vid-box").hidden = !need; if (need) $("vid-why").textContent = "These times would put you at #" + P.rank + " in Oceania. Everyone in the top 20 needs to send a video as well as the screenshot."; }
 function finalTimes() {
   return MAPS.map((_, m) => { const v = readT(m); const ok = /^\d{1,2}\.\d{3}$/.test(v) && +v >= 1 && +v < 60; if (!ok) return null; const n = +v; if (S.mode === "update" && S.current && S.current.t[m] != null && n >= S.current.t[m] - 0.0005) return null; return n; });
 }
@@ -603,25 +623,44 @@ function stepError(n) {
   }
   if (n === 3) {
     if (!S.proof) return "Add your ping screenshot.";
+    if (needVideo() && !/^https:\/\/\S{6,300}$/.test($("vid-link").value.trim())) return "Top 20 times need a video. Paste your video link (starting with https://).";
     if (!$("video").checked || !$("agree").checked) return "Tick both boxes to continue.";
   }
   return "";
 }
+// shows what's missing right above the button, so "Next" never looks like it does nothing
+function stepErr(k, msg) {
+  const sec = document.querySelector('section[data-step="' + k + '"]'); if (!sec) return;
+  let el = sec.querySelector(".ap-steperr");
+  document.querySelectorAll(".need").forEach(x => x.classList.remove("need"));
+  if (!msg) { if (el) el.remove(); return; }
+  if (!el) { el = document.createElement("p"); el.className = "ap-steperr"; el.setAttribute("role", "alert"); sec.querySelector(".ap-nav").before(el); }
+  el.textContent = "⚠️ " + msg;
+  const target = /screenshot/.test(msg) ? $("drop") : /boxes/.test(msg) ? sec.querySelector(".ap-checks") : /time|PB/.test(msg) ? $("grid") : /name|country|ranked name|Pick/i.test(msg) ? sec.querySelector(".ap-field") : null;
+  if (target) target.classList.add("need");
+  const btn = sec.querySelector("[data-next]"); if (btn) { btn.classList.remove("shake"); void btn.offsetWidth; btn.classList.add("shake"); }
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+document.addEventListener("input", () => { if (document.querySelector(".ap-steperr") && !stepError(S.step)) stepErr(S.step, ""); });
+document.addEventListener("change", () => { if (document.querySelector(".ap-steperr") && !stepError(S.step)) stepErr(S.step, ""); });
+document.addEventListener("click", () => setTimeout(() => { if (document.querySelector(".ap-steperr") && !stepError(S.step)) stepErr(S.step, ""); }, 0));
 function go(n) {
-  if (n > S.step) { for (let k = S.step; k < n; k++) { const e = stepError(k); if (e) { toast(e); return; } } }
+  if (n > S.step) { for (let k = S.step; k < n; k++) { const e = stepError(k); if (e) { stepErr(k, e); toast(e); return; } } }
+  stepErr(S.step, "");
   S.step = n;
   document.querySelectorAll("[data-step]").forEach(s => { s.hidden = +s.dataset.step !== n; });
   document.querySelectorAll(".ap-steps li").forEach(li => { const s = +li.dataset.s; li.classList.toggle("on", s === n); li.classList.toggle("done", s < n); });
   $("ap-prog").style.width = (n * 25) + "%";
+  if (n === 3) showVideoBox();
   if (n === 4) review();
   const top = $("ap").getBoundingClientRect().top + scrollY - 90; if (scrollY > top) scrollTo({ top, behavior: "smooth" });
 }
-function toast(msg) { let t = $("ap-toast"); if (!t) { t = document.createElement("div"); t.id = "ap-toast"; t.setAttribute("role", "alert"); t.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:60;background:#d9505c;color:#fff;font-weight:700;padding:12px 18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:calc(100vw - 32px)"; document.body.appendChild(t); } t.textContent = msg; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => { t.hidden = true; }, 3200); }
+function toast(msg) { let t = $("ap-toast"); if (!t) { t = document.createElement("div"); t.id = "ap-toast"; t.setAttribute("role", "alert"); t.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:60;background:#d9505c;color:#fff;font-weight:700;padding:12px 18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:calc(100vw - 32px)"; document.body.appendChild(t); } t.textContent = msg; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => { t.hidden = true; }, 5000); }
 function review() {
   const P = projected(), name = $("name").value.trim(), fl = S.country === "nz" ? "🇳🇿" : "🇦🇺";
   const list = MAPS.map((n, m) => { const v = P.t[m], cur = S.current ? S.current.t[m] : null; if (S.mode === "update" && v == null) return ""; return "<div><span>" + esc(n) + "</span><b class=\"" + (v == null ? "miss" : S.mode === "update" ? "pb" : "") + "\">" + (v == null ? "60 (no time)" : fmt(v)) + (S.mode === "update" && cur != null ? ' <small class="muted">was ' + fmt(cur) + "</small>" : "") + "</b></div>"; }).join("");
   $("review").innerHTML = '<div class="rv"><div class="rv-top"><div class="who"><small>' + (S.mode === "update" ? "Updating " + esc(S.current.name) : "New player") + "</small><b>" + fl + " " + esc(name) + "</b><small>" + P.total.toFixed(3) + "s total · " + P.mapsWithTime + "/27 maps" + ($("discord").value.trim() ? " · Discord: " + esc($("discord").value.trim()) : "") + '</small></div><div><small>You\'d be</small><span class="big">#' + P.rank + "</span></div></div>" +
-    '<div class="rv-list">' + list + "</div>" +
+    '<div class="rv-list">' + list + "</div>" + (needVideo() ? '<p class="rv-note">🎥 Top 20 video: <b>' + esc($("vid-link").value.trim()) + "</b></p>" : "") +
     '<p class="rv-note">An admin checks every application before it goes on the rankings. ' + (S.mode === "update" ? "Only times faster than your current ones are used." : "Maps you left empty count as 60s.") + "</p></div>";
 }
 async function submit(e) {
@@ -629,7 +668,7 @@ async function submit(e) {
   const btn = $("submit"), err = $("err"); err.hidden = true; btn.disabled = true; btn.textContent = "Sending…";
   try {
     const P = projected();
-    const r = await api({ action: "apply", name: $("name").value.trim(), country: S.country, discord: $("discord").value.trim(), current: S.mode === "update" && S.current ? S.current.name : "", times: P.t, agree: $("agree").checked, video: $("video").checked, proof: S.proof });
+    const r = await api({ action: "apply", name: $("name").value.trim(), country: S.country, discord: $("discord").value.trim(), current: S.mode === "update" && S.current ? S.current.name : "", times: P.t, agree: $("agree").checked, video: $("video").checked, proof: S.proof, videoLink: needVideo() ? $("vid-link").value.trim() : "" });
     if (!r || !r.ok) throw new Error((r && r.error) || "Something went wrong. Please try again.");
     $("ap").innerHTML = '<section class="ap-card ap-done"><span class="boom">🎉</span><h2>Application sent!</h2><p class="muted">Thanks ' + esc($("name").value.trim()) + "! An admin will check your times soon. If you're approved, you'll show up on the rankings at about <b>#" + P.rank + '</b>.</p><a class="btn btn-primary" href="rankings.html">Back to the rankings</a></section>';
     $("live").hidden = true; showStatus();

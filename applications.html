@@ -177,6 +177,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .app-res { font-weight: 700; padding: 10px 14px; border-radius: 12px; background: var(--bg); } .app-res.good { background: color-mix(in srgb, #2a9d5c 16%, var(--panel)); } .app-res.err { background: color-mix(in srgb, #d9505c 16%, var(--panel)); }
 .adm-empty { text-align: center; padding: 50px 20px; color: var(--muted); background: var(--panel); border-radius: 20px; border: 1px dashed var(--line); }
 
+.app-video { display: inline-flex; align-items: center; gap: 6px; margin: 8px 0; padding: 8px 14px; border-radius: 999px; background: rgba(224,162,27,.15); border: 1px solid #e0a21b; font-weight: 800; text-decoration: none; color: inherit; }
 </style>
 </head>
 <body style="margin:0">
@@ -318,6 +319,7 @@ function card(a) {
     (P.flags.length ? '<div class="app-flags">' + P.flags.map(f => '<span class="flag ' + f[0] + '">' + esc(f[1]) + "</span>").join("") + "</div>" : "") +
     "<details" + (pending ? " open" : "") + "><summary>Times</summary><div class=\"app-times\">" + rows + "</div></details>" +
     '<details class="app-proof" data-proof><summary>📸 Ping screenshot</summary><p class="muted">Loading…</p></details>' +
+    (/^https:\/\//.test(a.video || "") ? '<a class="app-video" href="' + esc(a.video) + '" target="_blank" rel="noopener noreferrer">🎥 Watch the top 20 video ↗</a>' : "") +
     (pending ? '<div class="app-act"><textarea placeholder="Reason (only needed if you decline)" maxlength="200"></textarea><button type="button" class="btn btn-no" data-act="decline">Decline</button><button type="button" class="btn btn-outline" data-act="dry">Preview</button><button type="button" class="btn btn-ok" data-act="approve">✅ Approve</button></div><div class="app-res" hidden></div>'
       : '<div class="app-res ' + (a.status === "approved" ? "good" : "err") + '">' + (a.status === "approved" ? "✅ Approved " + esc(a.decided) + (a.result ? " · " + esc(a.result) : "") : "❌ Declined " + esc(a.decided) + (a.note ? " · " + esc(a.note) : "")) + "</div>") + "</article>";
 }
