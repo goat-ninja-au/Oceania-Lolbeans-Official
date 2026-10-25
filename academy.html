@@ -122,6 +122,54 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   .olb-top nav[aria-label="Main"] a { padding: 12px; border-radius: 0; border-bottom: 1px solid var(--line); font-size: 1rem; }
   .olb-top nav[aria-label="Main"] a:last-child { border-bottom: 0; }
 }
+
+/* ---------- Academy: password homepage ---------- */
+.ac { background: #070f1a; color: #e6f1f9; }
+.ac a { color: inherit; }
+.ac-stage { position: relative; overflow: hidden; padding: 60px 0 70px; }
+.ac-bg { position: absolute; inset: -60px -60px auto; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; padding: 30px; filter: blur(6px) saturate(1.2); opacity: .32; transform: rotate(-6deg) scale(1.15); pointer-events: none; }
+.ac-bg .mt { border-radius: 14px; overflow: hidden; background: #123; aspect-ratio: 16/10; } .ac-bg img { width: 100%; height: 100%; object-fit: cover; }
+.ac-stage:before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 60% at 50% 40%, rgba(7,15,26,.55), #070f1a 75%), linear-gradient(180deg, rgba(7,15,26,.2), #070f1a); z-index: 1; }
+.ac-stage:after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(90,170,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(90,170,255,.05) 1px, transparent 1px); background-size: 34px 34px; z-index: 1; -webkit-mask: radial-gradient(closest-side, #000, transparent); mask: radial-gradient(closest-side, #000, transparent); pointer-events: none; }
+.ac-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+.ac-eyebrow { color: #9bf04a; font-weight: 800; font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; text-shadow: 0 0 10px rgba(155,240,74,.5); }
+.ac h1 { font-size: clamp(2.4rem, 5.4vw, 4rem); line-height: 1.02; font-weight: 900; letter-spacing: -.02em; margin: 12px 0 16px; color: #fff; }
+.ac h1 span { background: linear-gradient(90deg, #4aa8f0, #9bf04a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ac-lead { color: #9cb6c9; font-size: 1.15rem; max-width: 520px; }
+.ac-stats { display: flex; gap: 26px; flex-wrap: wrap; margin: 26px 0; } .ac-stats b { display: block; font-size: 1.8rem; font-weight: 900; line-height: 1.1; } .ac-stats span { color: #9cb6c9; font-size: .82rem; }
+.ac-feat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 600px; }
+.ac-feat div { background: rgba(255,255,255,.04); border: 1px solid #1f3a57; border-radius: 16px; padding: 14px; } .ac-feat .e { font-size: 1.5rem; } .ac-feat b { display: block; font-size: .95rem; margin: 4px 0 2px; } .ac-feat small { color: #9cb6c9; font-size: .8rem; line-height: 1.35; display: block; }
+.ac-lock { position: relative; background: linear-gradient(160deg, rgba(29,63,143,.35), rgba(13,26,38,.92) 60%); border: 1px solid #2a4b6a; border-radius: 26px; padding: 34px 30px 26px; box-shadow: 0 30px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06); }
+.ac-lock:before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; background: linear-gradient(140deg, rgba(74,168,240,.7), transparent 40%, transparent 60%, rgba(155,240,74,.6)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+.ac-pad { width: 78px; height: 78px; border-radius: 22px; margin: 0 auto 14px; display: grid; place-items: center; font-size: 36px; background: radial-gradient(circle at 40% 30%, #1d4f8f, #0b1d36); border: 1px solid #3a6a96; box-shadow: 0 0 30px rgba(74,168,240,.35); transition: transform .3s; }
+.ac-pad.open { transform: scale(1.08) rotate(-8deg); box-shadow: 0 0 40px rgba(155,240,74,.6); border-color: #9bf04a; }
+.ac-lock h2 { text-align: center; font-size: 1.6rem; font-weight: 900; color: #fff; } .ac-lock p.s { text-align: center; color: #9cb6c9; margin: 6px 0 20px; }
+.ac-inp { display: flex; align-items: center; gap: 10px; background: #0a1626; border: 1px solid #3a6a96; border-radius: 14px; padding: 0 8px 0 14px; height: 56px; box-shadow: 0 0 0 4px rgba(74,168,240,.12); cursor: text; }
+.ac-inp:focus-within { border-color: #9bf04a; box-shadow: 0 0 0 4px rgba(155,240,74,.15); }
+.ac-inp .ic { color: #9bf04a; } .ac-inp input { flex: 1; min-width: 0; background: none; border: 0; color: #fff; font: 600 1.05rem var(--font); outline: none; }
+.ac-inp .eye { background: none; border: 0; color: #9cb6c9; font: 700 .82rem var(--font); cursor: pointer; padding: 8px; }
+.ac-err { color: #ff8a93; font-weight: 700; margin: 10px 2px 0; }
+.ac-lock.shake { animation: acshake .4s; } @keyframes acshake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.ac-go { margin-top: 14px; width: 100%; height: 56px; border: 0; border-radius: 14px; background: linear-gradient(90deg, #9bf04a, #5fe0a0); color: #0b1622; font: 900 1.05rem var(--font); box-shadow: 0 0 24px rgba(155,240,74,.45); cursor: pointer; }
+.ac-go:hover { filter: brightness(1.06); }
+.ac-rem { margin-top: 14px; color: #9cb6c9; font-size: .9rem; } .ac-rem label { display: flex; gap: 8px; align-items: center; cursor: pointer; } .ac-rem input { accent-color: #9bf04a; width: 16px; height: 16px; }
+.ac-how { margin-top: 18px; padding-top: 16px; border-top: 1px solid #1f3a57; display: flex; gap: 12px; align-items: center; font-size: .9rem; color: #9cb6c9; }
+.ac-how .d { width: 40px; height: 40px; border-radius: 12px; background: #5865f2; display: grid; place-items: center; color: #fff; font-weight: 900; flex: none; } .ac-how b { color: #fff; } .ac-how a { color: #4aa8f0; font-weight: 800; }
+.ac-peek { position: relative; z-index: 2; margin-top: 44px; }
+.ac-peek h3, .ac-head .ac-eyebrow { font-size: .8rem; }
+.ac-peek h3 { letter-spacing: .14em; color: #9cb6c9; text-transform: uppercase; font-weight: 800; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; } .ac-peek h3:after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #27445c, transparent); }
+.ac-peek .row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.ac-peek .mt { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 16/10; border: 1px solid #1f3a57; }
+.ac-peek img { width: 100%; height: 100%; object-fit: cover; filter: blur(3px) grayscale(.4) brightness(.6); } .ac-peek span { position: absolute; left: 10px; bottom: 8px; font-weight: 800; font-size: .82rem; } .ac-peek .mt:after { content: "🔒"; position: absolute; right: 8px; top: 6px; font-size: .9rem; }
+.ac-in { padding: 40px 0 70px; }
+.ac-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; } .ac-head h2 { font-size: 2rem; font-weight: 900; color: #fff; } .ac-head p { color: #9cb6c9; }
+.ac-out { background: none; border: 1px solid #2a4b6a; color: #cfe2f0; border-radius: 999px; padding: 8px 16px; font: 700 .9rem var(--font); cursor: pointer; }
+.ac-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.mc { position: relative; display: block; border-radius: 16px; overflow: hidden; aspect-ratio: 16/10; border: 1px solid #1f3a57; text-decoration: none; transition: transform .15s, border-color .15s, box-shadow .15s; }
+.mc:hover { transform: translateY(-3px); border-color: #9bf04a; box-shadow: 0 0 20px rgba(155,240,74,.25); }
+.mc img { width: 100%; height: 100%; object-fit: cover; } .mc:before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(7,15,26,.9)); }
+.mc span { position: absolute; left: 12px; bottom: 26px; font-weight: 900; color: #fff; } .mc em { position: absolute; left: 12px; bottom: 8px; font-style: normal; font-size: .74rem; color: #9cb6c9; }
+@media (max-width: 900px) { .ac-inner { grid-template-columns: 1fr; } .ac-lock { order: -1; } .ac-feat { grid-template-columns: 1fr; } .ac-peek .row { grid-template-columns: repeat(3, 1fr); } .ac-bg { grid-template-columns: repeat(3, 1fr); } }
 </style>
 </head>
 <body style="margin:0">
@@ -148,16 +196,34 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   </div>
 </header>
 
-<main>
-  <section class="soon-wrap">
-    <div class="wrap">
-      <div class="eyebrow">Oceania LOLBeans Academy</div>
-      <h1>Coming soon</h1>
-      <p>Map-by-map video tutorials matched to your PB are on the way. Keep an eye on the Discord server for the launch.</p>
-      <div class="actions" style="justify-content:center">
-        <a class="btn btn-primary" href="join.html">Join the Discord</a>
-        <a class="btn btn-outline" href="rankings.html">View the rankings</a>
+<main class="ac">
+  <section class="ac-stage">
+    <div class="ac-bg" aria-hidden="true"><div class="mt"><img src="maps/BeaconBay.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/BoulderHill.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/CircusContest.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/DevilsTrick.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/EscapeTsunami.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/DashCup.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/LavaLake.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/GravityGates.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/HammerVille.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/JungleTemple.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/KittieKegs.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/MechaMaze.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/MillValley.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/MonsterManor.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/NastySeals.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/NeonCity.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/PolarPath.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/1-2-3RedLight.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/BeaconBay.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/BoulderHill.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/CircusContest.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/DevilsTrick.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/EscapeTsunami.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/DashCup.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/LavaLake.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/GravityGates.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/HammerVille.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/JungleTemple.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/KittieKegs.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/MechaMaze.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/MillValley.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/MonsterManor.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/NastySeals.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/NeonCity.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/PolarPath.png" alt="" loading="lazy"></div><div class="mt"><img src="maps/1-2-3RedLight.png" alt="" loading="lazy"></div></div>
+    <div class="wrap ac-inner">
+      <div>
+        <div class="ac-eyebrow">🎓 Oceania LOLBeans Academy</div>
+        <h1>Learn to run <span>every map faster</span></h1>
+        <p class="ac-lead">Map-by-map courses from Oceania's best. Tell us your time, and we'll show you exactly what to learn to hit your next target.</p>
+        <div class="ac-stats"><div><b>27</b><span>maps</span></div><div><b>4</b><span>levels each</span></div><div><b>100+</b><span>video lessons</span></div><div><b>🇦🇺 🇳🇿</b><span>made in Oceania</span></div></div>
+        <div class="ac-feat"><div><span class="e">🗺️</span><b>A course for every map</b><small>Routes, skips and tech, from Beacon Bay to UFO Attack</small></div><div><span class="e">🎯</span><b>Matched to your time</b><small>Enter your PB and get the lessons for your level</small></div><div><span class="e">🏆</span><b>Learn from the best</b><small>Record runs broken down step by step</small></div></div>
       </div>
+      <form class="ac-lock" id="ac-lock" autocomplete="off">
+        <div class="ac-pad" id="ac-pad">🔒</div>
+        <h2>Enter the Academy</h2>
+        <p class="s">Type the Academy password to unlock the courses.</p>
+        <label class="ac-inp"><span class="ic">🔑</span><input id="ac-pass" type="password" placeholder="Password" aria-label="Academy password" autocomplete="current-password"><button type="button" class="eye" id="ac-eye">Show</button></label>
+        <p class="ac-err" id="ac-err" role="alert" hidden></p>
+        <button class="ac-go" type="submit">Unlock the Academy →</button>
+        <div class="ac-rem"><label><input type="checkbox" id="ac-remember" checked> Remember me on this device</label></div>
+        <div class="ac-how"><span class="d">?</span><div><b>Don't have the password?</b><br>Ask <b>Goat(Ninja)</b> in the <a href="community.html">Community chat</a>, or message him on <a href="join.html">Discord</a>.</div></div>
+      </form>
+    </div>
+    <div class="wrap ac-peek" id="ac-peek"><h3>Inside the Academy</h3><div class="row"><div class="mt"><img src="maps/BeaconBay.png" alt=""><span>Beacon Bay</span></div><div class="mt"><img src="maps/BoulderHill.png" alt=""><span>Boulder Hill</span></div><div class="mt"><img src="maps/CircusContest.png" alt=""><span>Circus Contest</span></div><div class="mt"><img src="maps/DevilsTrick.png" alt=""><span>Devil's Trick</span></div><div class="mt"><img src="maps/EscapeTsunami.png" alt=""><span>Escape Tsunami</span></div><div class="mt"><img src="maps/DashCup.png" alt=""><span>Dash Cup</span></div></div></div>
+  </section>
+  <section class="ac-in" id="ac-in" hidden>
+    <div class="wrap">
+      <div class="ac-head"><div><div class="ac-eyebrow">🎓 You're in</div><h2>Pick a map</h2><p>Every map will get its own course, matched to your time. They're being built now.</p></div><button type="button" class="ac-out" id="ac-out">Lock the Academy</button></div>
+      <div class="ac-grid"><a class="mc" href="#" data-map="0"><img src="maps/BeaconBay.png" alt="" loading="lazy"><span>Beacon Bay</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="1"><img src="maps/BoulderHill.png" alt="" loading="lazy"><span>Boulder Hill</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="2"><img src="maps/CircusContest.png" alt="" loading="lazy"><span>Circus Contest</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="3"><img src="maps/DevilsTrick.png" alt="" loading="lazy"><span>Devil&#39;s Trick</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="4"><img src="maps/EscapeTsunami.png" alt="" loading="lazy"><span>Escape Tsunami</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="5"><img src="maps/DashCup.png" alt="" loading="lazy"><span>Dash Cup</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="6"><img src="maps/LavaLake.png" alt="" loading="lazy"><span>Lava Lake</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="7"><img src="maps/GravityGates.png" alt="" loading="lazy"><span>Gravity Gates</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="8"><img src="maps/HammerVille.png" alt="" loading="lazy"><span>Hammer Ville</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="9"><img src="maps/JungleTemple.png" alt="" loading="lazy"><span>Jungle Temple</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="10"><img src="maps/KittieKegs.png" alt="" loading="lazy"><span>Kittie Kegs</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="11"><img src="maps/MechaMaze.png" alt="" loading="lazy"><span>Mecha Maze</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="12"><img src="maps/MillValley.png" alt="" loading="lazy"><span>Mill Valley</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="13"><img src="maps/MonsterManor.png" alt="" loading="lazy"><span>Monster Manor</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="14"><img src="maps/NastySeals.png" alt="" loading="lazy"><span>Nasty Seals</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="15"><img src="maps/NeonCity.png" alt="" loading="lazy"><span>Neon City</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="16"><img src="maps/PolarPath.png" alt="" loading="lazy"><span>Polar Path</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="17"><img src="maps/1-2-3RedLight.png" alt="" loading="lazy"><span>1-2-3 Red Light</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="18"><img src="maps/RicketyRun.png" alt="" loading="lazy"><span>Rickety Run</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="19"><img src="maps/RiskyCliffs.png" alt="" loading="lazy"><span>Risky Cliffs</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="20"><img src="maps/SharkPark.png" alt="" loading="lazy"><span>Shark Park</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="21"><img src="maps/SillySlide.png" alt="" loading="lazy"><span>Silly Slide</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="22"><img src="maps/SpikySlopes.png" alt="" loading="lazy"><span>Spiky Slopes</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="23"><img src="maps/SplashDash.png" alt="" loading="lazy"><span>Splash Dash</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="24"><img src="maps/TrickyTraps.png" alt="" loading="lazy"><span>Tricky Traps</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="25"><img src="maps/TumbleTown.png" alt="" loading="lazy"><span>Tumble Town</span><em>Course coming soon</em></a><a class="mc" href="#" data-map="26"><img src="maps/UFOAttack.png" alt="" loading="lazy"><span>UFO Attack</span><em>Course coming soon</em></a></div>
     </div>
   </section>
 </main>
@@ -203,6 +269,38 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   }
   window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   top.addEventListener("focusin", function () { root.classList.remove("olb-hidden"); });
+})();
+</script>
+<script>
+// Academy lock. The password is stored only as a SHA-256 hash, so it can't be read from the page.
+(function () {
+  var PASS_HASH = "PASS_HASH_HERE"; // SHA-256 of the Academy password (lowercase hex)
+  var KEY = "olb-academy";
+  var $ = function (id) { return document.getElementById(id); };
+  async function sha(t) { var b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(function (x) { return x.toString(16).padStart(2, "0"); }).join(""); }
+  function open(fromLogin) {
+    $("ac-in").hidden = false; document.querySelector(".ac-stage").hidden = true;
+    if (fromLogin) window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function lock() { try { localStorage.removeItem(KEY); sessionStorage.removeItem(KEY); } catch (e) {} $("ac-in").hidden = true; document.querySelector(".ac-stage").hidden = false; $("ac-pass").value = ""; $("ac-pad").classList.remove("open"); }
+  try { if (PASS_HASH.length === 64 && (localStorage.getItem(KEY) === PASS_HASH || sessionStorage.getItem(KEY) === PASS_HASH)) open(false); } catch (e) {}
+  $("ac-eye").addEventListener("click", function () { var i = $("ac-pass"); i.type = i.type === "password" ? "text" : "password"; this.textContent = i.type === "password" ? "Show" : "Hide"; i.focus(); });
+  $("ac-lock").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var v = $("ac-pass").value.trim(), err = $("ac-err");
+    if (!v) { err.textContent = "Type the password first."; err.hidden = false; return; }
+    var h = await sha(v);
+    if (PASS_HASH.length === 64 && h === PASS_HASH) {
+      err.hidden = true; $("ac-pad").textContent = "🔓"; $("ac-pad").classList.add("open");
+      try { ($("ac-remember").checked ? localStorage : sessionStorage).setItem(KEY, h); } catch (x) {}
+      setTimeout(function () { open(true); }, 450);
+    } else {
+      err.textContent = "That's not the right password. Ask Goat(Ninja) if you need it."; err.hidden = false;
+      var f = $("ac-lock"); f.classList.remove("shake"); void f.offsetWidth; f.classList.add("shake"); $("ac-pass").select();
+    }
+  });
+  $("ac-out").addEventListener("click", lock);
+  document.querySelectorAll(".mc").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); }); });
 })();
 </script>
 <script type="module" src="auth-widget.js?v=6"></script>
