@@ -312,7 +312,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 <main class="cp">
   <div class="cp-wrap">
     <a class="cp-back" href="academy.html">← Back</a>
-    <div class="cp-hero"><img src="maps/BeaconBay.png" alt=""><div><div class="cp-eb">Map 01 · Academy</div><h1>Beacon Bay – <span>Level 1 Tutorial</span></h1><p>2 modules · about 50 seconds of video</p></div></div>
+    <div class="cp-hero"><img src="maps/BeaconBay.png" alt=""><div><div class="cp-eb">Map 01 · Academy</div><h1>Beacon Bay – <span>Level 1 Tutorial</span></h1><p>2 modules</p></div></div>
     <div class="cp-lv"><span class="on">Level 1</span><span>Level 2 · soon</span><span>Level 3 · soon</span><span>Level 4 · soon</span></div>
     <div class="cp-toc" role="navigation" aria-label="Table of contents"><h2>Table of Contents</h2><ol id="cp-toc"></ol></div>
     <div id="cp-mods"></div>
@@ -366,18 +366,18 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 (function () {
   var VIDEO = "academy/beacon-bay-level-1.mp4";
   var MODS = [
-    { poster: "academy/beacon-bay-level-1-m1.jpg", t: "Start + Avoiding the Hammers and the bhop", d: "Your spawn route, swerving the hammers, then the Beacon Bay bhop.", from: 0, to: 20.8,
-      tips: ["Spawn on red → take the red route. Spawn on blue → take the blue route.", "Swerve around the hammers, don't stop.", "Bhop across the plank bridges."] },
-    { poster: "academy/beacon-bay-level-1-m2.jpg", t: "Full run", d: "Three full runs that show how the bhop timing changes your time.", from: 20.8, to: null,
-      tips: ["It's all about when you jump: 34.583 → 34.483 → 34.383.", "The later you leave the platform, the faster your time. Just don't fall!"] }
+    { poster: "academy/beacon-bay-level-1-m1.jpg", t: "Start + Avoiding the Hammers and the bhop", d: "The full tutorial: your spawn route, the hammers, the bhop and how your jump timing changes your time.", from: 0, to: null,
+      tips: ["Spawn on red → take the red route. Spawn on blue → take the blue route.", "Swerve around the hammers, don't stop.", "Bhop across the plank bridges.", "It's all about when you jump: 34.583 → 34.483 → 34.383.", "The later you leave the platform, the faster your time. Just don't fall!"] },
+    { t: "Full run", d: "One full run from spawn to finish. Put everything together.", yt: "8MHQE-gq-fk",
+      tips: ["Watch the whole route, then try to copy it start to finish."] }
   ];
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
   var mmss = function (s) { s = Math.round(s); return Math.floor(s / 60) + ":" + ("0" + s % 60).slice(-2); };
   var toc = "", h = "";
   MODS.forEach(function (m, i) {
-    var n = i + 1, len = m.to ? m.to - m.from : null;
-    toc += '<li><a href="#m' + n + '"><i>' + n + "</i>Module " + n + ": " + esc(m.t) + "<small>" + mmss(m.from) + "</small></a></li>";
+    var n = i + 1, len = m.to && !m.yt ? m.to - m.from : null;
+    toc += '<li><a href="#m' + n + '"><i>' + n + "</i>Module " + n + ": " + esc(m.t) + "<small>" + (m.yt ? "YouTube" : "Full video") + "</small></a></li>";
     h += '<section class="cp-mod" id="m' + n + '"><div class="cp-mh"><div class="cp-num">' + ("0" + n).slice(-2) + "</div><div><h3>Module " + n + ": " + esc(m.t) + "</h3><p>" + esc(m.d) + "</p></div>" + (len ? '<span class="cp-dur">' + mmss(len) + "</span>" : "") + "</div>" +
       '<ul class="cp-tips">' + m.tips.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ul>" +
       '<button type="button" class="cp-watch" data-i="' + i + '">▶ Watch</button><div class="cp-slot"></div></section>';
@@ -389,6 +389,13 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var m = MODS[i], el = $("m" + (i + 1));
     if (open && open.i === i) { stop(); return; }
     stop();
+    if (m.yt) {
+      var f = document.createElement("iframe"); f.src = "https://www.youtube-nocookie.com/embed/" + m.yt + "?autoplay=1&rel=0&playsinline=1";
+      f.title = m.t; f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true; f.style.cssText = "width:100%;height:100%;border:0;display:block";
+      var yb = document.createElement("div"); yb.className = "cp-vid"; yb.appendChild(f); el.querySelector(".cp-slot").appendChild(yb);
+      el.classList.add("open"); el.querySelector(".cp-watch").textContent = "■ Close"; open = { i: i, el: el };
+      el.scrollIntoView({ behavior: "smooth", block: "start" }); return;
+    }
     var v = document.createElement("video"); v.controls = true; v.playsInline = true; v.preload = "metadata"; if (m.poster) v.poster = m.poster;
     v.src = VIDEO + "#t=" + m.from + (m.to ? "," + m.to : "");
     var box = document.createElement("div"); box.className = "cp-vid"; box.appendChild(v); el.querySelector(".cp-slot").appendChild(box);
