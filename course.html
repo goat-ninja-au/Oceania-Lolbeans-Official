@@ -232,43 +232,46 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 @media (max-width: 900px) { .ac-inner { grid-template-columns: 1fr; } .ac-lock { order: -1; } .ac-feat { grid-template-columns: 1fr; } .ac-peek .row { grid-template-columns: repeat(3, 1fr); } .ac-bg { grid-template-columns: repeat(3, 1fr); } }
 
 /* ---------- Academy course page ---------- */
+/* each level has its own colour: Level 1 blue, Level 2 green */
+.cp { --a: #4aa8f0; --ar: 74,168,240; --a2: #8fd8ff; }
+.cp[data-lv="2"] { --a: #9bf04a; --ar: 155,240,74; --a2: #5fe0a0; }
 .cp { background: #070f1a; color: #e6f1f9; min-height: 70vh; position: relative; overflow: hidden; }
-.cp:before { content: ""; position: absolute; inset: 0; background: radial-gradient(50% 35% at 10% 0%, rgba(74,168,240,.16), transparent 70%), radial-gradient(40% 30% at 95% 5%, rgba(155,240,74,.10), transparent 70%); pointer-events: none; }
+.cp:before { content: ""; position: absolute; inset: 0; background: radial-gradient(50% 35% at 10% 0%, rgba(var(--ar),.16), transparent 70%), radial-gradient(40% 30% at 95% 5%, rgba(var(--ar),.10), transparent 70%); pointer-events: none; }
 .cp-wrap { position: relative; max-width: 1100px; margin: 0 auto; padding: 34px max(20px, env(safe-area-inset-left, 0px)) 80px; }
 .cp-hero { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid #1f3a57; min-height: 220px; display: flex; align-items: end; padding: 26px; }
 .cp-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 .cp-hero:after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(7,15,26,.92), rgba(7,15,26,.55) 60%, rgba(7,15,26,.2)); z-index: 1; }
 .cp-hero > div { position: relative; z-index: 2; }
-.cp-eb { color: #9bf04a; font-weight: 800; font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; text-shadow: 0 0 10px rgba(155,240,74,.5); }
+.cp-eb { color: var(--a); font-weight: 800; font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; text-shadow: 0 0 10px rgba(var(--ar),.5); }
 .cp-hero h1 { font-size: clamp(1.9rem, 4.4vw, 3rem); font-weight: 900; line-height: 1.05; letter-spacing: -.02em; color: #fff; margin: 8px 0 6px; }
-.cp-hero h1 span { background: linear-gradient(90deg, #4aa8f0, #9bf04a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.cp-hero h1 span { background: linear-gradient(90deg, var(--a2), var(--a)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .cp-hero p { color: #cfe2f0; }
 .cp-back { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px; background: rgba(255,255,255,.05); border: 1px solid #2a4b6a; color: #e6f1f9; border-radius: 12px; padding: 9px 16px; font: 800 .95rem var(--font); text-decoration: none; transition: border-color .15s, background .15s; }
-.cp-back:hover { border-color: #9bf04a; background: rgba(155,240,74,.08); }
+.cp-back:hover { border-color: var(--a); background: rgba(var(--ar),.08); }
 .cp-lv { display: flex; gap: 8px; margin: 18px 0; flex-wrap: wrap; }
 .cp-lv span { border-radius: 999px; padding: 7px 16px; font-weight: 800; font-size: .88rem; border: 1px solid #1f3a57; color: #7f9bb1; background: rgba(255,255,255,.03); }
-.cp-lv a { text-decoration: none; cursor: pointer; display: flex; } .cp-lv a span:hover { border-color: #9bf04a; color: #fff; }
-.cp-lv span.on { color: #0b1622; background: #9bf04a; border-color: #9bf04a; box-shadow: 0 0 16px rgba(155,240,74,.4); }
+.cp-lv a { text-decoration: none; cursor: pointer; display: flex; } .cp-lv a span:hover { border-color: var(--a); color: #fff; }
+.cp-lv span.on { color: #0b1622; background: var(--a); border-color: var(--a); box-shadow: 0 0 16px rgba(var(--ar),.4); }
 .cp-toc { background: linear-gradient(180deg, #10233a, #0b1726); border: 1px solid #1f3a57; border-radius: 20px; padding: 22px 26px; margin-bottom: 22px; }
 .cp-toc h2 { font-size: 1.2rem; font-weight: 900; color: #fff; margin-bottom: 10px; }
 .cp-toc ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
-.cp-toc a { display: flex; align-items: center; gap: 12px; color: #4aa8f0; font-weight: 800; text-decoration: none; padding: 6px 0; }
-.cp-toc a:hover { color: #9bf04a; }
-.cp-toc a i { font-style: normal; font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: #0b1622; background: #4aa8f0; border-radius: 7px; padding: 1px 7px; }
-.cp-toc a:hover i { background: #9bf04a; }
+.cp-toc a { display: flex; align-items: center; gap: 12px; color: var(--a); font-weight: 800; text-decoration: none; padding: 6px 0; }
+.cp-toc a:hover { color: var(--a); }
+.cp-toc a i { font-style: normal; font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: #0b1622; background: var(--a); border-radius: 7px; padding: 1px 7px; }
+.cp-toc a:hover i { background: var(--a); }
 .cp-toc small { white-space: nowrap; margin-left: auto; color: #7f9bb1; font-weight: 600; font-family: ui-monospace, Menlo, monospace; }
 .cp-mod { background: linear-gradient(180deg, rgba(16,35,58,.9), rgba(11,23,38,.95)); border: 1px solid #1f3a57; border-radius: 20px; padding: 22px 26px; margin-bottom: 16px; scroll-margin-top: 90px; transition: border-color .2s, box-shadow .2s; }
-.cp-mod.open { border-color: rgba(155,240,74,.6); box-shadow: 0 0 0 1px rgba(155,240,74,.25), 0 0 30px rgba(155,240,74,.12); }
+.cp-mod.open { border-color: rgba(var(--ar),.6); box-shadow: 0 0 0 1px rgba(var(--ar),.25), 0 0 30px rgba(var(--ar),.12); }
 .cp-mh { display: flex; align-items: center; gap: 16px; }
-.cp-num { flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font: 900 1.1rem ui-monospace, Menlo, monospace; color: #9bf04a; border: 1px solid rgba(155,240,74,.5); background: rgba(155,240,74,.08); }
+.cp-num { flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font: 900 1.1rem ui-monospace, Menlo, monospace; color: var(--a); border: 1px solid rgba(var(--ar),.5); background: rgba(var(--ar),.08); }
 .cp-mh h3 { font-size: 1.15rem; font-weight: 900; color: #fff; line-height: 1.2; }
 .cp-mh p { color: #9cb6c9; font-size: .92rem; margin-top: 2px; }
 .cp-mh .cp-dur { margin-left: auto; color: #7f9bb1; font: 600 .82rem ui-monospace, Menlo, monospace; flex: none; }
 .cp-tips { margin: 14px 0 0 62px; padding: 0; list-style: none; display: grid; gap: 6px; color: #cfe2f0; font-size: .95rem; }
-.cp-tips li:before { content: "›"; color: #9bf04a; font-weight: 900; margin-right: 8px; }
-.cp-watch { margin: 16px 0 0 62px; display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 12px; padding: 11px 22px; background: linear-gradient(90deg, #4aa8f0, #5fc0f0); color: #06121e; font: 900 .98rem var(--font); cursor: pointer; box-shadow: 0 0 18px rgba(74,168,240,.35); transition: transform .15s, filter .15s; }
+.cp-tips li:before { content: "›"; color: var(--a); font-weight: 900; margin-right: 8px; }
+.cp-watch { margin: 16px 0 0 62px; display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 12px; padding: 11px 22px; background: linear-gradient(90deg, var(--a), var(--a2)); color: #06121e; font: 900 .98rem var(--font); cursor: pointer; box-shadow: 0 0 18px rgba(var(--ar),.35); transition: transform .15s, filter .15s; }
 .cp-watch:hover { filter: brightness(1.08); } .cp-watch:active { transform: scale(.97); }
-.cp-mod.open .cp-watch { background: linear-gradient(90deg, #9bf04a, #5fe0a0); box-shadow: 0 0 18px rgba(155,240,74,.35); }
+.cp-mod.open .cp-watch { background: linear-gradient(90deg, var(--a), var(--a2)); box-shadow: 0 0 18px rgba(var(--ar),.35); }
 .cp-vid { margin: 16px 0 0; border-radius: 16px; overflow: hidden; border: 1px solid #1f3a57; background: #000; aspect-ratio: 16/9; }
 .cp-vid video { width: 100%; height: 100%; display: block; }
 @media (max-width: 600px) { .cp-tips, .cp-watch { margin-left: 0; } .cp-mh .cp-dur { display: none; } .cp-hero { min-height: 180px; padding: 18px; } }
@@ -310,7 +313,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   </div>
 </header>
 
-<main class="cp">
+<main class="cp" id="cp-main">
   <div class="cp-wrap">
     <a class="cp-back" href="academy.html">← Back</a>
     <div class="cp-hero"><img src="maps/BeaconBay.png" alt=""><div><div class="cp-eb">Map 01 · Academy</div><h1>Beacon Bay – <span id="cp-lvname">Level 1 Tutorial</span></h1><p id="cp-count"></p></div></div>
@@ -381,6 +384,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   };
   var LV = +((/[?&]level=(\d)/.exec(location.search) || [])[1] || 1); if (!LEVELS[LV]) LV = 1;
   var L = LEVELS[LV], VIDEO = L.video, MODS = L.mods;
+  document.getElementById("cp-main").setAttribute("data-lv", LV);
   document.getElementById("cp-lvname").textContent = L.name;
   document.getElementById("cp-count").textContent = MODS.length + " modules";
   document.title = "Beacon Bay · Level " + LV + " · Oceania LOLBeans Academy";
