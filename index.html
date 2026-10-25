@@ -200,6 +200,49 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .h-discord h2 { font-size: clamp(1.6rem, 4vw, 2.3rem); } .h-discord p { color: #e2e6ff; font-size: 1.05rem; margin: 10px auto 22px; }
 @media (max-width: 900px) { .h-hg, .h-lb, .h-comm { grid-template-columns: 1fr; } .h-g3 { grid-template-columns: 1fr; } .h-champ { grid-template-columns: 1fr; text-align: left; } .h-champ .ic { display: none; } .h-champ .right { justify-items: start; } }
 @media (max-width: 520px) { .h-hero { padding-top: 34px; } .h-btn { height: 44px; padding: 0 16px; } .h-stats { gap: 18px; } .h-pod { padding: 18px 10px 0; gap: 6px; } .h-pod .av { width: 50px; height: 50px; } .h-pod .p1 .av { width: 62px; height: 62px; } .lr { grid-template-columns: 24px 32px minmax(0, 1fr) auto 40px; gap: 8px; padding: 8px; } .h-tiles { grid-template-columns: 1fr 1fr; } .cd div { min-width: 60px; } }
+
+/* ---------- Academy showcase ---------- */
+.hx { position: relative; border-radius: 28px; overflow: hidden; background: #050b14; color: #e6f1f9; border: 1px solid #1c3550; padding: 46px 44px; isolation: isolate; }
+.hx:before { content: ""; position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(rgba(74,168,240,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(74,168,240,.07) 1px, transparent 1px); background-size: 40px 40px; -webkit-mask: radial-gradient(80% 90% at 70% 50%, #000, transparent); mask: radial-gradient(80% 90% at 70% 50%, #000, transparent); animation: hx-grid 18s linear infinite; }
+.hx:after { content: ""; position: absolute; inset: 0; z-index: -2; background: radial-gradient(45% 60% at 80% 30%, rgba(74,168,240,.28), transparent 70%), radial-gradient(40% 55% at 10% 100%, rgba(155,240,74,.16), transparent 70%); }
+@keyframes hx-grid { to { background-position: 0 40px, 40px 0; } }
+.hx-g { display: grid; grid-template-columns: 1fr 1.25fr; gap: 40px; align-items: center; }
+.hx-eb { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: .75rem; letter-spacing: .2em; text-transform: uppercase; color: #8fd8ff; border: 1px solid rgba(74,168,240,.4); background: rgba(74,168,240,.08); border-radius: 999px; padding: 6px 14px; }
+.hx-eb i { width: 7px; height: 7px; border-radius: 50%; background: #9bf04a; box-shadow: 0 0 10px #9bf04a; animation: hx-pulse 1.6s ease-in-out infinite; }
+@keyframes hx-pulse { 50% { opacity: .3; } }
+.hx h2 { font-size: clamp(2rem, 4.2vw, 3.3rem); line-height: 1; font-weight: 900; letter-spacing: -.03em; color: #fff; margin: 16px 0 14px; }
+.hx h2 span { background: linear-gradient(90deg, #8fd8ff, #4aa8f0 40%, #9bf04a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hx p.l { color: #9cb6c9; font-size: 1.08rem; max-width: 520px; }
+.hx-st { display: flex; gap: 28px; margin: 26px 0 28px; flex-wrap: wrap; }
+.hx-st b { display: block; font: 800 2rem ui-monospace, Menlo, Consolas, monospace; color: #fff; line-height: 1; } .hx-st span { font-size: .78rem; color: #7f9bb1; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
+.hx-cta { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(90deg, #4aa8f0, #8fd8ff); color: #04101c; font-weight: 900; text-decoration: none; border-radius: 14px; padding: 14px 24px; box-shadow: 0 0 30px rgba(74,168,240,.45); transition: transform .15s, box-shadow .15s; }
+.hx-cta:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(74,168,240,.65); }
+.hx-cta + a { margin-left: 16px; color: #8fd8ff; font-weight: 800; text-decoration: none; }
+.hx-scr { position: relative; perspective: 1400px; }
+.hx-mon { position: relative; border-radius: 18px; overflow: hidden; border: 1px solid rgba(143,216,255,.35); transform: rotateY(-9deg) rotateX(3deg); box-shadow: -30px 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(74,168,240,.15), 0 0 60px rgba(74,168,240,.25); aspect-ratio: 16/9; background: #000; }
+.hx-mon img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .6s; }
+.hx-mon:before { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, transparent, rgba(143,216,255,.18) 50%, transparent); height: 30%; animation: hx-scan 3.2s linear infinite; pointer-events: none; }
+@keyframes hx-scan { from { transform: translateY(-100%); } to { transform: translateY(400%); } }
+.hx-mon:after { content: ""; position: absolute; inset: 0; z-index: 1; background: repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 1px, transparent 1px 3px); pointer-events: none; }
+.hx-br { position: absolute; width: 26px; height: 26px; border: 3px solid #8fd8ff; z-index: 3; filter: drop-shadow(0 0 6px #4aa8f0); }
+.hx-br.a { left: 10px; top: 10px; border-right: 0; border-bottom: 0; } .hx-br.b { right: 10px; top: 10px; border-left: 0; border-bottom: 0; } .hx-br.c { left: 10px; bottom: 10px; border-right: 0; border-top: 0; } .hx-br.d { right: 10px; bottom: 10px; border-left: 0; border-top: 0; }
+.hx-rec { position: absolute; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 3; font: 800 .72rem ui-monospace, Menlo, monospace; color: #fff; background: rgba(0,0,0,.55); border-radius: 6px; padding: 3px 8px; letter-spacing: .08em; }
+.hx-rec i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ff4d5e; margin-right: 6px; animation: hx-pulse 1s infinite; }
+.hx-chip { position: absolute; z-index: 4; display: flex; align-items: center; gap: 10px; background: rgba(6,16,30,.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(143,216,255,.35); border-radius: 14px; padding: 10px 14px; font-weight: 800; font-size: .85rem; color: #fff; box-shadow: 0 14px 30px rgba(0,0,0,.45); animation: hx-float 5s ease-in-out infinite; white-space: nowrap; }
+.hx-chip small { display: block; font-weight: 700; font-size: .68rem; color: #7f9bb1; letter-spacing: .06em; text-transform: uppercase; }
+.hx-chip .ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: rgba(74,168,240,.18); font-size: 1rem; }
+.hx-chip.p1 { left: -26px; top: 14%; } .hx-chip.p2 { right: -18px; top: 40%; animation-delay: -1.7s; } .hx-chip.p3 { left: 8%; bottom: -22px; animation-delay: -3.2s; }
+.hx-chip.p2 .ic { background: rgba(155,240,74,.18); } .hx-chip.p3 .ic { background: rgba(255,107,154,.2); }
+@keyframes hx-float { 50% { transform: translateY(-8px); } }
+.hx-f { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 42px; }
+.hx-f div { position: relative; background: rgba(255,255,255,.035); border: 1px solid #1c3550; border-radius: 18px; padding: 18px; transition: border-color .2s, transform .2s; overflow: hidden; }
+.hx-f div:hover { border-color: rgba(143,216,255,.6); transform: translateY(-3px); }
+.hx-f div:before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, #4aa8f0, transparent); opacity: .7; }
+.hx-f .e { font-size: 1.4rem; } .hx-f b { display: block; color: #fff; font-size: 1rem; margin: 6px 0 4px; } .hx-f span { color: #8aa6bb; font-size: .86rem; line-height: 1.4; display: block; }
+@media (max-width: 900px) { .hx { padding: 30px 20px; } .hx-g { grid-template-columns: 1fr; gap: 40px; } .hx-mon { transform: none; } .hx-chip.p1 { left: -6px; } .hx-chip.p2 { right: -6px; } .hx-f { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .hx-scr { display: flex; flex-wrap: wrap; gap: 8px; } .hx-mon { width: 100%; margin-bottom: 4px; } .hx-chip { position: static; animation: none; flex: 1 1 auto; } }
+@media (max-width: 480px) { .hx-chip { font-size: .74rem; padding: 7px 10px; } .hx-chip .ic { width: 26px; height: 26px; } .hx-st { gap: 18px; } .hx-st b { font-size: 1.6rem; } .hx-cta + a { display: block; margin: 14px 0 0; } }
+@media (prefers-reduced-motion: reduce) { .hx:before, .hx-mon:before, .hx-chip, .hx-eb i { animation: none; } }
 </style>
 </head>
 <body style="margin:0">
@@ -248,6 +291,30 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     <div class="h-lb"><div class="h-card h-pod" id="h-pod"></div><div class="h-card h-list" id="h-list"><p class="h-empty">Loading the rankings…</p></div></div>
   </div></section>
 
+  <section class="h-sec"><div class="wrap"><div class="hx">
+    <div class="hx-g">
+      <div>
+        <span class="hx-eb"><i></i>Oceania LOLBeans Academy</span>
+        <h2>Train smarter.<br><span>Built with the latest tech.</span></h2>
+        <p class="l">Every map broken down into short modules: slow-motion replays, on-screen routes and step-by-step tricks from Oceania's best. Type your PB and it shows you exactly which level to train.</p>
+        <div class="hx-st"><div><b>27</b><span>maps</span></div><div><b>4</b><span>levels each</span></div><div><b>0.25×</b><span>slow-mo</span></div></div>
+        <a class="hx-cta" href="academy.html">Enter the Academy →</a><a href="academy.html">How it works</a>
+      </div>
+      <div class="hx-scr">
+        <div class="hx-mon"><img id="hx-img" src="academy/boulder-hill-level-1-m2.jpg" alt="An Academy lesson with on-screen tips"><span class="hx-br a"></span><span class="hx-br b"></span><span class="hx-br c"></span><span class="hx-br d"></span><span class="hx-rec"><i></i>LESSON</span></div>
+        <div class="hx-chip p1"><span class="ic">🎯</span><span>PB 34.420<small>→ Level 2 unlocked</small></span></div>
+        <div class="hx-chip p2"><span class="ic">🧩</span><span>Module 2 of 4<small>Edge + checkpoint</small></span></div>
+        <div class="hx-chip p3"><span class="ic">🐢</span><span>0.25× slow-mo<small>Frame-by-frame</small></span></div>
+      </div>
+    </div>
+    <div class="hx-f">
+      <div><span class="e">🎬</span><b>Pro breakdowns</b><span>Clean edits with rings, arrows and tags right on the gameplay.</span></div>
+      <div><span class="e">🧩</span><b>Bite-size modules</b><span>Watch only the part you need. Each module jumps to its clip.</span></div>
+      <div><span class="e">📈</span><b>PB-matched levels</b><span>Beginner to Pro. Your time decides where you start.</span></div>
+      <div><span class="e">📱</span><b>Anywhere</b><span>Built for phone and desktop. Practise between runs.</span></div>
+    </div>
+  </div></div></section>
+
   <section class="h-sec"><div class="wrap">
     <div class="h-sh"><div><div class="eyebrow">This week</div><h2>What's happening</h2></div><a href="news.html">More in the news →</a></div>
     <div class="h-g3">
@@ -266,7 +333,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     <div class="h-card h-chat"><div class="h-sh sm"><div><div class="eyebrow">Community chat <span class="h-live" id="h-live" hidden>LIVE</span></div><h2>Latest in the chat</h2></div><a href="community.html">Open chat →</a></div><div id="h-msgs"><p class="h-empty">Loading…</p></div></div>
     <div class="h-tiles">
       <a class="h-card h-tile" href="players.html"><span class="e">👥</span><b>Players</b><span>Every player's card and profile</span></a>
-      <a class="h-card h-tile" href="academy.html"><span class="e">🎓</span><b>Academy</b><span>Map guides and tips (coming soon)</span></a>
+      <a class="h-card h-tile" href="academy.html"><span class="e">🎓</span><b>Academy</b><span>Map courses, now live</span></a>
       <a class="h-card h-tile" href="rankings.html?s=h2h"><span class="e">⚔️</span><b>Head to Head</b><span>Compare you vs anyone</span></a>
       <a class="h-card h-tile" href="app.html"><span class="e">📱</span><b>Get the app</b><span>Install it on your phone</span></a>
     </div>
@@ -434,6 +501,12 @@ document.querySelectorAll(".copy").forEach(function (btn) {
     $("h-msgs").innerHTML = docs.map(function (m) { var tx = m.text ? m.text.replace(/\|\|[^|]+\|\|/g, "▒▒▒") : m.img ? "📷 Sent a photo" : m.aud ? "🎤 Voice message" : ""; return '<div class="msg">' + av(m.name) + "<div><b>" + esc(m.name) + "</b><time>" + (m.at ? ago(m.at) : "") + "</time><p>" + esc(tx.length > 140 ? tx.slice(0, 140) + "…" : tx) + "</p></div></div>"; }).join("");
   }).catch(function () { $("h-msgs").innerHTML = '<p class="h-empty"><a href="community.html">Open the chat →</a></p>'; });
 })();
+</script>
+<script>
+// Academy showcase: cycle the lesson screen
+(function () { var i = 0, im = document.getElementById("hx-img"); if (!im || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var L = ["academy/boulder-hill-level-1-m2.jpg", "academy/beacon-bay-level-2-m1.jpg", "academy/boulder-hill-level-1-m3.jpg", "academy/beacon-bay-level-1-m1.jpg"];
+  setInterval(function () { i = (i + 1) % L.length; im.style.opacity = 0; setTimeout(function () { im.src = L[i]; im.style.opacity = 1; }, 500); }, 3500); })();
 </script>
 <script type="module" src="auth-widget.js?v=7"></script>
 <script src="site-nav.js?v=5" defer></script>
