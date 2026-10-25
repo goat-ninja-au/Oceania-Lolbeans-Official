@@ -247,6 +247,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .cp-back:hover { border-color: #9bf04a; background: rgba(155,240,74,.08); }
 .cp-lv { display: flex; gap: 8px; margin: 18px 0; flex-wrap: wrap; }
 .cp-lv span { border-radius: 999px; padding: 7px 16px; font-weight: 800; font-size: .88rem; border: 1px solid #1f3a57; color: #7f9bb1; background: rgba(255,255,255,.03); }
+.cp-lv a { text-decoration: none; cursor: pointer; display: flex; } .cp-lv a span:hover { border-color: #9bf04a; color: #fff; }
 .cp-lv span.on { color: #0b1622; background: #9bf04a; border-color: #9bf04a; box-shadow: 0 0 16px rgba(155,240,74,.4); }
 .cp-toc { background: linear-gradient(180deg, #10233a, #0b1726); border: 1px solid #1f3a57; border-radius: 20px; padding: 22px 26px; margin-bottom: 22px; }
 .cp-toc h2 { font-size: 1.2rem; font-weight: 900; color: #fff; margin-bottom: 10px; }
@@ -255,7 +256,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .cp-toc a:hover { color: #9bf04a; }
 .cp-toc a i { font-style: normal; font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: #0b1622; background: #4aa8f0; border-radius: 7px; padding: 1px 7px; }
 .cp-toc a:hover i { background: #9bf04a; }
-.cp-toc small { margin-left: auto; color: #7f9bb1; font-weight: 600; font-family: ui-monospace, Menlo, monospace; }
+.cp-toc small { white-space: nowrap; margin-left: auto; color: #7f9bb1; font-weight: 600; font-family: ui-monospace, Menlo, monospace; }
 .cp-mod { background: linear-gradient(180deg, rgba(16,35,58,.9), rgba(11,23,38,.95)); border: 1px solid #1f3a57; border-radius: 20px; padding: 22px 26px; margin-bottom: 16px; scroll-margin-top: 90px; transition: border-color .2s, box-shadow .2s; }
 .cp-mod.open { border-color: rgba(155,240,74,.6); box-shadow: 0 0 0 1px rgba(155,240,74,.25), 0 0 30px rgba(155,240,74,.12); }
 .cp-mh { display: flex; align-items: center; gap: 16px; }
@@ -312,8 +313,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 <main class="cp">
   <div class="cp-wrap">
     <a class="cp-back" href="academy.html">← Back</a>
-    <div class="cp-hero"><img src="maps/BeaconBay.png" alt=""><div><div class="cp-eb">Map 01 · Academy</div><h1>Beacon Bay – <span>Level 1 Tutorial</span></h1><p>2 modules</p></div></div>
-    <div class="cp-lv"><span class="on">Level 1</span><span>Level 2 · soon</span><span>Level 3 · soon</span><span>Level 4 · soon</span></div>
+    <div class="cp-hero"><img src="maps/BeaconBay.png" alt=""><div><div class="cp-eb">Map 01 · Academy</div><h1>Beacon Bay – <span id="cp-lvname">Level 1 Tutorial</span></h1><p id="cp-count"></p></div></div>
+    <div class="cp-lv" id="cp-lv"></div>
     <div class="cp-toc" role="navigation" aria-label="Table of contents"><h2>Table of Contents</h2><ol id="cp-toc"></ol></div>
     <div id="cp-mods"></div>
   </div>
@@ -364,20 +365,34 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 <script>
 // Course page. Each module plays its part of the map's tutorial video.
 (function () {
-  var VIDEO = "academy/beacon-bay-level-1.mp4";
-  var MODS = [
-    { poster: "academy/beacon-bay-level-1-m1.jpg", t: "Start + Avoiding the Hammers and the bhop", d: "The full tutorial: your spawn route, the hammers, the bhop and how your jump timing changes your time.", from: 0, to: null,
-      tips: ["Spawn on red → take the red route. Spawn on blue → take the blue route.", "Swerve around the hammers, don't stop.", "Bhop across the plank bridges.", "It's all about when you jump: 34.583 → 34.483 → 34.383.", "The later you leave the platform, the faster your time. Just don't fall!"] },
-    { t: "Full run", d: "One full run from spawn to finish. Put everything together.", yt: "8MHQE-gq-fk",
-      tips: ["Watch the whole route, then try to copy it start to finish."] }
-  ];
+  var LEVELS = {
+    1: { name: "Level 1 Tutorial", video: "academy/beacon-bay-level-1.mp4", mods: [
+      { poster: "academy/beacon-bay-level-1-m1.jpg", t: "Start + Avoiding the Hammers and the bhop", d: "The full tutorial: your spawn route, the hammers, the bhop and how your jump timing changes your time.", from: 0, to: null,
+        tips: ["Spawn on red → take the red route. Spawn on blue → take the blue route.", "Swerve around the hammers, don't stop.", "Bhop across the plank bridges.", "It's all about when you jump: 34.583 → 34.483 → 34.383.", "The later you leave the platform, the faster your time. Just don't fall!"] },
+      { t: "Full run", d: "One full run from spawn to finish. Put everything together.", yt: "8MHQE-gq-fk",
+        tips: ["Watch the whole route, then try to copy it start to finish."] }
+    ] },
+    2: { name: "Level 2 · The wall bump", video: "academy/beacon-bay-level-2.mp4", mods: [
+      { poster: "academy/beacon-bay-level-2-m1.jpg", t: "Watch the trick", d: "A new trick discovered by kzs. It takes Beacon Bay solo from 34.383 down to 34.350. Watch his run, then see it in slow motion.", from: 0, to: 30.9,
+        tips: ["Watch the end of the plank bridge.", "kzs bumps into the wall, which gives him a small speed boost."] },
+      { poster: "academy/beacon-bay-level-2-m2.jpg", t: "How to do it", d: "Two steps, then a few tips. Take it slow the first few times.", from: 30.97, to: null,
+        tips: ["Step 1: stand in the 2nd section of the platform.", "Step 2: walk straight and gently bump into the wall.", "Don't slam into the wall, or the trick won't work.", "With practice you'll get 34.433–34.383 easily. 34.350 is harder, but you can 100% do it."] }
+    ] }
+  };
+  var LV = +((/[?&]level=(\d)/.exec(location.search) || [])[1] || 1); if (!LEVELS[LV]) LV = 1;
+  var L = LEVELS[LV], VIDEO = L.video, MODS = L.mods;
+  document.getElementById("cp-lvname").textContent = L.name;
+  document.getElementById("cp-count").textContent = MODS.length + " modules";
+  document.title = "Beacon Bay · Level " + LV + " · Oceania LOLBeans Academy";
+  var tabs = ""; for (var k = 1; k <= 4; k++) tabs += LEVELS[k] ? '<a href="?level=' + k + '"><span class="' + (k === LV ? "on" : "") + '">Level ' + k + "</span></a>" : "<span>Level " + k + " · soon</span>";
+  document.getElementById("cp-lv").innerHTML = tabs;
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
   var mmss = function (s) { s = Math.round(s); return Math.floor(s / 60) + ":" + ("0" + s % 60).slice(-2); };
   var toc = "", h = "";
   MODS.forEach(function (m, i) {
     var n = i + 1, len = m.to && !m.yt ? m.to - m.from : null;
-    toc += '<li><a href="#m' + n + '"><i>' + n + "</i>Module " + n + ": " + esc(m.t) + "<small>" + (m.yt ? "YouTube" : "Full video") + "</small></a></li>";
+    toc += '<li><a href="#m' + n + '"><i>' + n + "</i>Module " + n + ": " + esc(m.t) + "<small>" + (m.yt ? "YouTube" : !m.from && !m.to ? "Full video" : mmss(m.from) + "–" + (m.to ? mmss(m.to) : "end")) + "</small></a></li>";
     h += '<section class="cp-mod" id="m' + n + '"><div class="cp-mh"><div class="cp-num">' + ("0" + n).slice(-2) + "</div><div><h3>Module " + n + ": " + esc(m.t) + "</h3><p>" + esc(m.d) + "</p></div>" + (len ? '<span class="cp-dur">' + mmss(len) + "</span>" : "") + "</div>" +
       '<ul class="cp-tips">' + m.tips.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ul>" +
       '<button type="button" class="cp-watch" data-i="' + i + '">▶ Watch</button><div class="cp-slot"></div></section>';
