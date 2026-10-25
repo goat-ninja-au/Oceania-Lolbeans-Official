@@ -214,6 +214,17 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .ap-drop:hover, .ap-drop.drag { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 8%, var(--bg)); }
 .ap-drop .ic { font-size: 2rem; } .ap-drop img { max-width: 100%; max-height: 260px; border-radius: 12px; margin-top: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
 .ap-checks { display: grid; gap: 10px; }
+.ap-how { margin: 0 0 16px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--bg); }
+.ap-how summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px 14px; font-weight: 800; }
+.ap-how summary::-webkit-details-marker { display: none; }
+.ap-how summary .pl { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #ff0033; color: #fff; font-size: .9rem; box-shadow: 0 4px 14px rgba(255,0,51,.35); }
+.ap-how summary small { display: block; font-weight: 600; color: var(--muted); font-size: .82rem; }
+.ap-how summary:after { content: "Watch ▾"; margin-left: auto; font-size: .82rem; color: var(--blue); font-weight: 800; white-space: nowrap; } .ap-how[open] summary:after { content: "Hide ▴"; }
+.ap-how .fr { position: relative; aspect-ratio: 16/9; background: #000; } .ap-how iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.ap-rec { margin: 16px 0; border: 1px solid #b44ce0; background: rgba(180,76,224,.08); border-radius: 16px; padding: 16px; display: grid; gap: 8px; }
+.ap-rec ul { margin: 0; padding-left: 20px; font-weight: 700; }
+.ap-rec input { width: 100%; font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; }
+.ap-free { margin: 6px 0 4px; border: 1px solid #2a9d5c; background: rgba(42,157,92,.08); border-radius: 14px; padding: 12px 14px; font-weight: 700; }
 .ap-vid { margin: 16px 0; border: 1px solid #e0a21b; background: rgba(224,162,27,.08); border-radius: 16px; padding: 16px; display: grid; gap: 8px; }
 .ap-vid-top { display: flex; gap: 12px; align-items: flex-start; } .ap-vid-top .ic { font-size: 1.8rem; line-height: 1; } .ap-vid-top b { font-size: 1.05rem; }
 .ap-vid .flabel { font-weight: 700; font-size: .92rem; margin-top: 4px; }
@@ -351,6 +362,10 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
           <div><h2 id="t-title">Your best times</h2><p class="muted" id="t-sub">Type your best time on each map, to 3 decimal places (like <b>23.450</b>). Leave a map empty if you haven't played it. It counts as 60s.</p></div>
           <button type="button" class="btn btn-outline small" id="paste-btn">📋 Paste a list</button>
         </div>
+        <details class="ap-how" id="how">
+          <summary><span class="pl">▶</span><span>How to see your times to 3 decimal places<small>Watch this first. Times have to be like 23.450, not 23.45</small></span></summary>
+          <div class="fr" id="how-fr"></div>
+        </details>
         <div class="ap-paste" id="paste" hidden>
           <textarea id="paste-txt" rows="4" placeholder="Paste all 27 times in map order (one per line or separated by spaces). Use - for a map you haven't played."></textarea>
           <div class="row"><button type="button" class="btn btn-primary small" id="paste-go">Fill in times</button><small class="hint">Order: same as the maps below.</small></div>
@@ -361,8 +376,9 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 
       <!-- STEP 3 -->
       <section class="ap-card" data-step="3" hidden>
-        <h2>Prove you're from Oceania</h2>
-        <p class="muted">Attach a screenshot of your ping in LOLBeans. It's only seen by the admins.</p>
+        <h2 id="p-title">Prove you're from Oceania</h2>
+        <p class="muted" id="p-sub">Attach a screenshot of your ping in LOLBeans. It's only seen by the admins.</p>
+        <p class="ap-free" id="p-free" hidden>✅ You're updating your times, so no screenshot is needed.</p>
         <label class="ap-drop" id="drop" for="file">
           <input type="file" id="file" accept="image/*" hidden>
           <span class="ic">📸</span><b>Tap to add your ping screenshot</b><span class="muted">or drag it here</span>
@@ -374,6 +390,13 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
           <label class="flabel" for="vid-link">Video link</label>
           <input id="vid-link" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/…  or a Google Drive / Medal link">
           <small class="hint">Make sure anyone with the link can watch it.</small>
+        </div>
+        <div class="ap-rec" id="rec-box" hidden>
+          <div class="ap-vid-top"><span class="ic">🏆</span><div><b id="rec-title">Record times need verifying</b><p class="muted">These times beat the Oceania or world record, so an admin has to verify them:</p></div></div>
+          <ul id="rec-list"></ul>
+          <label class="flabel" for="rec-link">Proof video link <em class="muted">(recommended)</em></label>
+          <input id="rec-link" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/…  a clip of the run or your stats page">
+          <small class="hint">You can still send your times without it. Until a video is checked, your name shows <b style="color:#e23">red</b> on the sheet (unconfirmed record).</small>
         </div>
         <div class="ap-checks">
           <label class="ap-check"><input type="checkbox" id="video"><span>I've watched the video on how to see my times to <b>3 decimal places</b>, and my times are in that format.<a id="video-link" href="#" target="_blank" rel="noopener" hidden> Watch the video ↗</a></span></label>
@@ -446,7 +469,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 // ---------- Apply for the rankings ----------
 const API = "https://script.google.com/macros/s/AKfycbzZiPoG41opXscV4iuSYMgJPOcuP0NPYDiAUl3Kqpj0Jd3IWBQN2tGyLTPOXStdCYebQQ/exec";
 const RANK_CSV = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
-const VIDEO_URL = ""; // link to the "3 decimal places" video (shown next to the tick box when set)
+const VIDEO_URL = "https://www.youtube.com/watch?v=oDKziifnviQ"; // link to the "3 decimal places" video (shown next to the tick box when set)
 const FIREBASE = { apiKey: "AIzaSyBNKv8QM7kR4Y_yA0djMPo87y7fqw2jseA", authDomain: "oceania-lolbeans.firebaseapp.com", databaseURL: "https://oceania-lolbeans-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "oceania-lolbeans", appId: "1:186827295273:web:530769127fde65c829ea38" };
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
 const MAPS = ["Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup", "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze", "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light", "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash", "Tricky Traps", "Tumble Town", "UFO Attack"];
@@ -562,8 +585,18 @@ function check(m) {
   else h.textContent = "";
   return st;
 }
+function records() { const t = finalTimes(), out = []; t.forEach((n, m) => { if (n == null) return; if (S.WR && S.WR[m] != null && n < S.WR[m] - 0.0005) out.push("🌍 World record: " + MAPS[m] + " " + fmt(n)); else if (S.OR && S.OR[m] != null && n < S.OR[m] - 0.0005) out.push("🏆 Oceania record: " + MAPS[m] + " " + fmt(n)); }); return out; }
+function needPing() { return S.mode === "new"; }
+function showProofStep() {
+  const ping = needPing(), rec = records();
+  $("drop").hidden = !ping; $("p-free").hidden = ping;
+  $("p-title").textContent = ping ? "Prove you're from Oceania" : "Almost done";
+  $("p-sub").hidden = !ping;
+  $("rec-box").hidden = !rec.length;
+  if (rec.length) $("rec-list").innerHTML = rec.map(x => "<li>" + esc(x) + "</li>").join("");
+}
 function needVideo() { const P = projected(); return P.filled > 0 && P.rank <= 20; }
-function showVideoBox() { const need = needVideo(), P = projected(); $("vid-box").hidden = !need; if (need) $("vid-why").textContent = "These times would put you at #" + P.rank + " in Oceania. Everyone in the top 20 needs to send a video as well as the screenshot."; }
+function showVideoBox() { const need = needVideo(), P = projected(); $("vid-box").hidden = !need; if (need) $("vid-why").textContent = "These times would put you at #" + P.rank + " in Oceania. Everyone in the top 20 needs to send a video" + (needPing() ? " as well as the screenshot." : "."); }
 function finalTimes() {
   return MAPS.map((_, m) => { const v = readT(m); const ok = /^\d{1,2}\.\d{3}$/.test(v) && +v >= 1 && +v < 60; if (!ok) return null; const n = +v; if (S.mode === "update" && S.current && S.current.t[m] != null && n >= S.current.t[m] - 0.0005) return null; return n; });
 }
@@ -622,7 +655,8 @@ function stepError(n) {
     if (S.mode === "update" && P.filled < 1) return "Enter at least one new PB.";
   }
   if (n === 3) {
-    if (!S.proof) return "Add your ping screenshot.";
+    if (needPing() && !S.proof) return "Add your ping screenshot.";
+    if ($("rec-link").value.trim() && !/^https:\/\/\S{6,300}$/.test($("rec-link").value.trim())) return "That record video link should start with https://";
     if (needVideo() && !/^https:\/\/\S{6,300}$/.test($("vid-link").value.trim())) return "Top 20 times need a video. Paste your video link (starting with https://).";
     if (!$("video").checked || !$("agree").checked) return "Tick both boxes to continue.";
   }
@@ -651,7 +685,7 @@ function go(n) {
   document.querySelectorAll("[data-step]").forEach(s => { s.hidden = +s.dataset.step !== n; });
   document.querySelectorAll(".ap-steps li").forEach(li => { const s = +li.dataset.s; li.classList.toggle("on", s === n); li.classList.toggle("done", s < n); });
   $("ap-prog").style.width = (n * 25) + "%";
-  if (n === 3) showVideoBox();
+  if (n === 3) { showVideoBox(); showProofStep(); }
   if (n === 4) review();
   const top = $("ap").getBoundingClientRect().top + scrollY - 90; if (scrollY > top) scrollTo({ top, behavior: "smooth" });
 }
@@ -660,7 +694,7 @@ function review() {
   const P = projected(), name = $("name").value.trim(), fl = S.country === "nz" ? "🇳🇿" : "🇦🇺";
   const list = MAPS.map((n, m) => { const v = P.t[m], cur = S.current ? S.current.t[m] : null; if (S.mode === "update" && v == null) return ""; return "<div><span>" + esc(n) + "</span><b class=\"" + (v == null ? "miss" : S.mode === "update" ? "pb" : "") + "\">" + (v == null ? "60 (no time)" : fmt(v)) + (S.mode === "update" && cur != null ? ' <small class="muted">was ' + fmt(cur) + "</small>" : "") + "</b></div>"; }).join("");
   $("review").innerHTML = '<div class="rv"><div class="rv-top"><div class="who"><small>' + (S.mode === "update" ? "Updating " + esc(S.current.name) : "New player") + "</small><b>" + fl + " " + esc(name) + "</b><small>" + P.total.toFixed(3) + "s total · " + P.mapsWithTime + "/27 maps" + ($("discord").value.trim() ? " · Discord: " + esc($("discord").value.trim()) : "") + '</small></div><div><small>You\'d be</small><span class="big">#' + P.rank + "</span></div></div>" +
-    '<div class="rv-list">' + list + "</div>" + (needVideo() ? '<p class="rv-note">🎥 Top 20 video: <b>' + esc($("vid-link").value.trim()) + "</b></p>" : "") +
+    '<div class="rv-list">' + list + "</div>" + (needVideo() ? '<p class="rv-note">🎥 Top 20 video: <b>' + esc($("vid-link").value.trim()) + "</b></p>" : "") + (records().length ? '<p class="rv-note">🏆 ' + records().length + " record time" + (records().length > 1 ? "s" : "") + ": " + ($("rec-link").value.trim() ? "proof video <b>" + esc($("rec-link").value.trim()) + "</b>" : "<b>not verified yet</b> (your name shows red until an admin checks a video)") + "</p>" : "") +
     '<p class="rv-note">An admin checks every application before it goes on the rankings. ' + (S.mode === "update" ? "Only times faster than your current ones are used." : "Maps you left empty count as 60s.") + "</p></div>";
 }
 async function submit(e) {
@@ -668,7 +702,7 @@ async function submit(e) {
   const btn = $("submit"), err = $("err"); err.hidden = true; btn.disabled = true; btn.textContent = "Sending…";
   try {
     const P = projected();
-    const r = await api({ action: "apply", name: $("name").value.trim(), country: S.country, discord: $("discord").value.trim(), current: S.mode === "update" && S.current ? S.current.name : "", times: P.t, agree: $("agree").checked, video: $("video").checked, proof: S.proof, videoLink: needVideo() ? $("vid-link").value.trim() : "" });
+    const r = await api({ action: "apply", name: $("name").value.trim(), country: S.country, discord: $("discord").value.trim(), current: S.mode === "update" && S.current ? S.current.name : "", times: P.t, agree: $("agree").checked, video: $("video").checked, proof: needPing() ? S.proof : "", recordLink: records().length ? $("rec-link").value.trim() : "", videoLink: needVideo() ? $("vid-link").value.trim() : "" });
     if (!r || !r.ok) throw new Error((r && r.error) || "Something went wrong. Please try again.");
     $("ap").innerHTML = '<section class="ap-card ap-done"><span class="boom">🎉</span><h2>Application sent!</h2><p class="muted">Thanks ' + esc($("name").value.trim()) + "! An admin will check your times soon. If you're approved, you'll show up on the rankings at about <b>#" + P.rank + '</b>.</p><a class="btn btn-primary" href="rankings.html">Back to the rankings</a></section>';
     $("live").hidden = true; showStatus();
@@ -697,6 +731,7 @@ const drop = $("drop");
 ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("drag"); }));
 drop.addEventListener("drop", e => { const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) useFile(f); });
 if (VIDEO_URL) { $("video-link").href = VIDEO_URL; $("video-link").hidden = false; }
+$("how").addEventListener("toggle", () => { const f = $("how-fr"); if ($("how").open && !f.firstChild) f.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/oDKziifnviQ?autoplay=1&rel=0&playsinline=1" title="How to see your times to 3 decimal places" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>'; });
 // signed-in players who linked their ranking start on "Update my times"
 try { const acct = JSON.parse(localStorage.getItem("olb-acct") || "null"); if (acct && acct.player) { $("current").value = acct.player; setMode("update"); } } catch (e) {}
 if (new URLSearchParams(location.search).get("update") != null) setMode("update");
