@@ -387,7 +387,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   var KEY = "olb-academy-pb", RANK = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
   var $ = function (id) { return document.getElementById(id); };
   var OR = [], PB = {}, cur = -1;
-  var COURSE = { 0: "course.html" }; // maps that have a course page so far
+  var COURSE = { 0: "course.html?map=beacon-bay", 1: "course.html?map=boulder-hill" }; // maps that have a course page so far
   function save() {}
   var t3 = function (v) { return isFinite(v) ? v.toFixed(3) : "–"; };
   // how far behind the Oceania record decides the level

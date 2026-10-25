@@ -316,7 +316,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 <main class="cp" id="cp-main">
   <div class="cp-wrap">
     <a class="cp-back" href="academy.html">← Back</a>
-    <div class="cp-hero"><img src="maps/BeaconBay.png" alt=""><div><div class="cp-eb">Map 01 · Academy</div><h1>Beacon Bay – <span id="cp-lvname">Level 1 Tutorial</span></h1><p id="cp-count"></p></div></div>
+    <div class="cp-hero"><img id="cp-img" src="maps/BeaconBay.png" alt=""><div><div class="cp-eb" id="cp-eb">Map 01 · Academy</div><h1><span id="cp-map" style="background:none;-webkit-text-fill-color:#fff;color:#fff">Beacon Bay</span> – <span id="cp-lvname">Level 1 Tutorial</span></h1><p id="cp-count"></p></div></div>
     <div class="cp-lv" id="cp-lv"></div>
     <div class="cp-toc" role="navigation" aria-label="Table of contents"><h2>Table of Contents</h2><ol id="cp-toc"></ol></div>
     <div id="cp-mods"></div>
@@ -368,7 +368,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 <script>
 // Course page. Each module plays its part of the map's tutorial video.
 (function () {
-  var LEVELS = {
+  var BEACON = {
     1: { name: "Level 1 Tutorial", video: "academy/beacon-bay-level-1.mp4", mods: [
       { poster: "academy/beacon-bay-level-1-m1.jpg", t: "Start + Avoiding the Hammers and the bhop", d: "The full tutorial: your spawn route, the hammers, the bhop and how your jump timing changes your time.", from: 0, to: null,
         tips: ["Spawn on red → take the red route. Spawn on blue → take the blue route.", "Swerve around the hammers, don't stop.", "Bhop across the plank bridges.", "It's all about when you jump: 34.583 → 34.483 → 34.383.", "The later you leave the platform, the faster your time. Just don't fall!"] },
@@ -382,13 +382,32 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
         tips: ["Step 1: stand in the 2nd section of the platform.", "Step 2: walk straight and gently bump into the wall.", "Don't slam into the wall, or the trick won't work.", "With practice you'll get 34.433–34.383 easily. 34.350 is harder, but you can 100% do it."] }
     ] }
   };
+  var MAPS = {
+    "beacon-bay": { n: "01", name: "Beacon Bay", img: "maps/BeaconBay.png", levels: BEACON },
+    "boulder-hill": { n: "02", name: "Boulder Hill", img: "maps/BoulderHill.png", levels: {
+      1: { name: "Level 1 Tutorial", video: "academy/boulder-hill-level-1.mp4", mods: [
+        { poster: "academy/boulder-hill-level-1-m1.jpg", t: "The start", d: "Run straight from spawn, then spam jump up onto the blue block.", from: 0, to: 8.6,
+          tips: ["Spam jump to get up onto the blue block as fast as you can."] },
+        { poster: "academy/boulder-hill-level-1-m2.jpg", t: "The edge + checkpoint", d: "Run to the checkpoint, then jump onto the edge and run along it.", from: 8.6, to: 20.9,
+          tips: ["Run up the blue blocks to the checkpoint (the rainbow square).", "Jump onto the edge between the blue and the pink.", "Stay on the edge. The caterpillars can't reach you."] },
+        { poster: "academy/boulder-hill-level-1-m3.jpg", t: "Avoiding the balls", d: "Move your bean side to side. Know which way to go and you're good.", from: 20.9, to: 49.1,
+          tips: ["Ball tube: go left for the 1st ball, then right for the 2nd.", "At the end, stay left the whole way.", "Only step right if a ball is coming at you, then go back left."] },
+        { poster: "academy/boulder-hill-level-1-m4.jpg", t: "Full run", d: "Everything together, start to finish. This route can get you around 36 seconds.", from: 49.1, to: null,
+          tips: ["Watch the whole route, then try to copy it start to finish."] }
+      ] }
+    } }
+  };
+  var MK = (/[?&]map=([a-z-]+)/.exec(location.search) || [])[1]; if (!MAPS[MK]) MK = "beacon-bay";
+  var MP = MAPS[MK], LEVELS = MP.levels;
+  document.getElementById("cp-img").src = MP.img; document.getElementById("cp-map").textContent = MP.name;
+  document.getElementById("cp-eb").textContent = "Map " + MP.n + " · Academy";
   var LV = +((/[?&]level=(\d)/.exec(location.search) || [])[1] || 1); if (!LEVELS[LV]) LV = 1;
   var L = LEVELS[LV], VIDEO = L.video, MODS = L.mods;
   document.getElementById("cp-main").setAttribute("data-lv", LV);
   document.getElementById("cp-lvname").textContent = L.name;
   document.getElementById("cp-count").textContent = MODS.length + " modules";
-  document.title = "Beacon Bay · Level " + LV + " · Oceania LOLBeans Academy";
-  var tabs = ""; for (var k = 1; k <= 4; k++) tabs += LEVELS[k] ? '<a href="?level=' + k + '"><span class="' + (k === LV ? "on" : "") + '">Level ' + k + "</span></a>" : "<span>Level " + k + " · soon</span>";
+  document.title = MP.name + " · Level " + LV + " · Oceania LOLBeans Academy";
+  var tabs = ""; for (var k = 1; k <= 4; k++) tabs += LEVELS[k] ? '<a href="?map=' + MK + '&level=' + k + '"><span class="' + (k === LV ? "on" : "") + '">Level ' + k + "</span></a>" : "<span>Level " + k + " · soon</span>";
   document.getElementById("cp-lv").innerHTML = tabs;
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
