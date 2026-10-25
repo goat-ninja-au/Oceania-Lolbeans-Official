@@ -239,6 +239,26 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .hx-f div:hover { border-color: rgba(143,216,255,.6); transform: translateY(-3px); }
 .hx-f div:before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, #4aa8f0, transparent); opacity: .7; }
 .hx-f .e { font-size: 1.4rem; } .hx-f b { display: block; color: #fff; font-size: 1rem; margin: 6px 0 4px; } .hx-f span { color: #8aa6bb; font-size: .86rem; line-height: 1.4; display: block; }
+.hx-tb { margin-top: 40px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 14px; align-items: stretch; }
+.hx-an { position: relative; border-radius: 20px; padding: 20px 22px; background: linear-gradient(160deg, rgba(74,168,240,.12), rgba(5,11,20,.6)); border: 1px solid rgba(143,216,255,.3); overflow: hidden; }
+.hx-an h3 { font-size: 1.25rem; font-weight: 900; color: #fff; margin: 4px 0 4px; } .hx-an h3 span { color: #9bf04a; }
+.hx-an > p { color: #8aa6bb; font-size: .9rem; margin-bottom: 14px; }
+.hx-an .k { font: 800 .7rem ui-monospace, Menlo, monospace; letter-spacing: .14em; color: #8fd8ff; text-transform: uppercase; }
+.hx-gr { display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; }
+.hx-gr > div { background: rgba(0,0,0,.35); border: 1px solid #1c3550; border-radius: 14px; padding: 12px 14px; }
+.hx-gr small { display: block; color: #7f9bb1; font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.hx-gr b { font: 800 1.3rem ui-monospace, Menlo, monospace; color: #fff; } .hx-gr b em { font-style: normal; color: #9bf04a; font-size: .85rem; margin-left: 6px; }
+.hx-gr svg { display: block; width: 100%; height: 54px; margin-top: 6px; }
+.hx-gr .ln { stroke-dasharray: 400; stroke-dashoffset: 400; animation: hx-draw 2.4s ease-out forwards infinite alternate; }
+@keyframes hx-draw { to { stroke-dashoffset: 0; } }
+.hx-bar { height: 8px; border-radius: 8px; background: #1d3550; overflow: hidden; margin-top: 10px; } .hx-bar i { display: block; height: 100%; width: 72%; border-radius: 8px; background: linear-gradient(90deg, #4aa8f0, #9bf04a); box-shadow: 0 0 10px rgba(155,240,74,.6); }
+.hx-tl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hx-tl a { display: flex; gap: 12px; align-items: center; text-decoration: none; color: #fff; background: rgba(255,255,255,.035); border: 1px solid #1c3550; border-radius: 16px; padding: 12px 14px; transition: border-color .2s, transform .2s; }
+.hx-tl a:hover { border-color: rgba(155,240,74,.6); transform: translateY(-2px); }
+.hx-tl .ic { flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: rgba(155,240,74,.12); border: 1px solid rgba(155,240,74,.35); font-size: 1.05rem; }
+.hx-tl b { display: block; font-size: .92rem; } .hx-tl span span { display: block; color: #8aa6bb; font-size: .76rem; line-height: 1.3; }
+@media (max-width: 900px) { .hx-tb { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .hx-tl { grid-template-columns: 1fr; } .hx-gr { grid-template-columns: 1fr; } }
 @media (max-width: 900px) { .hx { padding: 30px 20px; } .hx-g { grid-template-columns: 1fr; gap: 40px; } .hx-mon { transform: none; } .hx-chip.p1 { left: -6px; } .hx-chip.p2 { right: -6px; } .hx-f { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .hx-scr { display: flex; flex-wrap: wrap; gap: 8px; } .hx-mon { width: 100%; margin-bottom: 4px; } .hx-chip { position: static; animation: none; flex: 1 1 auto; } }
 @media (max-width: 480px) { .hx-chip { font-size: .74rem; padding: 7px 10px; } .hx-chip .ic { width: 26px; height: 26px; } .hx-st { gap: 18px; } .hx-st b { font-size: 1.6rem; } .hx-cta + a { display: block; margin: 14px 0 0; } }
@@ -305,6 +325,21 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
         <div class="hx-chip p1"><span class="ic">🎯</span><span>PB 34.420<small>→ Level 2 unlocked</small></span></div>
         <div class="hx-chip p2"><span class="ic">🧩</span><span>Module 2 of 4<small>Edge + checkpoint</small></span></div>
         <div class="hx-chip p3"><span class="ic">🐢</span><span>0.25× slow-mo<small>Frame-by-frame</small></span></div>
+      </div>
+    </div>
+    <div class="hx-tb">
+      <div class="hx-an"><div class="k">● Analysis engine</div><h3>Built with the latest tech <span>&amp; analysis tools</span></h3><p>Your times, tracked and broken down so you know exactly what to train next.</p>
+        <div class="hx-gr">
+          <div><small>Rank trend · 8 weeks</small><b>#14 <em>▲ 6</em></b><svg viewBox="0 0 200 54" preserveAspectRatio="none"><defs><linearGradient id="hxg" x1="0" x2="1"><stop offset="0" stop-color="#4aa8f0"/><stop offset="1" stop-color="#9bf04a"/></linearGradient></defs><polyline class="ln" fill="none" stroke="url(#hxg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="0,46 28,42 56,44 84,32 112,34 140,22 168,16 200,6"/></svg></div>
+          <div><small>Gap to Oceania record</small><b>+0.037<em>s</em></b><div class="hx-bar"><i></i></div><small style="margin-top:8px">Level 3 · Advanced</small></div>
+        </div></div>
+      <div class="hx-tl">
+        <a href="rankings.html"><span class="ic">📊</span><span><b>Live rankings</b><span>Updated as times get approved</span></span></a>
+        <a href="rankings.html"><span class="ic">📈</span><span><b>8-week trends</b><span>See every player's rank over time</span></span></a>
+        <a href="rankings.html?s=h2h"><span class="ic">⚔️</span><span><b>Head to Head</b><span>Compare any two players, map by map</span></span></a>
+        <a href="academy.html"><span class="ic">🎯</span><span><b>PB level check</b><span>Type a time, see your level and next target</span></span></a>
+        <a href="rankings.html?s=records"><span class="ic">🏆</span><span><b>Record tracker</b><span>Every Oceania record, all 27 maps</span></span></a>
+        <a href="players.html"><span class="ic">🧬</span><span><b>Player cards</b><span>Totals, tiers and every map time</span></span></a>
       </div>
     </div>
     <div class="hx-f">
