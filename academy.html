@@ -162,52 +162,48 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .ac-peek .mt { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 16/10; border: 1px solid #1f3a57; }
 .ac-peek img { width: 100%; height: 100%; object-fit: cover; filter: blur(3px) grayscale(.4) brightness(.6); } .ac-peek span { position: absolute; left: 10px; bottom: 8px; font-weight: 800; font-size: .82rem; } .ac-peek .mt:after { content: "🔒"; position: absolute; right: 8px; top: 6px; font-size: .9rem; }
 /* ---------- Academy: choose a map ---------- */
-.ac-in { position: relative; padding: 34px 0 70px; }
-.ac-in:before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(90,170,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(90,170,255,.04) 1px, transparent 1px); background-size: 34px 34px; pointer-events: none; }
-.ag-wrap { position: relative; max-width: 1600px; margin: 0 auto; padding: 0 max(20px, env(safe-area-inset-left, 0px)); }
-.ag-top { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
-.ag-top h2 { font-size: clamp(1.8rem, 3.4vw, 2.4rem); font-weight: 900; line-height: 1.05; color: #fff; margin-top: 6px; }
+.ac-in { position: relative; padding: 40px 0 80px; overflow: hidden; }
+.ac-in:before { content: ""; position: absolute; inset: 0; background: radial-gradient(50% 40% at 15% 0%, rgba(74,168,240,.16), transparent 70%), radial-gradient(45% 35% at 90% 10%, rgba(155,240,74,.10), transparent 70%); pointer-events: none; }
+.ag-wrap { position: relative; max-width: 1500px; margin: 0 auto; padding: 0 max(20px, env(safe-area-inset-left, 0px)); }
+.ag-top { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 26px; }
+.ag-top h2 { font-size: clamp(2rem, 4.4vw, 3.2rem); font-weight: 900; line-height: 1; letter-spacing: -.02em; color: #fff; margin-top: 8px; }
 .ag-top h2 span { background: linear-gradient(90deg, #4aa8f0, #9bf04a); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.ag-top p { color: #9cb6c9; margin-top: 6px; }
-.ag-sum { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
-.ag-sum div { background: rgba(255,255,255,.04); border: 1px solid #1f3a57; border-radius: 14px; padding: 8px 16px; min-width: 110px; }
-.ag-sum b { display: block; font-size: 1.4rem; font-weight: 900; color: #fff; } .ag-sum span { font-size: .75rem; color: #9cb6c9; }
-.ag-sum .ac-out { align-self: center; }
-.ac-out { background: none; border: 1px solid #2a4b6a; color: #cfe2f0; border-radius: 999px; padding: 8px 16px; font: 700 .9rem var(--font); cursor: pointer; }
-.ag-bar { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
-.ag-srch { flex: 1; min-width: 220px; height: 44px; border-radius: 14px; border: 1px solid #1f3a57; background: rgba(255,255,255,.03); display: flex; align-items: center; padding: 0 14px; color: #6f8ea5; gap: 10px; }
-.ag-srch:focus-within { border-color: #4aa8f0; }
-.ag-srch input { flex: 1; min-width: 0; background: none; border: 0; outline: none; color: #fff; font: 500 1rem var(--font); }
-.ag-chip { height: 44px; border-radius: 14px; border: 1px solid #1f3a57; padding: 0 14px; display: flex; align-items: center; gap: 8px; color: #a9c3d6; font: 700 .88rem var(--font); background: rgba(255,255,255,.03); cursor: pointer; }
-.ag-chip.on { border-color: #9bf04a; color: #fff; background: rgba(155,240,74,.1); }
-.ag-chip i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-.ag-rowl { display: flex; align-items: center; gap: 12px; margin: 22px 0 10px; font-size: .75rem; letter-spacing: .16em; font-weight: 900; color: #9bf04a; text-transform: uppercase; }
-.ag-rowl:after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(155,240,74,.5), transparent); }
-.ag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; }
-@media (min-width: 1500px) { .ag-grid { grid-template-columns: repeat(9, 1fr); } }
-.ag-mc { display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; background: linear-gradient(180deg, #10233a, #0b1726); border: 1px solid #1f3a57; transition: transform .15s, border-color .15s, box-shadow .15s; cursor: pointer; text-align: left; padding: 0; color: inherit; font: inherit; }
-.ag-mc:hover, .ag-mc:focus-visible { transform: translateY(-4px); border-color: #9bf04a; outline: none; box-shadow: 0 0 0 1px rgba(155,240,74,.4), 0 14px 30px rgba(0,0,0,.4), 0 0 24px rgba(155,240,74,.18); }
-.ag-pic { position: relative; aspect-ratio: 16/10; overflow: hidden; } .ag-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ag-pic:after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(11,23,38,.95)); }
-.ag-num { position: absolute; left: 8px; top: 6px; font-weight: 900; font-size: .8rem; color: #fff; background: rgba(0,0,0,.45); border-radius: 6px; padding: 0 6px; z-index: 1; font-family: ui-monospace, Menlo, monospace; }
-.ag-lv { position: absolute; right: 6px; top: 6px; z-index: 1; font-size: .62rem; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; color: #0b1622; background: var(--c); border-radius: 999px; padding: 2px 8px; box-shadow: 0 0 10px var(--c); }
-.ag-lv.none { background: rgba(0,0,0,.5); color: #cfe2f0; box-shadow: none; border: 1px solid #3a5a73; }
-.ag-bd { padding: 9px 10px 10px; display: grid; gap: 6px; } .ag-bd b { font-size: .9rem; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-.ag-tm { display: flex; justify-content: space-between; font-size: .7rem; color: #7f9bb1; } .ag-tm span:last-child { text-align: right; }
-.ag-tm em { display: block; font-style: normal; font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: #e6f1f9; font-weight: 700; } .ag-tm em.or { color: #9bf04a; } .ag-tm em.add { color: #4aa8f0; font-family: var(--font); }
-.ag-pbar { height: 5px; border-radius: 5px; background: #1d3550; overflow: hidden; } .ag-pbar i { display: block; height: 100%; border-radius: 5px; box-shadow: 0 0 8px currentColor; }
-.ag-ft { display: flex; justify-content: space-between; font-size: .66rem; color: #7f9bb1; } .ag-ft .gl { color: #4aa8f0; font-weight: 800; }
-.ag-leg { display: flex; gap: 16px; color: #7f9bb1; font-size: .75rem; margin-top: 18px; flex-wrap: wrap; }
-.ag-empty { color: #9cb6c9; padding: 30px 0; text-align: center; }
-.ag-dlg { position: fixed; inset: 0; z-index: 200; background: rgba(3,8,15,.7); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 16px; }
+.ac-out { background: rgba(255,255,255,.04); border: 1px solid #2a4b6a; color: #cfe2f0; border-radius: 999px; padding: 8px 16px; font: 700 .85rem var(--font); cursor: pointer; flex: none; }
+.ag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+@media (min-width: 1400px) { .ag-grid { grid-template-columns: repeat(9, 1fr); } }
+.ag-mc { position: relative; display: block; aspect-ratio: 4/5; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); padding: 0; cursor: pointer; background: #0b1726; color: #fff; font: inherit; text-align: left; isolation: isolate; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, border-color .25s; animation: ag-in .5s both; animation-delay: calc(var(--d) * 25ms); }
+.ag-mc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.2,.8,.2,1), filter .3s; z-index: -2; }
+.ag-mc:before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(7,15,26,0) 35%, rgba(7,15,26,.92) 100%); }
+.ag-mc span { position: absolute; left: 14px; right: 14px; bottom: 12px; font-weight: 900; font-size: 1.02rem; line-height: 1.15; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
+.ag-mc:hover, .ag-mc:focus-visible { transform: translateY(-6px); border-color: #9bf04a; outline: none; box-shadow: 0 18px 36px rgba(0,0,0,.45), 0 0 0 1px rgba(155,240,74,.5), 0 0 30px rgba(155,240,74,.25); }
+.ag-mc:hover img, .ag-mc:focus-visible img { transform: scale(1.08); filter: saturate(1.2); }
+@keyframes ag-in { from { opacity: 0; transform: translateY(14px) scale(.97); } }
+/* PB popup */
+.ag-dlg { position: fixed; inset: 0; z-index: 200; background: rgba(3,8,15,.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: grid; place-items: center; padding: 16px; animation: ag-fade .2s both; }
 .ag-dlg[hidden] { display: none; }
-.ag-box { position: relative; width: min(420px, 100%); background: linear-gradient(160deg, #13294a, #0b1726 60%); border: 1px solid #2a4b6a; border-radius: 22px; padding: 0 22px 20px; overflow: hidden; color: #e6f1f9; box-shadow: 0 30px 60px rgba(0,0,0,.5); }
-.ag-box > img { display: block; width: calc(100% + 44px); margin: 0 -22px 14px; aspect-ratio: 16/7; object-fit: cover; -webkit-mask: linear-gradient(#000 60%, transparent); mask: linear-gradient(#000 60%, transparent); }
-.ag-box h3 { font-size: 1.4rem; font-weight: 900; color: #fff; } .ag-or { color: #9cb6c9; margin: 2px 0 14px; } .ag-or b { color: #9bf04a; font-family: ui-monospace, Menlo, monospace; }
-.ag-x { position: absolute; right: 10px; top: 10px; z-index: 2; width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(0,0,0,.55); color: #fff; cursor: pointer; font-size: .9rem; }
-.ag-err { color: #ff8a8a; font-weight: 700; margin-top: 8px; font-size: .9rem; } .ag-lvl { margin-top: 10px; font-weight: 800; min-height: 1.4em; }
-.ag-soon { color: #9cb6c9; font-size: .85rem; margin-top: 12px; } .ag-clear { background: none; border: 0; color: #7f9bb1; font: 600 .82rem var(--font); cursor: pointer; text-decoration: underline; margin-top: 4px; padding: 0; }
-@media (max-width: 600px) { .ag-sum div { min-width: 0; flex: 1; } .ag-chip { padding: 0 10px; font-size: .8rem; } .ag-grid { grid-template-columns: repeat(2, 1fr); } }
+@keyframes ag-fade { from { opacity: 0; } }
+@keyframes ag-pop { from { opacity: 0; transform: translateY(20px) scale(.96); } }
+.ag-box { position: relative; width: min(440px, 100%); border-radius: 28px; overflow: hidden; color: #e6f1f9; background: #0b1726; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(74,168,240,.15); animation: ag-pop .3s cubic-bezier(.2,.8,.2,1) both; text-align: center; }
+.ag-hero { position: relative; height: 170px; }
+.ag-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ag-hero:after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,23,38,0) 30%, #0b1726); }
+.ag-hero h3 { position: absolute; left: 0; right: 0; bottom: 6px; z-index: 1; font-size: 1.7rem; font-weight: 900; color: #fff; letter-spacing: -.01em; text-shadow: 0 2px 12px rgba(0,0,0,.5); }
+.ag-x { position: absolute; right: 12px; top: 12px; z-index: 2; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(0,0,0,.5); color: #fff; cursor: pointer; font-size: .95rem; backdrop-filter: blur(6px); }
+.ag-body { padding: 8px 26px 24px; }
+.ag-q { font-size: 1.1rem; font-weight: 800; color: #fff; margin-top: 6px; }
+.ag-pbin { display: block; width: 100%; margin: 14px 0 6px; background: none; border: 0; border-bottom: 2px solid #27445c; color: #fff; text-align: center; font: 800 2.6rem ui-monospace, Menlo, Consolas, monospace; letter-spacing: .02em; padding: 4px 0 8px; outline: none; transition: border-color .2s; }
+.ag-pbin:focus { border-color: #9bf04a; } .ag-pbin::placeholder { color: #2d4a63; }
+.ag-or { color: #7f9bb1; font-size: .85rem; } .ag-or b { color: #9bf04a; font-family: ui-monospace, Menlo, monospace; }
+.ag-err { color: #ff8a8a; font-weight: 700; margin-top: 10px; font-size: .88rem; }
+.ag-res { margin-top: 16px; animation: ag-pop .35s both; }
+.ag-res b { display: inline-block; font-size: .8rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #0b1622; background: var(--c); border-radius: 999px; padding: 4px 14px; box-shadow: 0 0 18px var(--c); }
+.ag-meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 14px 0 4px; }
+.ag-meter i { height: 6px; border-radius: 6px; background: #1d3550; } .ag-meter i.on { background: var(--c); box-shadow: 0 0 10px var(--c); }
+.ag-meter + small { display: block; color: #7f9bb1; font-size: .78rem; }
+.ag-btn { margin-top: 18px; width: 100%; height: 54px; border: 0; border-radius: 16px; background: linear-gradient(90deg, #9bf04a, #5fe0a0); color: #0b1622; font: 900 1.05rem var(--font); box-shadow: 0 0 24px rgba(155,240,74,.4); cursor: pointer; transition: transform .15s, filter .15s; }
+.ag-btn:hover { filter: brightness(1.06); } .ag-btn:active { transform: scale(.98); }
+.ag-soon { color: #7f9bb1; font-size: .82rem; margin-top: 12px; }
+@media (max-width: 600px) { .ag-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .ag-mc span { font-size: .92rem; left: 10px; bottom: 10px; } .ag-top { align-items: start; } }
 @media (max-width: 900px) { .ac-inner { grid-template-columns: 1fr; } .ac-lock { order: -1; } .ac-feat { grid-template-columns: 1fr; } .ac-peek .row { grid-template-columns: repeat(3, 1fr); } .ac-bg { grid-template-columns: repeat(3, 1fr); } }
 </style>
 </head>
@@ -261,18 +257,19 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   </section>
   <section class="ac-in" id="ac-in" hidden>
     <div class="ag-wrap">
-      <div class="ag-top"><div><div class="ac-eyebrow">🎓 You're in</div><h2>Choose a map to <span>start training</span></h2><p>Every map has 4 levels. Type your PB and it shows where you start.</p></div>
-        <div class="ag-sum"><div><b>27</b><span>maps</span></div><div><b id="ag-n">0</b><span>PBs entered</span></div><div><b id="ag-pro">0</b><span>at Pro level</span></div><button type="button" class="ac-out" id="ac-out">Lock</button></div></div>
-      <div class="ag-bar"><label class="ag-srch">⌕<input id="ag-q" type="search" placeholder="Find a map" aria-label="Find a map"></label>
-        <button type="button" class="ag-chip on" data-lv="all">All</button><button type="button" class="ag-chip" data-lv="1"><i style="background:#4aa8f0"></i>Beginner</button><button type="button" class="ag-chip" data-lv="2"><i style="background:#9bf04a"></i>Intermediate</button><button type="button" class="ag-chip" data-lv="3"><i style="background:#f0b429"></i>Advanced</button><button type="button" class="ag-chip" data-lv="4"><i style="background:#ff6b9a"></i>Pro</button></div>
-      <div id="ag-rows"></div>
-      <div class="ag-leg"><span>Badge = your level on that map (from your PB)</span><span>Bar = how close you are to the Oceania record</span><span>Your PBs are saved on this device</span></div>
+      <div class="ag-top"><div><div class="ac-eyebrow">🎓 You're in</div><h2>Choose a map to <span>start training</span></h2></div><button type="button" class="ac-out" id="ac-out">Lock</button></div>
+      <div class="ag-grid" id="ag-grid"></div>
     </div>
   </section>
-  <div class="ag-dlg" id="ag-dlg" hidden><form class="ag-box" id="ag-form"><button type="button" class="ag-x" id="ag-x" aria-label="Close">✕</button><img id="ag-img" alt=""><h3 id="ag-title"></h3><p class="ag-or" id="ag-or"></p>
-    <label class="ac-inp"><span class="ic">⏱️</span><input id="ag-pb" inputmode="decimal" placeholder="Your PB, e.g. 36.250" aria-label="Your PB" autocomplete="off"></label>
-    <p class="ag-err" id="ag-err" hidden></p><p class="ag-lvl" id="ag-lvl"></p>
-    <button class="ac-go" type="submit">Save PB</button><p class="ag-soon">🚧 The course for this map is being built. Your level will be ready for it.</p><button type="button" class="ag-clear" id="ag-clear">Clear my PB</button></form></div>
+  <div class="ag-dlg" id="ag-dlg" hidden><form class="ag-box" id="ag-form" autocomplete="off">
+    <div class="ag-hero"><img id="ag-img" alt=""><h3 id="ag-title"></h3></div><button type="button" class="ag-x" id="ag-x" aria-label="Close">✕</button>
+    <div class="ag-body"><p class="ag-q">What's your PB?</p>
+      <input class="ag-pbin" id="ag-pb" inputmode="decimal" placeholder="00.000" aria-label="Your PB in seconds">
+      <p class="ag-or" id="ag-or"></p><p class="ag-err" id="ag-err" hidden></p>
+      <div class="ag-res" id="ag-res" hidden></div>
+      <button class="ag-btn" id="ag-btn" type="submit">Show my level →</button>
+      <p class="ag-soon">🚧 Courses are being built. Your level will be ready for it.</p></div>
+  </form></div>
 </main>
 
 <footer>
@@ -353,67 +350,51 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 })();
 </script>
 <script>
-// Academy map grid. PBs are typed by the player and kept on this device. Records come from the rankings sheet.
+// Academy map grid. Tap a map, type your PB, see your level. PBs stay on this device. Records come from the rankings sheet.
 (function () {
   var MAPS = ["Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup", "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze", "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light", "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash", "Tricky Traps", "Tumble Town", "UFO Attack"];
   var IMG = ["BeaconBay", "BoulderHill", "CircusContest", "DevilsTrick", "EscapeTsunami", "DashCup", "LavaLake", "GravityGates", "HammerVille", "JungleTemple", "KittieKegs", "MechaMaze", "MillValley", "MonsterManor", "NastySeals", "NeonCity", "PolarPath", "1-2-3RedLight", "RicketyRun", "RiskyCliffs", "SharkPark", "SillySlide", "SpikySlopes", "SplashDash", "TrickyTraps", "TumbleTown", "UFOAttack"];
   var LV = [null, { n: "Beginner", c: "#4aa8f0" }, { n: "Intermediate", c: "#9bf04a" }, { n: "Advanced", c: "#f0b429" }, { n: "Pro", c: "#ff6b9a" }];
   var KEY = "olb-academy-pb", RANK = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
   var $ = function (id) { return document.getElementById(id); };
-  var OR = [], PB = {}, filt = "all", cur = -1;
+  var OR = [], PB = {}, cur = -1;
   try { PB = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { PB = {}; }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(PB)); } catch (e) {} }
   var t3 = function (v) { return isFinite(v) ? v.toFixed(3) : "–"; };
-  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
   // how far behind the Oceania record decides the level
-  function gap(i) { var p = PB[i], o = OR[i]; return p && o ? (p - o) / o : null; }
-  function level(i) { var g = gap(i); if (g == null) return 0; return g <= .03 ? 4 : g <= .06 ? 3 : g <= .12 ? 2 : 1; }
-  function card(i) {
-    var lv = level(i), L = LV[lv], g = gap(i), w = g == null ? 0 : Math.max(4, Math.min(100, 100 - g * 400));
-    return '<button type="button" class="ag-mc" data-i="' + i + '"><div class="ag-pic"><img src="maps/' + IMG[i] + '.png" alt="" loading="lazy"><span class="ag-num">' + ("0" + (i + 1)).slice(-2) + "</span>" +
-      (L ? '<span class="ag-lv" style="--c:' + L.c + '">' + L.n + "</span>" : '<span class="ag-lv none">No PB yet</span>') + "</div>" +
-      '<div class="ag-bd"><b>' + esc(MAPS[i]) + '</b><div class="ag-tm"><span>Your PB ' + (PB[i] ? "<em>" + t3(PB[i]) + "</em>" : '<em class="add">+ Add</em>') + '</span><span>OR <em class="or">' + t3(OR[i]) + "</em></span></div>" +
-      '<div class="ag-pbar"><i style="width:' + w + "%;background:" + (L ? L.c : "transparent") + '"></i></div><div class="ag-ft"><span>' + (lv ? "Level " + lv + " of 4" : "Level ?") + '</span><span class="gl">' + (lv ? "Start course →" : "Enter PB →") + "</span></div></div></button>";
+  function level(i) { var p = PB[i], o = OR[i]; if (!p || !o) return 0; var g = (p - o) / o; return g <= .03 ? 4 : g <= .06 ? 3 : g <= .12 ? 2 : 1; }
+  var h = "";
+  for (var i = 0; i < 27; i++) h += '<button type="button" class="ag-mc" data-i="' + i + '" style="--d:' + i + '"><img src="maps/' + IMG[i] + '.png" alt="" loading="lazy"><span></span></button>';
+  $("ag-grid").innerHTML = h;
+  document.querySelectorAll(".ag-mc span").forEach(function (s, i) { s.textContent = MAPS[i]; });
+  function showRes() {
+    var lv = level(cur), r = $("ag-res");
+    if (!lv) { r.hidden = true; $("ag-btn").textContent = "Show my level →"; return; }
+    var L = LV[lv], m = ""; for (var k = 1; k <= 4; k++) m += '<i class="' + (k <= lv ? "on" : "") + '"></i>';
+    r.style.setProperty("--c", L.c);
+    r.innerHTML = '<b>' + L.n + '</b><div class="ag-meter">' + m + "</div><small>Level " + lv + " of 4" + (lv < 4 ? " · beat " + t3(next(cur, lv)) + " to level up" : " · top level") + "</small>";
+    r.hidden = false; r.style.animation = "none"; void r.offsetWidth; r.style.animation = "";
+    $("ag-btn").textContent = "Update my PB";
   }
-  function render() {
-    var q = $("ag-q").value.trim().toLowerCase(), h = "", any = false;
-    for (var r = 0; r < 3; r++) {
-      var cards = "";
-      for (var i = r * 9; i < r * 9 + 9; i++) {
-        if (q && MAPS[i].toLowerCase().indexOf(q) < 0) continue;
-        if (filt !== "all" && String(level(i)) !== filt) continue;
-        cards += card(i);
-      }
-      if (cards) { any = true; h += '<div class="ag-rowl">Row ' + (r + 1) + " · Maps " + (r * 9 + 1) + "–" + (r * 9 + 9) + '</div><div class="ag-grid">' + cards + "</div>"; }
-    }
-    $("ag-rows").innerHTML = any ? h : '<p class="ag-empty">No maps match that.</p>';
-    var n = 0, pro = 0; for (var k = 0; k < 27; k++) { if (PB[k]) n++; if (level(k) === 4) pro++; }
-    $("ag-n").textContent = n; $("ag-pro").textContent = pro;
-  }
-  function lvlText(i) { var lv = level(i); return lv ? '<span style="color:' + LV[lv].c + '">Your level: ' + LV[lv].n + " (" + lv + " of 4)</span>" : ""; }
+  function next(i, lv) { var o = OR[i]; return o * (1 + [0, .12, .06, .03][lv]); }
   function openDlg(i) {
     cur = i; $("ag-img").src = "maps/" + IMG[i] + ".png"; $("ag-title").textContent = MAPS[i];
-    $("ag-or").innerHTML = "Oceania record <b>" + t3(OR[i]) + "</b>"; $("ag-pb").value = PB[i] ? t3(PB[i]) : "";
-    $("ag-err").hidden = true; $("ag-lvl").innerHTML = lvlText(i); $("ag-clear").hidden = !PB[i];
-    $("ag-dlg").hidden = false; setTimeout(function () { $("ag-pb").focus(); }, 30);
+    $("ag-or").innerHTML = OR[i] ? "Oceania record <b>" + t3(OR[i]) + "</b>" : "";
+    $("ag-pb").value = PB[i] ? t3(PB[i]) : ""; $("ag-err").hidden = true; showRes();
+    $("ag-dlg").hidden = false; setTimeout(function () { $("ag-pb").focus(); }, 60);
   }
   function close() { $("ag-dlg").hidden = true; cur = -1; }
-  $("ag-rows").addEventListener("click", function (e) { var b = e.target.closest(".ag-mc"); if (b) openDlg(+b.dataset.i); });
-  $("ag-q").addEventListener("input", render);
-  document.querySelectorAll(".ag-chip").forEach(function (c) { c.addEventListener("click", function () { filt = c.dataset.lv; document.querySelectorAll(".ag-chip").forEach(function (x) { x.classList.toggle("on", x === c); }); render(); }); });
+  $("ag-grid").addEventListener("click", function (e) { var b = e.target.closest(".ag-mc"); if (b) openDlg(+b.dataset.i); });
   $("ag-form").addEventListener("submit", function (e) {
     e.preventDefault();
     var v = parseFloat(String($("ag-pb").value).replace(",", ".")), err = $("ag-err");
     if (!isFinite(v) || v <= 0 || v > 600) { err.textContent = "Type your time in seconds, like 36.250"; err.hidden = false; return; }
-    if (OR[cur] && v < OR[cur] - 1e-9) { err.textContent = "That's faster than the Oceania record (" + t3(OR[cur]) + "). If it's real, send it through Get ranked!"; err.hidden = false; return; }
-    err.hidden = true; PB[cur] = Math.round(v * 1000) / 1000; save(); render();
-    $("ag-lvl").innerHTML = lvlText(cur); $("ag-clear").hidden = false; $("ag-pb").value = t3(PB[cur]);
+    if (OR[cur] && v < OR[cur] - 1e-9) { err.textContent = "That's faster than the Oceania record! If it's real, send it through Get ranked."; err.hidden = false; return; }
+    err.hidden = true; PB[cur] = Math.round(v * 1000) / 1000; save(); $("ag-pb").value = t3(PB[cur]); showRes();
   });
-  $("ag-clear").addEventListener("click", function () { delete PB[cur]; save(); render(); close(); });
   $("ag-x").addEventListener("click", close);
   $("ag-dlg").addEventListener("click", function (e) { if (e.target === this) close(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("ag-dlg").hidden) close(); });
-  render();
   // Oceania records from the rankings sheet
   function csv(t) { var R = [], r = [], f = "", q = false; for (var i = 0; i < t.length; i++) { var c = t[i]; if (q) { if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; } else if (c === '"') q = true; else if (c === ",") { r.push(f); f = ""; } else if (c === "\n") { r.push(f); R.push(r); r = []; f = ""; } else if (c !== "\r") f += c; } if (f || r.length) { r.push(f); R.push(r); } return R; }
   fetch(RANK).then(function (r) { return r.text(); }).then(csv).then(function (rows) {
@@ -428,7 +409,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       for (var m = 0; m < 27; m++) { var v = parseFloat(x[3 + m]); if (isFinite(v) && v > 0 && v < 60 && !(best[m] <= v)) best[m] = v; }
     });
     for (var m = 0; m < 27; m++) OR[m] = rec && isFinite(rec[m]) && rec[m] > 0 ? rec[m] : best[m];
-    render();
+    if (cur >= 0) { $("ag-or").innerHTML = "Oceania record <b>" + t3(OR[cur]) + "</b>"; showRes(); }
   }).catch(function () {});
 })();
 </script>
