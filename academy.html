@@ -215,7 +215,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .ag-lv.none { background: rgba(0,0,0,.5); color: #cfe2f0; box-shadow: none; border: 1px solid #3a5a73; }
 .ag-bd { padding: 9px 10px 10px; display: grid; gap: 6px; } .ag-bd b { font-size: .9rem; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
 .ag-tm { display: flex; justify-content: space-between; font-size: .7rem; color: #7f9bb1; } .ag-tm span:last-child { text-align: right; }
-.ag-tm em { display: block; font-style: normal; font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: #e6f1f9; font-weight: 700; } .ag-tm em.or { color: #9bf04a; } .ag-tm em.add { color: #4aa8f0; font-family: var(--font); }
+.ag-tm em { display: block; font-style: normal; font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: #e6f1f9; font-weight: 700; } .ag-tm { align-items: baseline; } .ag-tm em.or { color: #9bf04a; } .ag-tm em.add { color: #4aa8f0; font-family: var(--font); }
 .ag-pbar { height: 5px; border-radius: 5px; background: #1d3550; overflow: hidden; } .ag-pbar i { display: block; height: 100%; border-radius: 5px; box-shadow: 0 0 8px currentColor; }
 .ag-ft { display: flex; justify-content: space-between; font-size: .66rem; color: #7f9bb1; } .ag-ft .gl { color: #4aa8f0; font-weight: 800; }
 .ag-ft span { white-space: nowrap; }
@@ -283,9 +283,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   <section class="ac-in" id="ac-in" hidden>
     <div class="ag-wrap">
       <div class="ag-top"><div><div class="ac-eyebrow">🎓 You're in</div><h2>Choose a map to <span>start training</span></h2></div>
-        <div class="ag-sum"><div><b>27</b><span>maps</span></div><div><b id="ag-n">0</b><span>PBs entered</span></div><div><b id="ag-pro">0</b><span>at Pro level</span></div><button type="button" class="ac-out" id="ac-out">Lock</button></div></div>
-      <div class="ag-bar"><label class="ag-srch">⌕<input id="ag-q" type="search" placeholder="Find a map" aria-label="Find a map"></label>
-        <button type="button" class="ag-chip on" data-lv="all">All</button><button type="button" class="ag-chip" data-lv="1"><i style="background:#4aa8f0"></i>Beginner</button><button type="button" class="ag-chip" data-lv="2"><i style="background:#9bf04a"></i>Intermediate</button><button type="button" class="ag-chip" data-lv="3"><i style="background:#f0b429"></i>Advanced</button><button type="button" class="ag-chip" data-lv="4"><i style="background:#ff6b9a"></i>Pro</button></div>
+        <div class="ag-sum"><div><b>27</b><span>maps</span></div><div><b>4</b><span>levels each</span></div><button type="button" class="ac-out" id="ac-out">Lock</button></div></div>
+      <div class="ag-bar"><label class="ag-srch">⌕<input id="ag-q" type="search" placeholder="Find a map" aria-label="Find a map"></label></div>
       <div id="ag-rows"></div>
     </div>
   </section>
@@ -378,7 +377,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 })();
 </script>
 <script>
-// Academy map grid. Tap a map, type your PB, see your level. PBs stay on this device. Records come from the rankings sheet.
+// Academy map grid. Tap a map, type your PB, see your level (nothing is saved). Records come from the rankings sheet.
 (function () {
   var MAPS = ["Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup", "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze", "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light", "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash", "Tricky Traps", "Tumble Town", "UFO Attack"];
   var IMG = ["BeaconBay", "BoulderHill", "CircusContest", "DevilsTrick", "EscapeTsunami", "DashCup", "LavaLake", "GravityGates", "HammerVille", "JungleTemple", "KittieKegs", "MechaMaze", "MillValley", "MonsterManor", "NastySeals", "NeonCity", "PolarPath", "1-2-3RedLight", "RicketyRun", "RiskyCliffs", "SharkPark", "SillySlide", "SpikySlopes", "SplashDash", "TrickyTraps", "TumbleTown", "UFOAttack"];
@@ -386,19 +385,15 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   var KEY = "olb-academy-pb", RANK = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
   var $ = function (id) { return document.getElementById(id); };
   var OR = [], PB = {}, cur = -1;
-  try { PB = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { PB = {}; }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(PB)); } catch (e) {} }
+  function save() {}
   var t3 = function (v) { return isFinite(v) ? v.toFixed(3) : "–"; };
   // how far behind the Oceania record decides the level
   function level(i) { var p = PB[i], o = OR[i]; if (!p || !o) return 0; var g = (p - o) / o; return g <= .03 ? 4 : g <= .06 ? 3 : g <= .12 ? 2 : 1; }
   var filt = "all";
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); };
   function card(i, d) {
-    var lv = level(i), L = LV[lv], g = lv ? (PB[i] - OR[i]) / OR[i] : null, w = g == null ? 0 : Math.max(4, Math.min(100, 100 - g * 400));
-    return '<button type="button" class="ag-card" data-i="' + i + '" style="--d:' + d + '"><div class="ag-pic"><img src="maps/' + IMG[i] + '.png" alt="" loading="lazy"><span class="ag-num">' + ("0" + (i + 1)).slice(-2) + "</span>" +
-      (L ? '<span class="ag-lv" style="--c:' + L.c + '">' + L.n + "</span>" : '<span class="ag-lv none">No PB yet</span>') + "</div>" +
-      '<div class="ag-bd"><b>' + esc(MAPS[i]) + '</b><div class="ag-tm"><span>Your PB ' + (PB[i] ? "<em>" + t3(PB[i]) + "</em>" : '<em class="add">+ Add</em>') + '</span><span>OR <em class="or">' + t3(OR[i]) + "</em></span></div>" +
-      '<div class="ag-pbar"><i style="width:' + w + "%;background:" + (L ? L.c : "transparent") + '"></i></div><div class="ag-ft"><span>' + (lv ? "Level " + lv + "/4" : "Level ?") + '</span><span class="gl">' + (lv ? "Start →" : "Enter PB →") + "</span></div></div></button>";
+    return '<button type="button" class="ag-card" data-i="' + i + '" style="--d:' + d + '"><div class="ag-pic"><img src="maps/' + IMG[i] + '.png" alt="" loading="lazy"><span class="ag-num">' + ("0" + (i + 1)).slice(-2) + "</span></div>" +
+      '<div class="ag-bd"><b>' + esc(MAPS[i]) + '</b><div class="ag-tm"><span>Oceania record</span><span><em class="or">' + t3(OR[i]) + '</em></span></div><div class="ag-ft"><span>4 levels</span><span class="gl">Start training →</span></div></div></button>';
   }
   function render(anim) {
     var q = $("ag-q").value.trim().toLowerCase(), h = "", any = false, d = 0;
@@ -406,18 +401,14 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       var cards = "";
       for (var i = r * 9; i < r * 9 + 9; i++) {
         if (q && MAPS[i].toLowerCase().indexOf(q) < 0) continue;
-        if (filt !== "all" && String(level(i)) !== filt) continue;
         cards += card(i, anim ? d++ : -40);
       }
       if (cards) { any = true; h += '<div class="ag-rowl">Row ' + (r + 1) + " · Maps " + (r * 9 + 1) + "–" + (r * 9 + 9) + '</div><div class="ag-grid">' + cards + "</div>"; }
     }
     $("ag-rows").innerHTML = any ? h : '<p class="ag-empty">No maps match that.</p>';
-    var n = 0, pro = 0; for (var k = 0; k < 27; k++) { if (PB[k]) n++; if (level(k) === 4) pro++; }
-    $("ag-n").textContent = n; $("ag-pro").textContent = pro;
   }
   render(true);
   $("ag-q").addEventListener("input", function () { render(false); });
-  document.querySelectorAll(".ag-chip").forEach(function (c) { c.addEventListener("click", function () { filt = c.dataset.lv; document.querySelectorAll(".ag-chip").forEach(function (x) { x.classList.toggle("on", x === c); }); render(true); }); });
   function showRes() {
     var lv = level(cur), r = $("ag-res");
     if (!lv) { r.hidden = true; $("ag-btn").textContent = "Show my level →"; return; }
@@ -425,13 +416,13 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     r.style.setProperty("--c", L.c);
     r.innerHTML = '<b>' + L.n + '</b><div class="ag-meter">' + m + "</div><small>Level " + lv + " of 4" + (lv < 4 ? " · beat " + t3(next(cur, lv)) + " to level up" : " · top level") + "</small>";
     r.hidden = false; r.style.animation = "none"; void r.offsetWidth; r.style.animation = "";
-    $("ag-btn").textContent = "Update my PB";
+    $("ag-btn").textContent = "Check another time";
   }
   function next(i, lv) { var o = OR[i]; return o * (1 + [0, .12, .06, .03][lv]); }
   function openDlg(i) {
     cur = i; $("ag-img").src = "maps/" + IMG[i] + ".png"; $("ag-title").textContent = MAPS[i];
     $("ag-or").innerHTML = OR[i] ? "Oceania record <b>" + t3(OR[i]) + "</b>" : "";
-    $("ag-pb").value = PB[i] ? t3(PB[i]) : ""; $("ag-err").hidden = true; showRes();
+    PB = {}; $("ag-pb").value = ""; $("ag-err").hidden = true; showRes();
     $("ag-dlg").hidden = false; setTimeout(function () { $("ag-pb").focus(); }, 60);
   }
   function close() { $("ag-dlg").hidden = true; cur = -1; }
@@ -441,7 +432,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     var v = parseFloat(String($("ag-pb").value).replace(",", ".")), err = $("ag-err");
     if (!isFinite(v) || v <= 0 || v > 600) { err.textContent = "Type your time in seconds, like 36.250"; err.hidden = false; return; }
     if (OR[cur] && v < OR[cur] - 1e-9) { err.textContent = "That's faster than the Oceania record! If it's real, send it through Get ranked."; err.hidden = false; return; }
-    err.hidden = true; PB[cur] = Math.round(v * 1000) / 1000; save(); $("ag-pb").value = t3(PB[cur]); showRes(); render(false);
+    err.hidden = true; PB[cur] = Math.round(v * 1000) / 1000; save(); $("ag-pb").value = t3(PB[cur]); showRes();
   });
   $("ag-x").addEventListener("click", close);
   $("ag-dlg").addEventListener("click", function (e) { if (e.target === this) close(); });
