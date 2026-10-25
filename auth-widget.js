@@ -136,6 +136,7 @@ async function init(box) {
 
   if (auth) A.onAuthStateChanged(auth, async u => {
     user = u && !u.isAnonymous ? u : null; profile = null;
+    window.olbAdmin = !!(user && isAdmin()); window.dispatchEvent(new CustomEvent("olb-auth", { detail: { admin: window.olbAdmin } }));   // lets pages unlock admin-only bits
     if (!user) { save(null); drawSignedOut(); return; }
     if (needsVerify()) { drawSignedOut(); if (dlgOpen()) stepVerify(); return; }
     try { const s = await L.getDoc(L.doc(db, "users", user.uid)); profile = s.exists() ? s.data() : null; } catch (e) {}

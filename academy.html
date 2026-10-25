@@ -299,11 +299,14 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       var f = $("ac-lock"); f.classList.remove("shake"); void f.offsetWidth; f.classList.add("shake"); $("ac-pass").select();
     }
   });
+  // the admin account (signed in on the website) gets in without the password
+  function adminIn(e) { if ((e && e.detail && e.detail.admin) || window.olbAdmin) { if ($("ac-in").hidden) open(false); $("ac-out").hidden = true; var t = document.querySelector(".ac-head .ac-eyebrow"); if (t) t.textContent = "🛠️ Admin access · only you can see this"; } }
+  window.addEventListener("olb-auth", adminIn); adminIn();
   $("ac-out").addEventListener("click", lock);
   document.querySelectorAll(".mc").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); }); });
 })();
 </script>
-<script type="module" src="auth-widget.js?v=6"></script>
+<script type="module" src="auth-widget.js?v=7"></script>
 <script src="site-nav.js?v=5" defer></script>
 </body>
 </html>
