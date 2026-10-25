@@ -194,6 +194,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .ag-meter + small { display: block; color: #7f9bb1; font-size: .78rem; }
 .ag-btn { margin-top: 18px; width: 100%; height: 54px; border: 0; border-radius: 16px; background: linear-gradient(90deg, #9bf04a, #5fe0a0); color: #0b1622; font: 900 1.05rem var(--font); box-shadow: 0 0 24px rgba(155,240,74,.4); cursor: pointer; transition: transform .15s, filter .15s; }
 .ag-btn:hover { filter: brightness(1.06); } .ag-btn:active { transform: scale(.98); }
+.ag-start { display: grid; place-items: center; text-decoration: none; background: linear-gradient(90deg, #4aa8f0, #5fc0f0); box-shadow: 0 0 24px rgba(74,168,240,.4); margin-top: 10px; } .ag-start[hidden] { display: none; }
 .ag-soon { color: #7f9bb1; font-size: .82rem; margin-top: 12px; }
 .ag-sum { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
 .ag-sum div { background: rgba(255,255,255,.04); border: 1px solid #1f3a57; border-radius: 14px; padding: 8px 16px; min-width: 110px; }
@@ -295,7 +296,8 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       <p class="ag-or" id="ag-or"></p><p class="ag-err" id="ag-err" hidden></p>
       <div class="ag-res" id="ag-res" hidden></div>
       <button class="ag-btn" id="ag-btn" type="submit">Show my level →</button>
-      <p class="ag-soon">🚧 Courses are being built. Your level will be ready for it.</p></div>
+      <a class="ag-btn ag-start" id="ag-start" href="#" hidden>▶ Start Level 1 →</a>
+      <p class="ag-soon" id="ag-soon">🚧 Courses are being built. Your level will be ready for it.</p></div>
   </form></div>
 </main>
 
@@ -385,6 +387,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
   var KEY = "olb-academy-pb", RANK = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
   var $ = function (id) { return document.getElementById(id); };
   var OR = [], PB = {}, cur = -1;
+  var COURSE = { 0: "course.html" }; // maps that have a course page so far
   function save() {}
   var t3 = function (v) { return isFinite(v) ? v.toFixed(3) : "–"; };
   // how far behind the Oceania record decides the level
@@ -423,6 +426,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     cur = i; $("ag-img").src = "maps/" + IMG[i] + ".png"; $("ag-title").textContent = MAPS[i];
     $("ag-or").innerHTML = OR[i] ? "Oceania record <b>" + t3(OR[i]) + "</b>" : "";
     PB = {}; $("ag-pb").value = ""; $("ag-err").hidden = true; showRes();
+    var c = COURSE[i]; $("ag-start").hidden = !c; if (c) $("ag-start").href = c; $("ag-soon").hidden = !!c;
     $("ag-dlg").hidden = false; setTimeout(function () { $("ag-pb").focus(); }, 60);
   }
   function close() { $("ag-dlg").hidden = true; cur = -1; }
