@@ -177,6 +177,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .app-res { font-weight: 700; padding: 10px 14px; border-radius: 12px; background: var(--bg); } .app-res.good { background: color-mix(in srgb, #2a9d5c 16%, var(--panel)); } .app-res.err { background: color-mix(in srgb, #d9505c 16%, var(--panel)); }
 .adm-empty { text-align: center; padding: 50px 20px; color: var(--muted); background: var(--panel); border-radius: 20px; border: 1px dashed var(--line); }
 
+.app.busy { opacity: .72; }
 .tag.sheet { background: rgba(240,180,41,.18); border: 1px solid #e0a21b; color: inherit; margin-left: 6px; }
 .app-rec { margin: 8px 0; padding: 8px 12px; border-radius: 12px; background: rgba(180,76,224,.12); border: 1px solid #b44ce0; font-weight: 700; } .app-rec.bad { background: rgba(226,51,51,.1); border-color: #e23333; }
 .app-video { display: inline-flex; align-items: center; gap: 6px; margin: 8px 0; padding: 8px 14px; border-radius: 999px; background: rgba(224,162,27,.15); border: 1px solid #e0a21b; font-weight: 800; text-decoration: none; color: inherit; }
@@ -356,16 +357,22 @@ document.addEventListener("click", async e => {
   if (act === "decline" && !note && !confirm("Decline without a reason?")) return;
   if (act === "approve" && !confirm("Approve and add to the rankings sheet now?")) return;
   card.querySelectorAll("[data-act]").forEach(x => { x.disabled = true; });
-  res.hidden = false; res.className = "app-res"; res.textContent = act === "dry" ? "Checking where they'd go…" : "Working…";
+  res.hidden = false; res.className = "app-res"; res.textContent = act === "dry" ? "Checking where they'd go…" : "⏳ Queued. You can keep going, it finishes by itself.";
+  if (act !== "dry") card.classList.add("busy");
+  // approvals and declines run one after another in the background, so you never wait on the page
+  const job = async () => { if (act !== "dry") res.textContent = act === "decline" ? "Declining…" : "⚙️ Approving… (updating the sheet)";
   try {
     const r = await api({ action: act === "decline" ? "decline" : "approve", id, note, dryRun: act === "dry" });
     if (!r.ok) throw new Error(r.error);
     if (act === "dry") { res.className = "app-res good"; res.innerHTML = "👀 Preview: " + esc(r.summary) + (r.changes && r.changes.length ? "<br><small>" + r.changes.map(c => esc(c.map) + " " + fmt(c.from) + " → " + fmt(c.to)).join(" · ") + "</small>" : "") + "<br><small>Nothing has changed yet.</small>"; card.querySelectorAll("[data-act]").forEach(x => { x.disabled = false; }); return; }
     res.className = "app-res good"; res.textContent = act === "decline" ? "❌ Declined." : "✅ " + r.summary + ". The rankings sheet is updated.";
     const a = S.apps.find(x => x.id === id); if (a) { a.status = act === "decline" ? "declined" : "approved"; a.result = r.summary || ""; a.note = note; a.decided = "just now"; }
-    setTimeout(render, 2500);
-  } catch (x) { res.className = "app-res err"; res.textContent = "⚠️ " + x.message; card.querySelectorAll("[data-act]").forEach(y => { y.disabled = false; }); }
+    card.classList.remove("busy"); setTimeout(render, 2500);
+  } catch (x) { card.classList.remove("busy"); res.className = "app-res err"; res.textContent = "⚠️ " + x.message; card.querySelectorAll("[data-act]").forEach(y => { y.disabled = false; }); }
+  };
+  if (act === "dry") job(); else { QUEUE = QUEUE.then(job); }
 });
+let QUEUE = Promise.resolve();
 (async () => {
   try {
     const [app, A] = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js")]);
