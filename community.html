@@ -157,6 +157,17 @@ footer .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; justify-cont
 .emoji-pop button:hover { background: var(--soft); }
 .rxpop { position: fixed; bottom: auto; left: 0; top: 0; grid-template-columns: repeat(8, 38px); z-index: 65; }
 @media (max-width: 420px) { .emoji-pop { grid-template-columns: repeat(7, 38px); } .rxpop { grid-template-columns: repeat(4, 38px); } }
+.msg .lnk { color: var(--blue, #1478c2); text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
+.msg .emb { display: block; margin-top: 6px; max-width: min(420px, 100%); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+.msg .emb.fr, .msg .emb.yt { aspect-ratio: 16/9; width: 420px; position: relative; padding: 0; cursor: pointer; }
+.msg .emb.fr iframe, .msg .emb.yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.msg .emb.yt img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.msg .emb.yt .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 64px; height: 44px; border-radius: 12px; background: #ff0033; color: #fff; display: grid; place-items: center; font-size: 1.2rem; box-shadow: 0 6px 18px rgba(0,0,0,.4); }
+.msg .emb.yt .src { position: absolute; left: 8px; bottom: 8px; background: rgba(0,0,0,.65); color: #fff; font: 700 .72rem system-ui; padding: 2px 8px; border-radius: 6px; }
+.msg .emb.vid { width: 420px; max-height: 360px; }
+.msg .emb.pic { max-height: 300px; width: auto; background: var(--soft); border: 0; }
+.msg .emb.card { display: flex; gap: 10px; align-items: center; padding: 10px 12px; background: var(--soft, rgba(0,0,0,.05)); color: inherit; text-decoration: none; max-width: min(360px, 100%); }
+.msg .emb.card .ic { font-size: 1.2rem; } .msg .emb.card b { display: block; font-size: .9rem; } .msg .emb.card small { display: block; color: var(--muted); font-size: .76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; }
 .msg .img { display: block; margin-top: 6px; max-width: min(320px, 100%); max-height: 320px; border-radius: 10px; cursor: zoom-in; background: var(--soft); min-height: 90px; min-width: 120px; object-fit: cover; }
 .msg .img[src] { min-height: 0; min-width: 0; }
 .acts2 { display: flex; gap: 1px; opacity: 0; transition: opacity .12s; align-self: start; }
@@ -761,6 +772,7 @@ function fmtText(t) {
   let h = esc(t);
   const keep = [], ph = x => "\u0000" + (keep.push(x) - 1) + "\u0000";
   h = h.replace(/\\([*_~|`\\>])/g, (m, c) => ph(c));                                   // \* shows a real *
+  h = h.replace(/https?:\/\/(?:(?!&lt;|&gt;|&quot;)[^\s<])+/g, (u) => { const tail = (u.match(/(?:[.,!?)\]]|&#39;|&quot;)+$/) || [""])[0], url = tail ? u.slice(0, -tail.length) : u; return ph('<a class="lnk" href="' + url + '" target="_blank" rel="noopener noreferrer nofollow">' + url + "</a>") + tail; });
   h = h.replace(/```([^`]+?)```/g, (m, c) => ph('<code class="cb">' + c + "</code>"));
   h = h.replace(/`([^`]+?)`/g, (m, c) => ph('<code class="ic">' + c + "</code>"));
   const re = mentionNames();
@@ -773,6 +785,26 @@ function fmtText(t) {
   for (let i = 0; i < 3 && h.includes("\u0000"); i++) h = h.replace(/\u0000(\d+)\u0000/g, (m, n) => keep[n]);
   return h;
 }
+// Link previews: YouTube, Twitch clips, Streamable, Google Drive, video files, gifs/images, or a simple link card
+const PARENT = location.hostname || "goat-ninja-au.github.io";
+function embedFor(raw) {
+  let u; try { u = new URL(raw); } catch (e) { return ""; }
+  if (!/^https?:$/.test(u.protocol)) return "";
+  const host = u.hostname.replace(/^www\.|^m\./, ""), path = u.pathname, enc = encodeURIComponent;
+  let id;
+  if (host === "youtu.be") id = path.slice(1).split("/")[0];
+  else if (/(^|\.)youtube\.com$/.test(host)) id = u.searchParams.get("v") || (path.match(/^\/(?:shorts|embed|live)\/([\w-]{6,})/) || [])[1];
+  if (id && /^[\w-]{6,20}$/.test(id)) { const t = parseInt(u.searchParams.get("t") || "0", 10) || 0;
+    return '<button type="button" class="emb yt" data-yt="' + esc(id) + '" data-t="' + t + '" aria-label="Play YouTube video"><img src="https://i.ytimg.com/vi/' + esc(id) + '/hqdefault.jpg" alt="" loading="lazy"><span class="play">▶</span><span class="src">YouTube</span></button>'; }
+  if (host === "clips.twitch.tv" || (host === "twitch.tv" && /\/clip\//.test(path))) { const slug = host === "clips.twitch.tv" ? path.slice(1).split("/")[0] : path.split("/clip/")[1].split("/")[0];
+    if (/^[\w-]+$/.test(slug)) return '<div class="emb fr"><iframe src="https://clips.twitch.tv/embed?clip=' + enc(slug) + "&parent=" + enc(PARENT) + '&autoplay=false" allowfullscreen loading="lazy" title="Twitch clip"></iframe></div>'; }
+  if (host === "streamable.com" && /^\/[\w]+$/.test(path)) return '<div class="emb fr"><iframe src="https://streamable.com/e' + esc(path) + '" allowfullscreen loading="lazy" title="Streamable video"></iframe></div>';
+  if (host === "drive.google.com" && (id = (path.match(/\/file\/d\/([\w-]+)/) || [])[1])) return '<div class="emb fr"><iframe src="https://drive.google.com/file/d/' + esc(id) + '/preview" allow="autoplay" allowfullscreen loading="lazy" title="Google Drive video"></iframe></div>';
+  if (/\.(mp4|webm|mov|m4v)$/i.test(path)) return '<video class="emb vid" controls preload="metadata" playsinline src="' + esc(u.href) + '"></video>';
+  if (/\.(gif|png|jpe?g|webp)$/i.test(path) || host === "media.tenor.com" || /^media\d*\.giphy\.com$/.test(host)) return '<a href="' + esc(u.href) + '" target="_blank" rel="noopener noreferrer nofollow"><img class="emb pic" src="' + esc(u.href) + '" alt="" loading="lazy" referrerpolicy="no-referrer"></a>';
+  return '<a class="emb card" href="' + esc(u.href) + '" target="_blank" rel="noopener noreferrer nofollow"><span class="ic">🔗</span><span><b>' + esc(host) + "</b><small>" + esc((path + u.search).slice(0, 60) || "/") + "</small></span></a>";
+}
+function embeds(t) { const urls = String(t || "").match(/https?:\/\/[^\s<>]+/g) || []; return urls.slice(0, 2).map(x => embedFor(x.replace(/[.,!?)\]'"]+$/, ""))).join(""); }
 const EMOJI_ONLY = /^(?:\p{Extended_Pictographic}|\p{Emoji_Modifier}|\p{Regional_Indicator}|\u200d|\ufe0f|\s)+$/u;
 const isJumbo = t => !!t && EMOJI_ONLY.test(t) && Array.from(t.replace(/\s|\u200d|\ufe0f/g, "")).length <= 27;
 function discordTime(d) {
@@ -818,7 +850,7 @@ function renderMsgs(list) {
     const txt = m.text ? '<div class="text' + (isJumbo(m.text) ? " jumbo" : "") + '">' + fmtText(m.text) + (cont && m.edited ? ' <span class="edited">(edited)</span>' : "") + "</div>" : "";
     html += '<div class="' + cls + '" id="m-' + esc(m.id) + '">' + (cont ? '<span class="ht" title="' + esc(fullTime(d)) + '">' + timeLabel(d) + "</span>" : '<span data-user="' + esc(m.uid) + '">' + avatar(u) + "</span>") + '<div class="bub">' + rp +
       (cont ? "" : '<div class="meta"><b data-user="' + esc(m.uid) + '">' + esc(u.name || m.name) + "</b>" + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + '<time title="' + esc(fullTime(d)) + '">' + discordTime(d) + "</time>" + (m.edited ? '<span class="edited">(edited)</span>' : "") + (m.pinned ? '<span class="edited">📌</span>' : "") + "</div>") +
-      txt + img + aud + rx + seen + "</div>" + acts + "</div>";
+      txt + (m.text ? embeds(m.text) : "") + img + aud + rx + seen + "</div>" + acts + "</div>";
   }
   const stick = S.stick || renderMsgs.first, keep = renderMsgs.keepFrom;
   const prevTop = box.scrollTop, prevH = box.scrollHeight;
@@ -1838,6 +1870,10 @@ start();
   window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   top.addEventListener("focusin", function () { root.classList.remove("olb-hidden"); });
 })();
+</script>
+<script>
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest(".emb.yt"); if (!b || b.querySelector("iframe")) return; e.preventDefault();
+  b.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(b.dataset.yt) + "?autoplay=1&rel=0&playsinline=1" + (+b.dataset.t ? "&start=" + (+b.dataset.t) : "") + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="YouTube video"></iframe>'; });
 </script>
 <script type="module" src="auth-widget.js?v=7"></script>
 <script src="site-nav.js?v=5" defer></script>
