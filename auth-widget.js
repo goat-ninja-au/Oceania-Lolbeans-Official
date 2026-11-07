@@ -10,7 +10,7 @@ const FIREBASE = {
   appId: "1:186827295273:web:530769127fde65c829ea38"
 };
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
-const RANKINGS_CSV = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
+const RANKINGS_CSV = "https://docs.google.com/spreadsheets/d/18WTwgf_f_u6oxsUE9JufxDsSWvGcrwa6ev0MfU3UZXg/gviz/tq?tqx=out:csv&gid=0";
 const PHOTOS_CSV = "https://docs.google.com/spreadsheets/d/12D4wvMVKNqAoot5Ytk2ttgE-CZPNSUCPfktiAiGIE6w/gviz/tq?tqx=out:csv&sheet=Photos";
 const BAD = ["fuck", "shit", "bitch", "cunt", "dick", "pussy", "nigger", "nigga", "faggot", "fag", "retard", "slut", "whore", "porn", "sex"];
 const ON_COMMUNITY = /community\.html$/.test(location.pathname);

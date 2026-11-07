@@ -8,7 +8,7 @@
   if (!header || header.classList.contains("olbx")) return;
   var wrap = header.querySelector(".wrap") || header;
 
-  var SHEET = "https://docs.google.com/spreadsheets/d/1YvEz4x895BCXkqYMpjMuMLij_cuPH6Lndmhr36V_jmo/gviz/tq?tqx=out:csv&gid=0";
+  var SHEET = "https://docs.google.com/spreadsheets/d/18WTwgf_f_u6oxsUE9JufxDsSWvGcrwa6ev0MfU3UZXg/gviz/tq?tqx=out:csv&gid=0";
   var FS = "https://firestore.googleapis.com/v1/projects/oceania-lolbeans/databases/(default)/documents/messages?orderBy=createdAt%20desc&pageSize=1&key=AIzaSyBNKv8QM7kR4Y_yA0djMPo87y7fqw2jseA";
   var MAPS = ["Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup", "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze", "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light", "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash", "Tricky Traps", "Tumble Town", "UFO Attack"];
   // Top tabs. A tab with "cols" opens a big menu with columns: [heading, [[icon, title, description, link, isNew, search words, external]]]
