@@ -177,6 +177,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 .app-res { font-weight: 700; padding: 10px 14px; border-radius: 12px; background: var(--bg); } .app-res.good { background: color-mix(in srgb, #2a9d5c 16%, var(--panel)); } .app-res.err { background: color-mix(in srgb, #d9505c 16%, var(--panel)); }
 .adm-empty { text-align: center; padding: 50px 20px; color: var(--muted); background: var(--panel); border-radius: 20px; border: 1px dashed var(--line); }
 
+.tag.sheet { background: rgba(240,180,41,.18); border: 1px solid #e0a21b; color: inherit; margin-left: 6px; }
 .app-rec { margin: 8px 0; padding: 8px 12px; border-radius: 12px; background: rgba(180,76,224,.12); border: 1px solid #b44ce0; font-weight: 700; } .app-rec.bad { background: rgba(226,51,51,.1); border-color: #e23333; }
 .app-video { display: inline-flex; align-items: center; gap: 6px; margin: 8px 0; padding: 8px 14px; border-radius: 999px; background: rgba(224,162,27,.15); border: 1px solid #e0a21b; font-weight: 800; text-decoration: none; color: inherit; }
 </style>
@@ -293,10 +294,11 @@ async function api(body) { body.idToken = await S.user.getIdToken(); const r = a
 
 function preview(a) {
   const cur = a.kind === "update" ? S.players.find(p => p.name.toLowerCase() === String(a.current || "").toLowerCase()) : S.players.find(p => p.name.toLowerCase() === a.name.toLowerCase());
-  const full = MAPS.map((_, m) => { const v = a.times[m]; if (a.kind === "update" && cur) return v != null && (cur.t[m] == null || v < cur.t[m]) ? v : cur.t[m]; return v; });
+  const full = MAPS.map((_, m) => { const v = a.times[m]; if (a.kind === "update" && cur) return v != null && (cur.t[m] == null || v < cur.t[m] || a.src) ? v : cur.t[m]; return v; });
   const total = full.reduce((x, v) => x + (v == null ? 60 : v), 0);
   const rank = S.players.filter(p => p !== cur && p.total < total - 1e-9).length + 1;
   const flags = [];
+  if (a.src && cur) { const m = MAPS.indexOf(String(a.src).slice(6)); if (m >= 0 && a.times[m] != null && cur.t[m] != null && a.times[m] > cur.t[m] + 0.0005) flags.push(["bad", "🐢 Slower than their current " + cur.t[m].toFixed(3) + " on " + MAPS[m] + ". Approving replaces it."]); }
   if (a.kind === "new" && cur) flags.push(["bad", "⚠️ " + cur.name + " is already ranked (#" + cur.place + "). Approving will update their times instead."]);
   if (a.kind === "update" && !cur) flags.push(["bad", "⚠️ Can't find “" + a.current + "” in the rankings"]);
   let or = 0, wr = 0, jumps = 0;
@@ -316,7 +318,7 @@ function card(a) {
     return '<div class="' + cls + '"><span>' + esc(n) + "</span><span><b>" + (v == null ? "60" : fmt(v)) + "</b>" + (c != null ? " <small>was " + fmt(c) + "</small>" : "") + (S.OR && S.OR[m] != null ? " <small>OR " + fmt(S.OR[m]) + "</small>" : "") + "</span></div>";
   }).join("");
   const pending = a.status === "pending";
-  return '<article class="app" data-id="' + esc(a.id) + '"><div class="app-top"><div class="who"><b>' + fl + " " + esc(a.name) + '</b><span class="tag ' + esc(a.kind) + '">' + (a.kind === "update" ? "⚡ Update" + (a.current && a.current !== a.name ? " · " + esc(a.current) : "") : "🆕 New player") + "</span><small>Sent " + esc(a.at) + (a.discord ? " · Discord: " + esc(a.discord) : "") + " · total " + P.total.toFixed(3) + '</small></div><div class="app-rank"><small>' + (pending ? "Would be" : "Result") + "</small><b>#" + P.rank + "</b>" + (P.cur ? "<small>now #" + P.cur.place + "</small>" : "") + "</div></div>" +
+  return '<article class="app" data-id="' + esc(a.id) + '"><div class="app-top"><div class="who"><b>' + fl + " " + esc(a.name) + '</b><span class="tag ' + esc(a.kind) + '">' + (a.kind === "update" ? "⚡ Update" + (a.current && a.current !== a.name ? " · " + esc(a.current) : "") : "🆕 New player") + "</span> + (a.src ? '<span class="tag sheet">📋 From the sheet</span>' : "") + <small>Sent " + esc(a.at) + (a.discord ? " · Discord: " + esc(a.discord) : "") + " · total " + P.total.toFixed(3) + '</small></div><div class="app-rank"><small>' + (pending ? "Would be" : "Result") + "</small><b>#" + P.rank + "</b>" + (P.cur ? "<small>now #" + P.cur.place + "</small>" : "") + "</div></div>" +
     (P.flags.length ? '<div class="app-flags">' + P.flags.map(f => '<span class="flag ' + f[0] + '">' + esc(f[1]) + "</span>").join("") + "</div>" : "") +
     "<details" + (pending ? " open" : "") + "><summary>Times</summary><div class=\"app-times\">" + rows + "</div></details>" +
     (a.proof ? '<details class="app-proof" data-proof><summary>📸 Ping screenshot</summary><p class="muted">Loading…</p></details>' : '<p class="muted">📸 No ping screenshot (updating times)</p>') +
