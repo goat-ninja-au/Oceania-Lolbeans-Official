@@ -564,7 +564,7 @@ function renderGrid() {
   const keep = MAPS.map((_, m) => { const i = $("t" + m); return i ? i.value : ""; });
   $("grid").innerHTML = MAPS.map((n, m) => {
     const cur = S.current ? S.current.t[m] : null;
-    return '<div class="tm" id="tm' + m + '"><div class="pic">' + pic(m) + '</div><label for="t' + m + '">' + esc(n) + '</label><input id="t' + m + '" inputmode="decimal" autocomplete="off" placeholder="' + (S.mode === "update" ? (cur != null ? fmt(cur) : "no time yet") : "00.000") + '" value="' + esc(keep[m]) + '"><small id="h' + m + '">' + (S.mode === "update" ? "Now: " + (cur != null ? fmt(cur) : "60 (no time)") : "") + "</small></div>";
+    return '<div class="tm" id="tm' + m + '"><div class="pic">' + pic(m) + '</div><label for="t' + m + '">' + esc(n) + '</label><input id="t' + m + '" inputmode="decimal" autocomplete="off" placeholder="' + (S.mode === "update" ? "New PB" : "00.000") + '" value="' + esc(keep[m]) + '"><small id="h' + m + '">' + (S.mode === "update" ? "Now: " + (cur != null ? fmt(cur) : "60 (no time)") : "") + "</small></div>";
   }).join("");
   MAPS.forEach((_, m) => check(m));
 }
