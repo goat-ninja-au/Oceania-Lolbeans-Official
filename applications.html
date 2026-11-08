@@ -62,6 +62,10 @@ nav a:hover { color: var(--text); background: var(--panel-2); }
 .btn-outline:hover { background: var(--panel-2); }
 .push-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 14px; }
 .push-row small { color: var(--muted); }
+.qbar { position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 50; background: #0c2a43; color: #fff; padding: 11px 18px; border-radius: 999px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,.3); display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 32px); }
+.qbar.err { background: #b3261e; }
+.qbar button { background: #fff; color: #0c2a43; border: 0; border-radius: 999px; padding: 5px 12px; font: 700 .9rem var(--font); cursor: pointer; }
+.app.gone { opacity: 0; transform: translateX(24px); transition: opacity .2s, transform .2s; }
 
 /* Sections */
 section.block { padding-block: 72px; border-bottom: 1px solid var(--line); }
@@ -224,6 +228,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
       <button type="button" class="adm-refresh" id="refresh" title="Refresh">↻ Refresh</button>
     </div>
     <div id="list" class="adm-list"></div>
+    <div id="qbar" class="qbar" hidden role="status" aria-live="polite"></div>
   </div>
 </main>
 
@@ -358,24 +363,44 @@ document.addEventListener("click", async e => {
   const b = e.target.closest("[data-act]"); if (!b) return;
   const card = b.closest(".app"), id = card.dataset.id, res = card.querySelector(".app-res"), note = card.querySelector("textarea").value.trim(), act = b.dataset.act;
   if (act === "decline" && !note && !confirm("Decline without a reason?")) return;
-  if (act === "quiet" && !confirm("Decline with no note on the sheet?")) return;
   const quiet = act === "quiet", dec = act === "decline" || quiet;
-  if (act === "approve" && !confirm("Approve and add to the rankings sheet now?")) return;
-  card.querySelectorAll("[data-act]").forEach(x => { x.disabled = true; });
-  res.hidden = false; res.className = "app-res"; res.textContent = act === "dry" ? "Checking where they'd go…" : "⏳ Queued. You can keep going, it finishes by itself.";
-  if (act !== "dry") card.classList.add("busy");
-  // approvals and declines run one after another in the background, so you never wait on the page
-  const job = async () => { if (act !== "dry") res.textContent = dec ? "Declining…" : "⚙️ Approving… (updating the sheet)";
-  try {
-    const r = await api({ action: dec ? "decline" : "approve", id, note: quiet && !note ? "Declined quietly (no note)" : note, quiet, dryRun: act === "dry" });
-    if (!r.ok) throw new Error(r.error);
-    if (act === "dry") { res.className = "app-res good"; res.innerHTML = "👀 Preview: " + esc(r.summary) + (r.changes && r.changes.length ? "<br><small>" + r.changes.map(c => esc(c.map) + " " + fmt(c.from) + " → " + fmt(c.to)).join(" · ") + "</small>" : "") + "<br><small>Nothing has changed yet.</small>"; card.querySelectorAll("[data-act]").forEach(x => { x.disabled = false; }); return; }
-    res.className = "app-res good"; res.textContent = quiet ? "🤫 Declined. No note left on the sheet." : dec ? "❌ Declined." : "✅ " + r.summary + ". The rankings sheet is updated.";
-    const a = S.apps.find(x => x.id === id); if (a) { a.status = dec ? "declined" : "approved"; a.result = r.summary || ""; a.note = quiet && !note ? "Declined quietly (no note)" : note; a.decided = "just now"; }
-    card.classList.remove("busy"); setTimeout(render, 2500);
-  } catch (x) { card.classList.remove("busy"); res.className = "app-res err"; res.textContent = "⚠️ " + x.message; card.querySelectorAll("[data-act]").forEach(y => { y.disabled = false; }); }
-  };
-  if (act === "dry") job(); else { QUEUE = QUEUE.then(job); }
+  if (act === "dry") {
+    card.querySelectorAll("[data-act]").forEach(x => { x.disabled = true; });
+    res.hidden = false; res.className = "app-res"; res.textContent = "Checking where they'd go…";
+    try {
+      const r = await api({ action: "approve", id, note, dryRun: true }); if (!r.ok) throw new Error(r.error);
+      res.className = "app-res good"; res.innerHTML = "👀 Preview: " + esc(r.summary) + (r.changes && r.changes.length ? "<br><small>" + r.changes.map(c => esc(c.map) + " " + fmt(c.from) + " → " + fmt(c.to)).join(" · ") + "</small>" : "") + "<br><small>Nothing has changed yet.</small>";
+    } catch (x) { res.className = "app-res err"; res.textContent = "⚠️ " + x.message; }
+    card.querySelectorAll("[data-act]").forEach(x => { x.disabled = false; }); return;
+  }
+  // approve / decline happen instantly on the page; the sheet catches up in the background
+  const a = S.apps.find(x => x.id === id); if (!a) return;
+  const nt = quiet && !note ? "Declined quietly (no note)" : note, job = { a, undone: false };
+  a.status = dec ? "declined" : "approved"; a.note = nt; a.decided = "just now"; a.result = "⏳ updating the sheet…";
+  card.classList.add("gone"); setTimeout(render, 220);
+  Q.n++; Q.last = job; showBar((dec ? "❌ Declined " : "✅ Approved ") + a.name, true);
+  QUEUE = QUEUE.then(async () => {
+    await new Promise(r => setTimeout(r, Math.max(0, 2500 - (Date.now() - job.t0))));
+    if (!job.undone) {
+      try { const r = await api({ action: dec ? "decline" : "approve", id, note: nt, quiet }); if (!r.ok) throw new Error(r.error); a.result = r.summary || ""; render(); }
+      catch (x) { a.status = "pending"; a.result = ""; render(); Q.err = a.name + ": " + x.message; }
+    }
+    Q.n--; showBar();
+  });
+  job.t0 = Date.now();
+});
+// little bar at the bottom: shows what's still being written to the sheet, with a quick Undo
+const Q = { n: 0, last: null, err: "" };
+function showBar(msg, undo) {
+  const q = $("qbar"); clearTimeout(q._t); q.hidden = false; q.className = "qbar" + (Q.err ? " err" : "");
+  if (Q.err) { q.innerHTML = "⚠️ " + esc(Q.err) + " (it's back in Waiting)"; Q.err = ""; q._t = setTimeout(() => { q.hidden = true; }, 9000); return; }
+  if (msg) { q.innerHTML = esc(msg) + (undo ? ' <button type="button" id="q-undo">Undo</button>' : ""); q._t = setTimeout(() => showBar(), 2600); return; }
+  if (Q.n > 0) { q.textContent = "⏳ Updating the sheet… " + (Q.n > 1 ? Q.n + " left" : ""); return; }
+  q.textContent = "✅ Sheet updated"; q._t = setTimeout(() => { q.hidden = true; }, 2500);
+}
+document.addEventListener("click", e => {
+  if (!e.target.closest("#q-undo") || !Q.last || Q.last.undone || Date.now() - Q.last.t0 > 2400) return;
+  Q.last.undone = true; const a = Q.last.a; a.status = "pending"; a.result = ""; a.note = ""; S.f = "pending"; render(); showBar("↩️ Undone: " + a.name + " is back in Waiting");
 });
 let QUEUE = Promise.resolve();
 // phone notifications: this device gets a ping for new PB requests and chat messages
