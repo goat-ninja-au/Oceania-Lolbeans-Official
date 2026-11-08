@@ -1377,7 +1377,6 @@ async function saveEdit() {
   const text = clean($("c-text").value).slice(0, 300);
   if (!db) { m.text = text; m.edited = true; clearReply(); renderMsgs(currentList()); return; }
   if (!text && !m.img && !m.aud) { toast("A message can't be empty. Delete it instead."); return; }
-  if (LINK.test(text)) { toast("Links aren't allowed."); return; }
   if (text === m.text) { clearReply(); return; }
   try { await F.updateDoc(msgRef(S.view, m.id), { text, edited: true }); if (S.older.includes(m)) { m.text = text; m.edited = true; } clearReply(); renderView(); } catch (err) { toast("Couldn't save the edit."); }
 }
@@ -1387,7 +1386,6 @@ async function sendMessage(extraIn) {
   let text = extraIn.aud ? "" : clean($("c-text").value).slice(0, 300), img = extraIn.aud ? null : S.pendingImg;
   if (!text && !img && !extraIn.aud) return;
   if (text.startsWith("/")) { const out = slashCmd(text); if (out == null) return; text = out.slice(0, 300); }
-  if (LINK.test(text)) { toast("Links aren't allowed."); return; }
   if (EVERY_RE.test(text) && !(S.admin && where === "main")) { toast("Only admins can ping @everyone, in the main chat."); return; }
   if (!viewOk(where)) { toast(k === "dm" ? "You need to be friends to message." : "You're not in this group."); return; }
   const gap = S.lastSend + MIN_GAP - Date.now(); if (gap > 0) await sleep(gap);
