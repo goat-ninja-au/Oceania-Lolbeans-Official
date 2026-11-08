@@ -325,7 +325,7 @@ function card(a) {
     (a.proof ? '<details class="app-proof" data-proof><summary>📸 Ping screenshot</summary><p class="muted">Loading…</p></details>' : '<p class="muted">📸 No ping screenshot (updating times)</p>') +
     (a.record ? '<p class="app-rec' + (/NOT VERIFIED/.test(a.record) ? " bad" : "") + '">🏆 ' + esc(a.record.split(" | ")[0]) + (/NOT VERIFIED/.test(a.record) ? " · <b>not verified</b> (name goes red if approved)" : "") + "</p>" + (/proof: (https:\/\/\S+)/.test(a.record) ? '<a class="app-video" href="' + esc(a.record.match(/proof: (https:\/\/\S+)/)[1]) + '" target="_blank" rel="noopener noreferrer">🏆 Watch the record proof ↗</a>' : "") : "") +
     (/^https:\/\//.test(a.video || "") ? '<a class="app-video" href="' + esc(a.video) + '" target="_blank" rel="noopener noreferrer">🎥 Watch the top 20 video ↗</a>' : "") +
-    (pending ? '<div class="app-act"><textarea placeholder="Reason (only needed if you decline)" maxlength="200"></textarea><button type="button" class="btn btn-no" data-act="decline">Decline</button><button type="button" class="btn btn-outline" data-act="dry">Preview</button><button type="button" class="btn btn-ok" data-act="approve">✅ Approve</button></div><div class="app-res" hidden></div>'
+    (pending ? '<div class="app-act"><textarea placeholder="Reason (only needed if you decline)" maxlength="200"></textarea><button type="button" class="btn btn-no" data-act="decline">Decline</button>' + (a.src ? '<button type="button" class="btn btn-outline" data-act="quiet" title="Decline and leave no note on the sheet">🤫 Decline, no note</button>' : '') + '<button type="button" class="btn btn-outline" data-act="dry">Preview</button><button type="button" class="btn btn-ok" data-act="approve">✅ Approve</button></div><div class="app-res" hidden></div>'
       : '<div class="app-res ' + (a.status === "approved" ? "good" : "err") + '">' + (a.status === "approved" ? "✅ Approved " + esc(a.decided) + (a.result ? " · " + esc(a.result) : "") : "❌ Declined " + esc(a.decided) + (a.note ? " · " + esc(a.note) : "")) + "</div>") + "</article>";
 }
 function render() {
@@ -355,18 +355,20 @@ document.addEventListener("click", async e => {
   const b = e.target.closest("[data-act]"); if (!b) return;
   const card = b.closest(".app"), id = card.dataset.id, res = card.querySelector(".app-res"), note = card.querySelector("textarea").value.trim(), act = b.dataset.act;
   if (act === "decline" && !note && !confirm("Decline without a reason?")) return;
+  if (act === "quiet" && !confirm("Decline with no note on the sheet?")) return;
+  const quiet = act === "quiet", dec = act === "decline" || quiet;
   if (act === "approve" && !confirm("Approve and add to the rankings sheet now?")) return;
   card.querySelectorAll("[data-act]").forEach(x => { x.disabled = true; });
   res.hidden = false; res.className = "app-res"; res.textContent = act === "dry" ? "Checking where they'd go…" : "⏳ Queued. You can keep going, it finishes by itself.";
   if (act !== "dry") card.classList.add("busy");
   // approvals and declines run one after another in the background, so you never wait on the page
-  const job = async () => { if (act !== "dry") res.textContent = act === "decline" ? "Declining…" : "⚙️ Approving… (updating the sheet)";
+  const job = async () => { if (act !== "dry") res.textContent = dec ? "Declining…" : "⚙️ Approving… (updating the sheet)";
   try {
-    const r = await api({ action: act === "decline" ? "decline" : "approve", id, note, dryRun: act === "dry" });
+    const r = await api({ action: dec ? "decline" : "approve", id, note: quiet && !note ? "Declined quietly (no note)" : note, quiet, dryRun: act === "dry" });
     if (!r.ok) throw new Error(r.error);
     if (act === "dry") { res.className = "app-res good"; res.innerHTML = "👀 Preview: " + esc(r.summary) + (r.changes && r.changes.length ? "<br><small>" + r.changes.map(c => esc(c.map) + " " + fmt(c.from) + " → " + fmt(c.to)).join(" · ") + "</small>" : "") + "<br><small>Nothing has changed yet.</small>"; card.querySelectorAll("[data-act]").forEach(x => { x.disabled = false; }); return; }
-    res.className = "app-res good"; res.textContent = act === "decline" ? "❌ Declined." : "✅ " + r.summary + ". The rankings sheet is updated.";
-    const a = S.apps.find(x => x.id === id); if (a) { a.status = act === "decline" ? "declined" : "approved"; a.result = r.summary || ""; a.note = note; a.decided = "just now"; }
+    res.className = "app-res good"; res.textContent = quiet ? "🤫 Declined. No note left on the sheet." : dec ? "❌ Declined." : "✅ " + r.summary + ". The rankings sheet is updated.";
+    const a = S.apps.find(x => x.id === id); if (a) { a.status = dec ? "declined" : "approved"; a.result = r.summary || ""; a.note = quiet && !note ? "Declined quietly (no note)" : note; a.decided = "just now"; }
     card.classList.remove("busy"); setTimeout(render, 2500);
   } catch (x) { card.classList.remove("busy"); res.className = "app-res err"; res.textContent = "⚠️ " + x.message; card.querySelectorAll("[data-act]").forEach(y => { y.disabled = false; }); }
   };
