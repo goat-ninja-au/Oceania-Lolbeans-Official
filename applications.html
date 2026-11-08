@@ -60,6 +60,8 @@ nav a:hover { color: var(--text); background: var(--panel-2); }
 .btn-primary:hover { background: var(--blue-hover); }
 .btn-outline { border-color: var(--line); color: var(--text); background: transparent; }
 .btn-outline:hover { background: var(--panel-2); }
+.push-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 14px; }
+.push-row small { color: var(--muted); }
 
 /* Sections */
 section.block { padding-block: 72px; border-bottom: 1px solid var(--line); }
@@ -212,6 +214,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
     <span class="eyebrow">Admin</span>
     <h1>📝 Ranking applications</h1>
     <p id="adm-sub">Checking your admin account…</p>
+    <div class="push-row" id="push-row" hidden><button type="button" class="btn btn-outline" id="push-btn">🔔 Turn on phone notifications</button><small id="push-msg">Get a ping on this device for new PB requests and chat messages.</small></div>
   </div></section>
   <div class="wrap">
     <div class="adm-tabs" role="tablist" id="tabs" hidden>
@@ -270,7 +273,7 @@ html.olb-hidden .sim-sum { top: calc(env(safe-area-inset-top, 0px) + 12px); }
 <script type="module">
 const API = "https://script.google.com/macros/s/AKfycbzZiPoG41opXscV4iuSYMgJPOcuP0NPYDiAUl3Kqpj0Jd3IWBQN2tGyLTPOXStdCYebQQ/exec";
 const RANK_CSV = "https://docs.google.com/spreadsheets/d/18WTwgf_f_u6oxsUE9JufxDsSWvGcrwa6ev0MfU3UZXg/gviz/tq?tqx=out:csv&gid=0";
-const FIREBASE = { apiKey: "AIzaSyBNKv8QM7kR4Y_yA0djMPo87y7fqw2jseA", authDomain: "oceania-lolbeans.firebaseapp.com", databaseURL: "https://oceania-lolbeans-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "oceania-lolbeans", appId: "1:186827295273:web:530769127fde65c829ea38" };
+const FIREBASE = { apiKey: "AIzaSyBNKv8QM7kR4Y_yA0djMPo87y7fqw2jseA", authDomain: "oceania-lolbeans.firebaseapp.com", databaseURL: "https://oceania-lolbeans-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "oceania-lolbeans", messagingSenderId: "186827295273", appId: "1:186827295273:web:530769127fde65c829ea38" };
 const SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
 const MAPS = ["Beacon Bay", "Boulder Hill", "Circus Contest", "Devil's Trick", "Escape Tsunami", "Dash Cup", "Lava Lake", "Gravity Gates", "Hammer Ville", "Jungle Temple", "Kittie Kegs", "Mecha Maze", "Mill Valley", "Monster Manor", "Nasty Seals", "Neon City", "Polar Path", "1-2-3 Red Light", "Rickety Run", "Risky Cliffs", "Shark Park", "Silly Slide", "Spiky Slopes", "Splash Dash", "Tricky Traps", "Tumble Town", "UFO Attack"];
 const $ = id => document.getElementById(id);
@@ -375,13 +378,31 @@ document.addEventListener("click", async e => {
   if (act === "dry") job(); else { QUEUE = QUEUE.then(job); }
 });
 let QUEUE = Promise.resolve();
+// phone notifications: this device gets a ping for new PB requests and chat messages
+$("push-btn").addEventListener("click", async () => {
+  const b = $("push-btn"), msg = $("push-msg");
+  if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+    msg.textContent = "⚠️ This browser can't get notifications. On iPhone: Share → Add to Home Screen, open the app from there, then press this again."; return; }
+  b.disabled = true; b.textContent = "Turning on…";
+  try {
+    if (await Notification.requestPermission() !== "granted") throw new Error("Notifications are blocked. Allow them for this site in your settings, then try again.");
+    const reg = await navigator.serviceWorker.register("sw.js"); await navigator.serviceWorker.ready;
+    const M = await import(SDK + "firebase-messaging.js");
+    if (!(await M.isSupported())) throw new Error("This browser can't get notifications.");
+    const token = await M.getToken(M.getMessaging(S.fapp), { serviceWorkerRegistration: reg });
+    const r = await api({ action: "pushSave", token, test: true });
+    if (!r.ok) throw new Error(r.error || "Couldn't save this device.");
+    b.textContent = "🔔 Notifications on";
+    msg.textContent = r.sent ? "✅ Sent you a test ping. You'll get one for every new request and chat message." : "⚠️ Saved, but the test ping failed: " + (r.error || "unknown error");
+  } catch (e) { b.disabled = false; b.textContent = "🔔 Turn on phone notifications"; msg.textContent = "⚠️ " + e.message; }
+});
 (async () => {
   try {
     const [app, A] = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js")]);
     let fapp; try { fapp = app.getApps().find(x => x.name === "[DEFAULT]") || app.initializeApp(FIREBASE); } catch (e) { fapp = app.getApp(); }
     A.onAuthStateChanged(A.getAuth(fapp), u => {
       if (!u || u.isAnonymous) { $("adm-sub").textContent = "Log in with the admin account (top right) to see applications."; $("tabs").hidden = true; $("list").innerHTML = ""; return; }
-      S.user = u; $("tabs").hidden = false; load();
+      S.user = u; $("tabs").hidden = false; $("push-row").hidden = false; S.fapp = fapp; load();
     });
   } catch (e) { $("adm-sub").textContent = "Couldn't load sign-in. Refresh the page."; }
 })();

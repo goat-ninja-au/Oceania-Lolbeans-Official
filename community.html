@@ -1380,6 +1380,8 @@ async function saveEdit() {
   if (text === m.text) { clearReply(); return; }
   try { await F.updateDoc(msgRef(S.view, m.id), { text, edited: true }); if (S.older.includes(m)) { m.text = text; m.edited = true; } clearReply(); renderView(); } catch (err) { toast("Couldn't save the edit."); }
 }
+// group / DM message sent: the script checks it and pings the owner's phone if they're in that chat
+function pingOwner(where) { auth.currentUser.getIdToken().then(idToken => fetch(NAME_API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "pushChat", where, idToken }) })).catch(() => {}); }
 async function sendMessage(extraIn) {
   if (!db) { toast("Sending works on the live website."); return; }
   const where = S.view, k = kindOf(where);
@@ -1410,7 +1412,7 @@ async function sendMessage(extraIn) {
   const keep = { text: $("c-text").value, reply: S.replyTo };
   if (!extraIn.aud) { $("c-text").value = ""; $("c-count").textContent = "0 / 300"; clearReply(); clearImg(); }
   stopTyping(); S.stick = true; $("mention-pop").hidden = true;
-  try { await b.commit(); S.lastSend = Date.now(); markRead(); }
+  try { await b.commit(); S.lastSend = Date.now(); markRead(); if (k !== "main") pingOwner(where); }
   catch (err) {
     if (!extraIn.aud) {
       $("c-text").value = keep.text; if (img) { S.pendingImg = img; $("prev-img").src = img; $("prev-info").textContent = "Ready to send"; $("preview").hidden = false; }
