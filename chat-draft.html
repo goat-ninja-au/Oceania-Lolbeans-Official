@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Community Chat Draft</title>
+<meta name="theme-color" content="#0c2a43">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap">
+<style>
+/* DRAFT ONLY: a clickable preview of the next Community chat (channels, roles, member list,
+   mod tools, apply-to-join). Sample data, nothing is saved anywhere. */
+:root {
+  --bg: #c3e1f4; --panel: #ffffff; --panel-2: #acd3ec; --soft: #eef7fd; --line: #98c5e2; --row: #e3eff7;
+  --text: #0c2a43; --muted: #3a5a73; --blue: #1478c2; --blue-hover: #0f62a0; --navy: #0c2a43; --mine: #dbeefb;
+  --green: #22a447; --red: #d9505c; --gold: #b07d00;
+  --r-owner: #d9480f; --r-mod: #7048e8; --r-top: #b07d00; --r-ranked: #1478c2; --r-member: var(--text);
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+:root[data-mode="dark"] {
+  --bg: #0d1a26; --panel: #142636; --panel-2: #1c3346; --soft: #10202e; --line: #27445c; --row: #1c3346;
+  --text: #e6f1f9; --muted: #9cb6c9; --blue: #4aa8f0; --blue-hover: #6bb9f5; --navy: #071420; --mine: #17324a;
+  --gold: #f0c04a; --r-owner: #ff8a4c; --r-mod: #a98bff; --r-top: #f0c04a; --r-ranked: #4aa8f0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.5; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+
+/* draft bar */
+.draftbar { background: var(--navy); color: #fff; }
+.draftbar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding-block: 10px; }
+.draftbar b { background: #ffd24a; color: #0b2033; border-radius: 6px; padding: 2px 8px; font-size: .78rem; letter-spacing: .08em; }
+.draftbar span { font-size: .9rem; opacity: .85; }
+.as { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
+.as button { border: 1px solid rgba(255,255,255,.25); background: transparent; color: #fff; border-radius: 999px; padding: 5px 12px; font-weight: 700; font-size: .85rem; }
+.as button[aria-pressed="true"] { background: #fff; color: var(--navy); }
+.mode { width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(255,255,255,.25); background: transparent; color: #fff; }
+
+/* app shell */
+.app { margin-block: 16px 28px; display: grid; grid-template-columns: 250px 1fr 240px; height: min(780px, calc(100dvh - 110px)); min-height: 520px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.side { background: var(--soft); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+.side-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 900; display: flex; align-items: center; gap: 8px; }
+.side-head small { margin-left: auto; color: var(--muted); font-weight: 600; white-space: nowrap; font-size: .8rem; }
+.side-scroll { overflow: auto; padding: 8px 8px 14px; flex: 1; }
+.sec { font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 12px 8px 4px; display: flex; align-items: center; }
+.sec .n { margin-left: auto; background: var(--red); color: #fff; border-radius: 999px; padding: 0 7px; font-size: .72rem; letter-spacing: 0; }
+.ch { width: 100%; display: flex; align-items: center; gap: 8px; border: 0; background: transparent; text-align: left; padding: 7px 10px; border-radius: 8px; color: var(--muted); font-weight: 600; }
+.ch:hover { background: var(--row); color: var(--text); }
+.ch[aria-current="true"] { background: var(--panel-2); color: var(--text); }
+.ch .ic { width: 18px; text-align: center; opacity: .8; }
+.ch .lock { margin-left: auto; font-size: .8rem; opacity: .7; }
+.ch .badge { margin-left: auto; background: var(--red); color: #fff; border-radius: 999px; font-size: .72rem; padding: 0 7px; font-weight: 800; }
+.ch.unread { color: var(--text); font-weight: 800; }
+.req { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin: 6px 2px; font-size: .88rem; }
+.req b { display: block; }
+.req small { color: var(--muted); display: block; margin: 2px 0 8px; }
+.req .row { display: flex; gap: 6px; }
+.mini { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 4px 10px; font-weight: 700; font-size: .82rem; }
+.mini.ok { background: var(--green); border-color: var(--green); color: #fff; }
+.mini.no { color: var(--red); }
+
+/* main */
+.main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); min-height: 56px; }
+.top h2 { font-size: 1.05rem; font-weight: 900; margin: 0; }
+.top p { color: var(--muted); font-size: .85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top .t { min-width: 0; }
+.top .tools { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.pill { border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: .78rem; font-weight: 700; color: var(--muted); background: var(--soft); white-space: nowrap; }
+.iconbtn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); display: grid; place-items: center; }
+.only-phone { display: none; }
+.msgs { flex: 1; overflow: auto; padding: 14px 4px 8px; }
+.day { text-align: center; color: var(--muted); font-size: .75rem; font-weight: 700; margin: 6px 0 10px; }
+.m { display: grid; grid-template-columns: 40px 1fr; gap: 10px; padding: 6px 14px; position: relative; }
+.m:hover { background: var(--soft); }
+.av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: .9rem; position: relative; }
+.av .dot { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--panel); background: #9aa9b5; }
+.av .dot.on { background: var(--green); }
+.who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+.nm { font-weight: 800; }
+.rb { font-size: .7rem; font-weight: 800; border-radius: 6px; padding: 1px 6px; background: var(--row); color: var(--muted); }
+.rb.t10 { background: color-mix(in srgb, var(--gold) 18%, transparent); color: var(--gold); }
+.tag { font-size: .66rem; font-weight: 800; border-radius: 4px; padding: 1px 5px; color: #fff; letter-spacing: .02em; }
+.tm { color: var(--muted); font-size: .75rem; }
+.tx { white-space: pre-wrap; word-break: break-word; }
+.tx.del { color: var(--muted); font-style: italic; }
+.reacts { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+.reacts span { border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; font-size: .8rem; background: var(--panel); }
+.thread { margin-top: 4px; border: 0; background: none; color: var(--blue); font-weight: 700; font-size: .82rem; padding: 0; }
+.acts { position: absolute; right: 12px; top: -12px; display: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,.12); }
+.m:hover .acts, .m.open .acts { display: flex; }
+.acts button { border: 0; background: none; padding: 5px 8px; font-size: .95rem; }
+.acts button:hover { background: var(--row); }
+.sys { text-align: center; color: var(--muted); font-size: .82rem; padding: 6px 14px; }
+.ann .m { border-left: 3px solid var(--r-owner); }
+
+.compose { border-top: 1px solid var(--line); padding: 10px 14px 12px; }
+.compose form { display: flex; gap: 8px; }
+.compose input { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--soft); border-radius: 10px; padding: 11px 14px; }
+.compose .send { border: 0; background: var(--blue); color: #fff; border-radius: 10px; padding: 0 16px; font-weight: 800; }
+.compose .send:disabled { opacity: .5; cursor: not-allowed; }
+.compose .note { font-size: .8rem; color: var(--muted); margin-top: 6px; min-height: 1.2em; }
+.locked { text-align: center; color: var(--muted); font-size: .9rem; padding: 14px; background: var(--soft); border-radius: 10px; }
+.timeout { background: color-mix(in srgb, var(--red) 12%, transparent); color: var(--red); border: 1px solid color-mix(in srgb, var(--red) 40%, transparent); }
+
+/* members */
+.members { border-left: 1px solid var(--line); background: var(--soft); display: flex; flex-direction: column; min-height: 0; }
+.mem { display: flex; align-items: center; gap: 9px; padding: 5px 10px; border-radius: 8px; border: 0; background: none; width: 100%; text-align: left; }
+.mem:hover { background: var(--row); }
+.mem .av { width: 32px; height: 32px; font-size: .75rem; }
+.mem .av .dot { width: 11px; height: 11px; }
+.mem.off { opacity: .55; }
+.mem .nm { font-size: .9rem; line-height: 1.2; }
+.mem small { display: block; color: var(--muted); font-size: .72rem; font-weight: 600; }
+
+/* join gate */
+.gate { flex: 1; display: grid; place-items: center; padding: 24px; overflow: auto; }
+.card { width: min(440px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; box-shadow: 0 10px 30px rgba(12,42,67,.08); }
+.card h3 { font-size: 1.35rem; margin: 6px 0 4px; }
+.card p { color: var(--muted); margin: 0 0 14px; }
+.card label { display: block; font-weight: 700; font-size: .88rem; margin: 10px 0 4px; }
+.card input, .card textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--soft); }
+.card textarea { min-height: 70px; resize: vertical; }
+.card .go { margin-top: 14px; width: 100%; border: 0; background: var(--blue); color: #fff; border-radius: 10px; padding: 12px; font-weight: 800; }
+.card .hint { font-size: .8rem; color: var(--muted); margin-top: 8px; }
+.big { font-size: 2.4rem; }
+
+/* dialogs */
+.dlg { position: fixed; inset: 0; background: rgba(5,15,25,.5); display: grid; place-items: center; z-index: 60; padding: 16px; }
+.dlg .card { max-width: 380px; }
+.opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+.opts button { border: 1px solid var(--line); background: var(--soft); border-radius: 10px; padding: 10px; font-weight: 700; }
+.opts button:hover { border-color: var(--blue); }
+.cancel { margin-top: 12px; width: 100%; border: 1px solid var(--line); background: none; border-radius: 10px; padding: 10px; font-weight: 700; }
+.toast { position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 999px; font-weight: 700; z-index: 70; box-shadow: 0 10px 30px rgba(0,0,0,.3); max-width: calc(100vw - 32px); }
+.legend { padding: 10px 12px 14px; border-top: 1px solid var(--line); font-size: .76rem; color: var(--muted); display: grid; gap: 3px; }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+
+/* phones: channels and members slide in as drawers */
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; height: calc(100dvh - 120px); margin-block: 10px 16px; position: relative; }
+  .side, .members { position: absolute; top: 0; bottom: 0; width: min(300px, 86%); z-index: 30; transition: transform .2s; box-shadow: 0 0 40px rgba(0,0,0,.25); }
+  .side { left: 0; transform: translateX(-105%); }
+  .members { right: 0; transform: translateX(105%); }
+  .app.show-side .side, .app.show-mem .members { transform: none; }
+  .only-phone { display: grid; }
+  .top .pill.hide-sm { display: none; }
+  .draftbar span { display: none; }
+  .draftbar .wrap { flex-wrap: nowrap; gap: 6px; padding-block: 8px; }
+  .as { margin-left: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .as button { padding: 4px 9px; font-size: .78rem; white-space: nowrap; }
+  .mode { flex: none; width: 30px; height: 30px; }
+  .draftbar b { flex: none; }
+}
+</style>
+</head>
+<body>
+<div class="draftbar"><div class="wrap">
+  <b>DRAFT</b><span>New Community chat preview, sample data only. Nothing here is saved.</span>
+  <div class="as" role="group" aria-label="Preview as">
+    <button type="button" data-as="owner" aria-pressed="true">👑 Owner</button>
+    <button type="button" data-as="mod" aria-pressed="false">🛡️ Mod</button>
+    <button type="button" data-as="player" aria-pressed="false">🫘 Player</button>
+    <button type="button" data-as="new" aria-pressed="false">🆕 New person</button>
+  </div>
+  <button type="button" class="mode" id="mode" aria-label="Dark mode">🌙</button>
+</div></div>
+
+<div class="wrap">
+  <div class="app" id="app">
+    <aside class="side" id="side">
+      <div class="side-head">🫘 Oceania LOLBeans <small id="online-n"></small></div>
+      <div class="side-scroll" id="chlist"></div>
+    </aside>
+    <section class="main" id="main"></section>
+    <aside class="members" id="members">
+      <div class="side-head">Members <small id="mem-n"></small></div>
+      <div class="side-scroll" id="memlist"></div>
+      <div class="legend">
+        <div><i style="background:var(--r-owner)"></i>Owner</div>
+        <div><i style="background:var(--r-mod)"></i>Mod</div>
+        <div><i style="background:var(--r-top)"></i>Top 10 (from the rankings)</div>
+        <div><i style="background:var(--r-ranked)"></i>Ranked (from the rankings)</div>
+        <div><i style="background:var(--muted)"></i>Member</div>
+      </div>
+    </aside>
+  </div>
+</div>
+<div id="dlg" class="dlg" hidden></div>
+<div id="toast" class="toast" hidden role="status"></div>
+
+<script>
+const ROLES = {
+  owner:  { name: "Owner",  icon: "👑", color: "var(--r-owner)" },
+  mod:    { name: "Mod",    icon: "🛡️", color: "var(--r-mod)" },
+  top:    { name: "Top 10", icon: "⭐", color: "var(--r-top)" },
+  ranked: { name: "Ranked", icon: "",   color: "var(--r-ranked)" },
+  member: { name: "Member", icon: "",   color: "var(--r-member)" }
+};
+const ROLE_ORDER = ["owner", "mod", "top", "ranked", "member"];
+const COLORS = ["#1478c2", "#22a447", "#7048e8", "#d9480f", "#b07d00", "#0f8a8a", "#c2255c", "#5c7cfa"];
+// sample people. rank = their place on the Oceania rankings (role comes from it automatically)
+const P = {
+  goat:   { name: "Goat(Ninja)",  role: "owner", rank: 4,  flag: "🇦🇺", on: true },
+  ottal:  { name: "Ottal",        role: "mod",   rank: 2,  flag: "🇦🇺", on: true },
+  joshy:  { name: "Joshy",        rank: 1,  flag: "🇦🇺", on: true },
+  jaffa:  { name: "Jaffacoolige", rank: 3,  flag: "🇦🇺", on: false },
+  sand:   { name: "Sandweech",    rank: 5,  flag: "🇦🇺", on: true },
+  stry:   { name: "StryboschKid", rank: 7,  flag: "🇦🇺", on: true },
+  soup:   { name: "soup",         rank: 9,  flag: "🇦🇺", on: false },
+  ice:    { name: "icebolt",      rank: 11, flag: "🇦🇺", on: true },
+  kirs:   { name: "Kirsten",      rank: 12, flag: "🇦🇺", on: false },
+  echo:   { name: "⭃♔♫Echo➣™",    rank: 19, flag: "🇦🇺", on: true },
+  astrya: { name: "Astrya",       rank: 16, flag: "🇳🇿", on: false },
+  bean:   { name: "beanboi22",    on: true },
+  milo:   { name: "milo.lb",      on: false }
+};
+Object.keys(P).forEach((k, i) => { const p = P[k]; p.id = k; p.color = COLORS[i % COLORS.length];
+  if (!p.role) p.role = p.rank ? (p.rank <= 10 ? "top" : "ranked") : "member"; });
+const ME_BY_MODE = { owner: "goat", mod: "ottal", player: "ice", new: null };
+
+const CH = [
+  { id: "announcements", icon: "📢", name: "announcements", sub: "Only the owner can post here", ownerOnly: true },
+  { id: "general", icon: "#", name: "general", sub: "Chat with the Oceania community", slow: 0 },
+  { id: "pb-flex", icon: "#", name: "pb-flex", sub: "New PB? Flex it here 🔥", slow: 0 },
+  { id: "clips", icon: "#", name: "clips", sub: "Clips, runs and fails", slow: 0 },
+  { id: "help", icon: "#", name: "help", sub: "Stuck on a map? Ask here" }
+];
+let t0 = Date.now(), seq = 0;
+const ago = m => t0 - m * 60000;
+const M = {
+  announcements: [
+    { u: "goat", at: ago(1440), tx: "📢 The new rankings sheet is live! Tap your time on the sheet to update your PB. Video: goat-ninja-au.github.io/Oceania-Lolbeans-Official/update-pb.html", r: { "🔥": 14, "🫘": 9 } },
+    { u: "goat", at: ago(60), tx: "🏆 Oceania Championships sign-ups open soon. Top 10 get auto invites.", r: { "🙌": 11 } }
+  ],
+  general: [
+    { u: "joshy", at: ago(42), tx: "anyone wanna 1v1 boulder hill rn" },
+    { u: "sand", at: ago(40), tx: "bet, give me 5 mins", r: { "👍": 2 } },
+    { u: "echo", at: ago(31), tx: "how do yall get past the balls in boulder hill without dying 😭", th: 3 },
+    { u: "ottal", at: ago(29), tx: "@⭃♔♫Echo➣™ check the Academy, module 3 is literally that" },
+    { u: "bean", at: ago(12), tx: "first time here hii 👋" },
+    { u: "ice", at: ago(5), tx: "welcome!! 🫘", r: { "❤️": 3 } }
+  ],
+  "pb-flex": [
+    { u: "stry", at: ago(90), tx: "11.350 circus contest LETS GOOO 🔥🔥", r: { "🔥": 8, "👑": 3 } },
+    { u: "soup", at: ago(70), tx: "gg that's insane" }
+  ],
+  clips: [{ u: "jaffa", at: ago(300), tx: "clip of the worst lava lake run ever 💀 youtu.be/…", r: { "💀": 6 } }],
+  help: [{ u: "kirs", at: ago(200), tx: "how do i see my times in 3 decimals?" }, { u: "ottal", at: ago(190), tx: "there's a video on the Get ranked page, takes 1 min" }]
+};
+Object.values(M).forEach(list => list.forEach(m => { m.id = ++seq; }));
+const S = {
+  as: "owner", ch: "general", unread: { clips: 1, help: 2 },
+  requests: [
+    { id: 1, name: "beanlover_77", discord: "beanlover77", why: "saw the rankings on tiktok, wanna get ranked", at: ago(25) },
+    { id: 2, name: "Nzspeed", discord: "nzspeed", why: "NZ player, been grinding for 2 months", at: ago(140) }
+  ],
+  timeouts: {},          // id -> until
+  myJoin: null,          // new person's request status: null | "waiting" | "approved"
+  lastSend: 0
+};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const me = () => P[ME_BY_MODE[S.as]] || (S.myJoin === "approved" ? P.newbie : null);
+const isMod = () => ["owner", "mod"].includes(S.as);
+const chan = () => CH.find(c => c.id === S.ch);
+const initials = n => (n.replace(/[^\w]/g, "").slice(0, 2) || "🫘").toUpperCase();
+const hm = t => new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+function av(p, small) { return '<div class="av" style="background:' + p.color + '">' + esc(initials(p.name)) + '<span class="dot' + (p.on ? " on" : "") + '"></span></div>'; }
+function nameHtml(p) {
+  const r = ROLES[p.role];
+  return '<span class="nm" style="color:' + r.color + '">' + esc(p.name) + '</span>' +
+    (r.icon && (p.role === "owner" || p.role === "mod") ? '<span class="tag" style="background:' + r.color + '">' + r.icon + " " + r.name.toUpperCase() + "</span>" : "") +
+    (p.rank ? '<span class="rb' + (p.rank <= 10 ? " t10" : "") + '" title="Place on the Oceania rankings">#' + p.rank + " " + p.flag + "</span>" : "");
+}
+function toast(t) { const el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(el._t); el._t = setTimeout(() => { el.hidden = true; }, 2600); }
+
+/* ---------- left: channels + join requests ---------- */
+function renderSide() {
+  const online = Object.values(P).filter(p => p.on).length;
+  $("online-n").textContent = "🟢 " + online + " online";
+  let h = "";
+  if (S.as === "owner" || S.as === "mod") {
+    h += '<div class="sec">Join requests' + (S.requests.length ? '<span class="n">' + S.requests.length + "</span>" : "") + "</div>";
+    if (!S.requests.length) h += '<div class="sys" style="text-align:left">No one waiting 🎉</div>';
+    S.requests.forEach(r => {
+      h += '<div class="req"><b>' + esc(r.name) + "</b><small>Discord: " + esc(r.discord) + " · " + ageTxt(r.at) + "<br>“" + esc(r.why) + "”</small>" +
+        '<div class="row"><button type="button" class="mini ok" data-req-ok="' + r.id + '">✅ Let in</button><button type="button" class="mini no" data-req-no="' + r.id + '">Decline</button></div></div>';
+    });
+  }
+  h += '<div class="sec">Text channels</div>';
+  CH.forEach(c => {
+    const n = S.unread[c.id];
+    h += '<button type="button" class="ch' + (n ? " unread" : "") + '" data-ch="' + c.id + '"' + (c.id === S.ch ? ' aria-current="true"' : "") + '><span class="ic">' + c.icon + "</span>" + esc(c.name) +
+      (n ? '<span class="badge">' + n + "</span>" : c.ownerOnly ? '<span class="lock" title="Only the owner can post">🔒</span>' : c.slow ? '<span class="lock" title="Slowmode">🐢</span>' : "") + "</button>";
+  });
+  h += '<div class="sec">Direct messages</div><button type="button" class="ch" data-soon><span class="ic">💬</span>Your DMs + group chats</button>';
+  $("chlist").innerHTML = h;
+}
+function ageTxt(t) { const m = Math.round((Date.now() - t) / 60000); return m < 60 ? m + "m ago" : Math.round(m / 60) + "h ago"; }
+
+/* ---------- right: member list grouped by role ---------- */
+function renderMembers() {
+  const people = Object.values(P).filter(p => p.id !== "newbie" || S.myJoin === "approved");
+  $("mem-n").textContent = people.length;
+  let h = "";
+  ROLE_ORDER.forEach(role => {
+    const list = people.filter(p => p.role === role).sort((a, b) => (b.on - a.on) || ((a.rank || 999) - (b.rank || 999)));
+    if (!list.length) return;
+    h += '<div class="sec">' + ROLES[role].icon + " " + ROLES[role].name + " — " + list.length + "</div>";
+    list.forEach(p => {
+      h += '<button type="button" class="mem' + (p.on ? "" : " off") + '" data-who="' + p.id + '">' + av(p) + '<span><span class="nm" style="color:' + ROLES[p.role].color + '">' + esc(p.name) + "</span>" +
+        "<small>" + (S.timeouts[p.id] > Date.now() ? "⏳ Timed out" : p.rank ? "#" + p.rank + " on the rankings " + p.flag : p.on ? "Online" : "Offline") + "</small></span></button>";
+    });
+  });
+  $("memlist").innerHTML = h;
+}
+
+/* ---------- middle: chat or the join screen ---------- */
+function renderMain() {
+  const c = chan(), u = me();
+  if (!u) { renderGate(); return; }
+  const tools = '<span class="pill hide-sm">' + (c.slow ? "🐢 Slowmode " + c.slow + "s" : c.ownerOnly ? "🔒 Read only" : "💬 Open") + "</span>" +
+    (isMod() && !c.ownerOnly ? '<button type="button" class="iconbtn" id="slow" title="Channel settings: slowmode">⚙️</button>' : "") +
+    '<button type="button" class="iconbtn only-phone" id="open-mem" title="Members">👥</button>';
+  let h = '<div class="top"><button type="button" class="iconbtn only-phone" id="open-side" title="Channels">☰</button><div class="t"><h2>' + c.icon + " " + esc(c.name) + "</h2><p>" + esc(c.sub) + '</p></div><div class="tools">' + tools + "</div></div>";
+  h += '<div class="msgs' + (c.ownerOnly ? " ann" : "") + '" id="msgs"><div class="day">Today</div>';
+  (M[c.id] || []).forEach(m => { h += msgHtml(m); });
+  h += "</div>" + composeHtml(c, u);
+  $("main").innerHTML = h;
+  const box = $("msgs"); box.scrollTop = box.scrollHeight;
+  const inp = $("inp"); if (inp && matchMedia("(hover:hover)").matches) inp.focus();
+}
+function msgHtml(m) {
+  if (m.sys) return '<div class="sys">' + m.sys + "</div>";
+  const p = P[m.u], u = me(), mine = u && m.u === u.id;
+  const canDel = !m.del && (mine || (isMod() && p.role !== "owner"));
+  const canTimeout = isMod() && !mine && !["owner", "mod"].includes(p.role);
+  return '<div class="m" data-id="' + m.id + '">' + av(p) + '<div><div class="who">' + nameHtml(p) + '<span class="tm">' + hm(m.at) + "</span></div>" +
+    '<div class="tx' + (m.del ? " del" : "") + '">' + (m.del ? "🗑️ " + esc(m.del) : esc(m.tx).replace(/@(\S+)/g, '<b style="color:var(--blue)">@$1</b>')) + "</div>" +
+    (m.r && !m.del ? '<div class="reacts">' + Object.entries(m.r).map(([e, n]) => "<span>" + e + " " + n + "</span>").join("") + "</div>" : "") +
+    (m.th && !m.del ? '<button type="button" class="thread" data-thread="' + m.id + '">🧵 ' + m.th + " replies in thread</button>" : "") +
+    '</div><div class="acts">' + (m.del ? "" : '<button type="button" title="React" data-react="' + m.id + '">😀</button><button type="button" title="Reply" data-soon>↩️</button>') +
+    (canDel ? '<button type="button" title="Delete message" data-del="' + m.id + '">🗑️</button>' : "") +
+    (canTimeout ? '<button type="button" title="Time out ' + esc(p.name) + '" data-to="' + p.id + '">⏳</button>' : "") + "</div></div>";
+}
+function composeHtml(c, u) {
+  const until = S.timeouts[u.id] || 0;
+  if (c.ownerOnly && u.role !== "owner") return '<div class="compose"><div class="locked">🔒 Only the owner can post in #announcements. You can still react.</div></div>';
+  if (until > Date.now()) return '<div class="compose"><div class="locked timeout">⏳ You\'re timed out for ' + Math.ceil((until - Date.now()) / 60000) + " more min. You can read, but not send.</div></div>";
+  return '<div class="compose"><form id="send"><input id="inp" maxlength="300" autocomplete="off" placeholder="Message #' + esc(c.name) + '"><button class="send" id="sendbtn">Send</button></form><div class="note" id="note">' +
+    (c.slow ? (isMod() ? "🐢 Slowmode is " + c.slow + "s (mods skip it)" : "🐢 Slowmode: 1 message every " + c.slow + "s") : "") + "</div></div>";
+}
+function renderGate() {
+  let h = '<div class="top"><div class="t"><h2>🫘 Oceania Community</h2><p>Members only</p></div></div><div class="gate">';
+  if (S.myJoin === "waiting") {
+    h += '<div class="card" style="text-align:center"><div class="big">⏳</div><h3>Request sent!</h3><p>An admin will check it soon. You\'ll get in as soon as it\'s approved.</p>' +
+      '<p class="hint">Draft tip: switch to "👑 Owner" up top and approve “' + esc(S.newName) + '” to see what happens.</p></div>';
+  } else {
+    h += '<div class="card"><div class="big">🔐</div><h3>Join the Oceania Community</h3><p>The chat is members only. Send a quick request and an admin will let you in.</p>' +
+      '<form id="join"><label for="j1">LOLBeans name</label><input id="j1" required maxlength="24" placeholder="e.g. beanlover_77">' +
+      '<label for="j2">Discord username</label><input id="j2" required maxlength="32" placeholder="e.g. beanlover77">' +
+      '<label for="j3">Why do you want to join? <span style="font-weight:500;color:var(--muted)">(optional)</span></label><textarea id="j3" maxlength="200" placeholder="Where did you hear about us?"></textarea>' +
+      '<button class="go">Request to join</button><p class="hint">✅ Already on the Oceania rankings? You get in automatically.</p></form></div>';
+  }
+  $("main").innerHTML = h + "</div>";
+}
+function render() { renderSide(); renderMembers(); renderMain(); }
+
+/* ---------- actions ---------- */
+function pushMsg(chId, m) { m.id = ++seq; m.at = m.at || Date.now(); (M[chId] = M[chId] || []).push(m); }
+document.addEventListener("submit", e => {
+  e.preventDefault();
+  if (e.target.id === "join") {
+    S.newName = $("j1").value.trim(); S.myJoin = "waiting";
+    S.requests.unshift({ id: Date.now(), name: S.newName, discord: $("j2").value.trim(), why: $("j3").value.trim() || "—", at: Date.now(), mine: true });
+    toast("📨 Request sent. The owner gets a ping on their phone."); render(); return;
+  }
+  if (e.target.id === "send") {
+    const inp = $("inp"), tx = inp.value.trim(), c = chan(); if (!tx) return;
+    const wait = c.slow && !isMod() ? c.slow * 1000 - (Date.now() - S.lastSend) : 0;
+    if (wait > 0) { $("note").textContent = "🐢 Slowmode: wait " + Math.ceil(wait / 1000) + "s"; return; }
+    pushMsg(c.id, { u: me().id, tx }); S.lastSend = Date.now(); renderMain();
+    if (c.slow && !isMod()) slowCountdown(c.slow);
+  }
+});
+function slowCountdown(s) {
+  const b = $("sendbtn"), n = $("note"); if (!b) return; let left = s; b.disabled = true;
+  const t = setInterval(() => { left--; if (!$("sendbtn")) return clearInterval(t); if (left <= 0) { clearInterval(t); b.disabled = false; n.textContent = "🐢 Slowmode: 1 message every " + s + "s"; } else n.textContent = "🐢 You can send again in " + left + "s"; }, 1000);
+  n.textContent = "🐢 You can send again in " + left + "s";
+}
+function dialog(html) { const d = $("dlg"); d.innerHTML = '<div class="card">' + html + '<button type="button" class="cancel" data-close>Cancel</button></div>'; d.hidden = false; }
+document.addEventListener("click", e => {
+  const t = e.target;
+  const as = t.closest("[data-as]"); if (as) { S.as = as.dataset.as; document.querySelectorAll("[data-as]").forEach(b => b.setAttribute("aria-pressed", b === as)); if (S.as === "new" && S.myJoin === "approved") { S.myJoin = null; } $("app").className = "app"; render(); return; }
+  if (t.closest("#mode")) { const d = document.documentElement.dataset.mode === "dark"; document.documentElement.dataset.mode = d ? "" : "dark"; $("mode").textContent = d ? "🌙" : "☀️"; return; }
+  if (t.closest("#open-side")) { $("app").classList.toggle("show-side"); return; }
+  if (t.closest("#open-mem")) { $("app").classList.toggle("show-mem"); return; }
+  if ($("app").className !== "app" && !t.closest(".side") && !t.closest(".members")) { $("app").className = "app"; }
+  const ch = t.closest("[data-ch]"); if (ch) { S.ch = ch.dataset.ch; delete S.unread[S.ch]; $("app").className = "app"; renderSide(); renderMain(); return; }
+  if (t.closest("[data-soon]")) { toast("Already in the current chat. The draft just shows what's new."); return; }
+  if (t.closest("[data-close]") || t === $("dlg")) { $("dlg").hidden = true; return; }
+  const ok = t.closest("[data-req-ok]"), no = t.closest("[data-req-no]");
+  if (ok || no) {
+    const id = +(ok || no).dataset[ok ? "reqOk" : "reqNo"], r = S.requests.find(x => x.id === id); S.requests = S.requests.filter(x => x.id !== id);
+    if (ok) { const key = r.mine ? "newbie" : "r" + id; P[key] = { id: key, name: r.name, role: "member", on: true, color: COLORS[id % COLORS.length] }; if (r.mine) S.myJoin = "approved";
+      pushMsg("general", { sys: "👋 <b>" + esc(r.name) + "</b> just joined the community. Say hi!" }); toast("✅ " + r.name + " is in"); }
+    else { if (r.mine) S.myJoin = null; toast("Declined " + r.name); }
+    render(); return;
+  }
+  const rx = t.closest("[data-react]"); if (rx) { const m = (M[S.ch] || []).find(x => x.id === +rx.dataset.react); m.r = m.r || {}; m.r["🫘"] = (m.r["🫘"] || 0) + 1; renderMain(); return; }
+  const th = t.closest("[data-thread]"); if (th) { dialog('<h3>🧵 Thread</h3><p><b>' + esc(P.echo.name) + '</b>: how do yall get past the balls in boulder hill without dying 😭</p><p style="margin:0">↳ <b>Joshy</b>: wait at the edge till they pass<br>↳ <b>Sandweech</b>: jump on the 2nd one not the first<br>↳ <b>⭃♔♫Echo➣™</b>: omg it worked tysm</p>'); return; }
+  const del = t.closest("[data-del]"); if (del) {
+    const m = (M[S.ch] || []).find(x => x.id === +del.dataset.del), mine = m.u === me().id;
+    m.del = mine ? "Message deleted" : "Removed by a " + (S.as === "owner" ? "admin" : "mod"); renderMain(); toast(mine ? "Deleted" : "🛡️ Message removed"); return;
+  }
+  const to = t.closest("[data-to]"); if (to) {
+    const p = P[to.dataset.to];
+    dialog('<h3>⏳ Time out ' + esc(p.name) + "?</h3><p>They can still read, but can't send messages or react until it ends.</p><div class=\"opts\">" +
+      [["1 min", 1], ["10 min", 10], ["1 hour", 60], ["1 day", 1440]].map(([l, n]) => '<button type="button" data-tofor="' + p.id + ":" + n + '">' + l + "</button>").join("") + "</div>"); return;
+  }
+  const tf = t.closest("[data-tofor]"); if (tf) {
+    const [id, n] = tf.dataset.tofor.split(":"); S.timeouts[id] = Date.now() + n * 60000; $("dlg").hidden = true;
+    pushMsg(S.ch, { sys: "⏳ <b>" + esc(P[id].name) + "</b> was timed out for " + (n >= 60 ? n / 60 + "h" : n + " min") + " by " + (S.as === "owner" ? "an admin" : "a mod") });
+    if (id === "ice") toast("Tip: switch to 🫘 Player to see what a timed-out person sees"); render(); return;
+  }
+  if (t.closest("#slow")) {
+    const c = chan();
+    dialog("<h3>⚙️ #" + esc(c.name) + "</h3><p>Slowmode: how often each person can send a message. Mods and the owner skip it.</p><div class=\"opts\">" +
+      [["Off", 0], ["5s", 5], ["10s", 10], ["30s", 30], ["1 min", 60], ["5 min", 300]].map(([l, n]) => '<button type="button" data-slowset="' + n + '"' + (c.slow === n ? ' style="border-color:var(--blue);font-weight:900"' : "") + ">" + l + "</button>").join("") + "</div>"); return;
+  }
+  const ss = t.closest("[data-slowset]"); if (ss) { chan().slow = +ss.dataset.slowset; $("dlg").hidden = true; toast(chan().slow ? "🐢 Slowmode on: " + chan().slow + "s" : "Slowmode off"); render(); return; }
+  const who = t.closest("[data-who]"); if (who) {
+    const p = P[who.dataset.who], r = ROLES[p.role];
+    dialog('<div style="display:flex;gap:12px;align-items:center">' + av(p) + "<div>" + nameHtml(p) + '<div class="tm">' + (p.on ? "🟢 Online" : "Offline") + "</div></div></div>" +
+      '<p style="margin-top:12px">Role: <b style="color:' + r.color + '">' + (r.icon ? r.icon + " " : "") + r.name + "</b>" + (p.rank ? "<br>Rankings: <b>#" + p.rank + "</b> " + p.flag + (p.role === "top" || p.role === "ranked" ? " <span class=\"tm\">(role updates by itself from the rankings)</span>" : "") : "") + "</p>" +
+      (S.as === "owner" && p.role !== "owner" ? '<div class="opts"><button type="button" data-mod="' + p.id + '">' + (p.role === "mod" ? "Remove Mod" : "🛡️ Make Mod") + "</button></div>" : "")); return;
+  }
+  const mk = t.closest("[data-mod]"); if (mk) { const p = P[mk.dataset.mod]; p.role = p.role === "mod" ? (p.rank ? (p.rank <= 10 ? "top" : "ranked") : "member") : "mod"; $("dlg").hidden = true; toast(p.role === "mod" ? "🛡️ " + p.name + " is now a Mod" : p.name + " is no longer a Mod"); render(); return; }
+  const mm = t.closest(".m"); document.querySelectorAll(".m.open").forEach(x => { if (x !== mm) x.classList.remove("open"); }); if (mm && !matchMedia("(hover:hover)").matches) mm.classList.toggle("open");
+});
+CH[1].slow = 10;    // #general starts with a 10 second slowmode, to show it off
+render();
+</script>
+</body>
+</html>
