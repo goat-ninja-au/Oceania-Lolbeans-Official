@@ -1400,6 +1400,7 @@ async function saveEdit() {
 // group / DM message sent: the script checks it and pings the owner's phone if they're in that chat
 function pingOwner(where) { auth.currentUser.getIdToken().then(idToken => fetch(NAME_API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "pushChat", where, idToken }) })).catch(() => {}); }
 async function sendMessage(extraIn) {
+  if (!extraIn.aud && canPurge() && PURGE_RE.test($("c-text").value)) { const raw = $("c-text").value; $("c-text").value = ""; $("c-text").dispatchEvent(new Event("input")); purgeCmd(raw); return; }
   if (!db) { toast("Sending works on the live website."); return; }
   const where = S.view, k = kindOf(where);
   let text = extraIn.aud ? "" : clean($("c-text").value).slice(0, 300), img = extraIn.aud ? null : S.pendingImg;
@@ -1727,7 +1728,8 @@ function callAction(a, btn) {
 
 // ---------- clicks ----------
 // ===== PURGE: delete lots of messages at once =====
-function canPurge() { const k = kindOf(S.view); return !S.adminView && ((S.admin && k === "main") || (k === "grp" && (S.groups[gidOf(S.view)] || {}).owner === S.uid)); }
+// only the owner (the ADMINS account) can purge: in the main chat, and in groups they own
+function canPurge() { const k = kindOf(S.view); return !S.adminView && S.admin && (k === "main" || (k === "grp" && (S.groups[gidOf(S.view)] || {}).owner === S.uid)); }
 function purgeBtn() { return canPurge() ? '<button class="tool" type="button" id="purge-btn" title="Purge: delete lots of messages" aria-label="Purge messages">🧹</button>' : ""; }
 function purgeModal() {
   const people = {}; currentList().forEach(m => { if (m.uid && !m.call) people[m.uid] = (S.users[m.uid] || {}).name || m.name || "?"; });
@@ -1757,18 +1759,37 @@ async function purgeDocs(list) {          // list of { id, img, aud } in the ope
   return done;
 }
 async function runPurge() {
-  const n = +(document.querySelector("#pg-n [aria-pressed='true']") || {}).dataset.pgn || 10, who = $("pg-who").value, v = S.view;
+  const n = +(document.querySelector("#pg-n [aria-pressed='true']") || {}).dataset.pgn || 10, who = $("pg-who").value;
   const whoName = who ? $("pg-who").selectedOptions[0].textContent : "";
   if (!confirm("Delete the newest " + n + " messages" + (who ? " from " + whoName : "") + "? This can't be undone.")) return;
   $("pg-go").disabled = true; $("pg-go").textContent = "Purging…";
+  const ok = await purgeNewest(n, who); $("modal").hidden = true;
+  if (!ok) { $("pg-go").disabled = false; $("pg-go").textContent = "🧹 Purge"; }
+}
+async function purgeNewest(n, who) {    // deletes the newest n messages (optionally only from one person)
+  const v = S.view;
   try {
     const field = timeField(v), by = kindOf(v) === "main" || !db ? "uid" : "from";
     const docs = db ? (await F.getDocs(F.query(msgCol(v), F.orderBy(field, "desc"), F.limit(who ? 500 : n)))).docs.map(d => ({ id: d.id, ...d.data() })) : currentList().slice().reverse();
     const list = docs.filter(m => !m.call && (!who || m[by] === who)).slice(0, n);
-    if (!list.length) { $("modal").hidden = true; toast("Nothing to purge."); return; }
-    const done = await purgeDocs(list); $("modal").hidden = true;
+    if (!list.length) { toast("Nothing to purge."); return true; }
+    const done = await purgeDocs(list);
     toast(done === list.length ? "🧹 Deleted " + done + " message" + (done === 1 ? "" : "s") : "Deleted " + done + " of " + list.length + ". Some couldn't be deleted.");
-  } catch (e) { $("pg-go").disabled = false; $("pg-go").textContent = "🧹 Purge"; toast("Couldn't purge: " + (e.code || e.message)); }
+    return true;
+  } catch (e) { toast("Couldn't purge: " + (e.code || e.message)); return false; }
+}
+// ?purge 10   ?purge 25 @name   (also !purge or /purge). Max 100. Owner only.
+const PURGE_RE = /^\s*[?!/]purge(?:\s+(\d+))?(?:\s+@?(.+?))?\s*$/i;
+function purgeCmd(raw) {
+  const m = PURGE_RE.exec(raw); if (!m) return false;
+  const n = Math.min(100, Math.max(1, +m[1] || 10)); let who = "";
+  if (m[2]) {
+    const q = m[2].trim().toLowerCase(), seen = {};
+    currentList().forEach(x => { const u = S.users[x.uid] || {}; seen[x.uid] = [u.name, u.player, x.name].filter(Boolean).map(z => String(z).toLowerCase()); });
+    who = Object.keys(seen).find(u => seen[u].includes(q)) || Object.keys(seen).find(u => seen[u].some(z => z.startsWith(q))) || "";
+    if (!who) { toast("Couldn't find “" + m[2].trim() + "” in this chat."); return true; }
+  }
+  purgeNewest(n, who); return true;
 }
 document.addEventListener("click", async e => {
   const t = e.target;
