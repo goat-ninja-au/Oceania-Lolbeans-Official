@@ -62,6 +62,22 @@ nav.main a:hover { color: var(--text); background: var(--panel-2); }
 .btn.primary:hover { background: var(--blue-hover); }
 .btn.small { padding: 6px 11px; font-size: .84rem; border-radius: 8px; }
 .btn.danger { color: var(--red); }
+/* purge: delete lots of messages at once (admins in the main chat, group owners in their group) */
+.pg-opts { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.pg-opts button { border: 1px solid var(--line); background: var(--soft); border-radius: 999px; padding: 6px 14px; font-weight: 700; }
+.pg-opts button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pg-form { width: 100%; display: grid; gap: 10px; text-align: left; }
+.pg-form label { font-weight: 700; font-size: .88rem; }
+.pg-form select { width: 100%; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--soft); }
+.pg-note { font-size: .82rem; color: var(--muted); }
+#msgs.selmode .msg { cursor: pointer; border-radius: 10px; outline: 2px solid transparent; outline-offset: 2px; }
+#msgs.selmode .msg:hover { background: var(--soft); }
+#msgs.selmode .msg.sel { background: color-mix(in srgb, var(--red) 12%, transparent); outline-color: color-mix(in srgb, var(--red) 55%, transparent); }
+#msgs.selmode .acts2 { display: none !important; }
+#pg-bar { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 45; background: #0c2a43; color: #fff; border-radius: 999px; padding: 8px 8px 8px 18px; display: flex; gap: 10px; align-items: center; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,.3); max-width: calc(100vw - 24px); }
+#pg-bar button { border: 0; border-radius: 999px; padding: 7px 14px; font-weight: 800; }
+#pg-bar .del { background: #d9505c; color: #fff; } #pg-bar .del:disabled { opacity: .5; }
+#pg-bar .no { background: rgba(255,255,255,.15); color: #fff; }
 .btn:disabled { opacity: .5; cursor: default; }
 .field { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; }
 .muted { color: var(--muted); }
@@ -745,11 +761,11 @@ function renderLists() {
 }
 function renderConvTop() {
   const k = kindOf(S.view);
-  if (k === "main") { const c = PUB[S.view]; $("conv-top").innerHTML = '<span class="hash">' + c.icon + '</span><div class="ttl"><b>' + c.title + "</b><small>" + c.sub + "</small></div>"; return; }
+  if (k === "main") { const c = PUB[S.view]; $("conv-top").innerHTML = '<span class="hash">' + c.icon + '</span><div class="ttl"><b>' + c.title + "</b><small>" + c.sub + "</small></div>" + purgeBtn(); return; }
   if (k === "grp") {
     const g = S.groups[gidOf(S.view)] || { name: "Group", members: [] };
     const on = (g.members || []).filter(u => isOnline(S.users[u])).length;
-    $("conv-top").innerHTML = groupAv(g) + '<div class="ttl"><b>' + esc(g.name) + "</b><small>" + (g.members || []).length + " members" + (on ? " · " + on + " online" : "") + '</small></div><button class="btn small" type="button" id="g-manage">Members</button>';
+    $("conv-top").innerHTML = groupAv(g) + '<div class="ttl"><b>' + esc(g.name) + "</b><small>" + (g.members || []).length + " members" + (on ? " · " + on + " online" : "") + '</small></div>' + purgeBtn() + '<button class="btn small" type="button" id="g-manage">Members</button>';
     return;
   }
   const other = otherInView(), u = S.users[other] || { name: "…", uid: other };
@@ -846,7 +862,7 @@ function renderMsgs(list) {
       (canPin() ? '<button type="button" title="' + (m.pinned ? "Unpin" : "Pin") + '" aria-label="' + (m.pinned ? "Unpin" : "Pin") + '" data-pin="' + esc(m.id) + '">📌</button>' : "") +
       (canDel ? '<button type="button" title="Delete" aria-label="Delete" data-delmsg="' + esc(m.id) + '">🗑</button>' : "") + "</div>";
     const seen = kindOf(S.view) === "dm" && m === myLast ? '<div class="seen">' + (S.otherSeen && m.at && S.otherSeen >= m.at.getTime() ? "Seen " + timeLabel(new Date(S.otherSeen)) : m.at ? "Sent" : "Sending…") + "</div>" : "";
-    const cls = "msg" + (mine ? " mine" : "") + (cont ? " cont" : "") + (rp ? " hasrp" : "") + (!mine && mentionsMe(m.text) ? " mentioned" : "") + (m.pinned ? " pinned" : "");
+    const cls = "msg" + (S.sel && S.sel.has(m.id) ? " sel" : "") + (mine ? " mine" : "") + (cont ? " cont" : "") + (rp ? " hasrp" : "") + (!mine && mentionsMe(m.text) ? " mentioned" : "") + (m.pinned ? " pinned" : "");
     const txt = m.text ? '<div class="text' + (isJumbo(m.text) ? " jumbo" : "") + '">' + fmtText(m.text) + (cont && m.edited ? ' <span class="edited">(edited)</span>' : "") + "</div>" : "";
     html += '<div class="' + cls + '" id="m-' + esc(m.id) + '">' + (cont ? '<span class="ht" title="' + esc(fullTime(d)) + '">' + timeLabel(d) + "</span>" : '<span data-user="' + esc(m.uid) + '">' + avatar(u) + "</span>") + '<div class="bub">' + rp +
       (cont ? "" : '<div class="meta"><b data-user="' + esc(m.uid) + '">' + esc(u.name || m.name) + "</b>" + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + '<time title="' + esc(fullTime(d)) + '">' + discordTime(d) + "</time>" + (m.edited ? '<span class="edited">(edited)</span>' : "") + (m.pinned ? '<span class="edited">📌</span>' : "") + "</div>") +
@@ -854,7 +870,7 @@ function renderMsgs(list) {
   }
   const stick = S.stick || renderMsgs.first, keep = renderMsgs.keepFrom;
   const prevTop = box.scrollTop, prevH = box.scrollHeight;
-  box.innerHTML = html;
+  box.innerHTML = html; box.classList.toggle("selmode", !!S.sel);
   loadMedia();
   if (keep != null) { box.scrollTop = box.scrollHeight - keep; renderMsgs.keepFrom = null; }
   else if (renderMsgs.first && $("newline")) { $("newline").scrollIntoView({ block: "center" }); renderMsgs.first = false; S.stick = false; }
@@ -1072,6 +1088,7 @@ function syncComposer() {
   $("c-text").placeholder = PUB[S.view] ? "Message " + (S.view === "main" ? "the main chat" : PUB[S.view].title) + " · @ to mention" : ok ? "Message · @ to mention" : kindOf(S.view) === "dm" ? "You need to be friends to message" : "You're not in this group";
 }
 function openView(id, keep) {
+  if (S.sel) { S.sel = null; purgeBar(); }
   if (!db) { toast("Works on the live website."); return; }
   if (!keep) S.adminView = false;
   stopView(); stopTyping(); stopRec(false);
@@ -1709,8 +1726,66 @@ function callAction(a, btn) {
 }
 
 // ---------- clicks ----------
+// ===== PURGE: delete lots of messages at once =====
+function canPurge() { const k = kindOf(S.view); return !S.adminView && ((S.admin && k === "main") || (k === "grp" && (S.groups[gidOf(S.view)] || {}).owner === S.uid)); }
+function purgeBtn() { return canPurge() ? '<button class="tool" type="button" id="purge-btn" title="Purge: delete lots of messages" aria-label="Purge messages">🧹</button>' : ""; }
+function purgeModal() {
+  const people = {}; currentList().forEach(m => { if (m.uid && !m.call) people[m.uid] = (S.users[m.uid] || {}).name || m.name || "?"; });
+  openModal('<span style="font-size:2.2rem;line-height:1">🧹</span><h3 style="margin:0">Purge messages</h3><div class="pg-form"><label>How many of the newest messages?</label><div class="pg-opts" id="pg-n">' +
+    [10, 25, 50, 100].map((n, i) => '<button type="button" data-pgn="' + n + '" aria-pressed="' + (i === 0) + '">' + n + "</button>").join("") +
+    '</div><label for="pg-who">From</label><select id="pg-who"><option value="">Everyone</option>' + Object.entries(people).sort((a, b) => a[1].localeCompare(b[1])).map(([u, n]) => '<option value="' + esc(u) + '">' + esc(n) + "</option>").join("") + "</select>" +
+    '<p class="pg-note">This deletes them for everyone and can\'t be undone.</p></div>' +
+    '<button class="btn danger" type="button" id="pg-go">🧹 Purge</button><button class="btn small" type="button" id="pg-pick">Or pick messages one by one</button>');
+}
+function purgeBar() {
+  let b = $("pg-bar");
+  if (!S.sel) { if (b) b.remove(); return; }
+  if (!b) { b = document.createElement("div"); b.id = "pg-bar"; document.body.appendChild(b); }
+  b.innerHTML = "<span>" + (S.sel.size ? S.sel.size + " selected" : "Tap messages to select") + '</span><button type="button" class="del" id="pg-del"' + (S.sel.size ? "" : " disabled") + '>🗑 Delete</button><button type="button" class="no" id="pg-cancel">Cancel</button>';
+}
+async function purgeDocs(list) {          // list of { id, img, aud } in the open chat
+  const v = S.view; let done = 0;
+  if (!db) { const g = new Set(list.map(m => m.id)); S.live = S.live.filter(x => !g.has(x.id)); Object.keys(S.pubLive).forEach(k => { S.pubLive[k] = S.pubLive[k].filter(x => !g.has(x.id)); }); renderView(); return list.length; }
+  for (let i = 0; i < list.length; i += 400) {
+    const part = list.slice(i, i + 400), b = F.writeBatch(db);
+    part.forEach(m => b.delete(msgRef(v, m.id)));
+    try { await b.commit(); done += part.length; }
+    catch (e) { for (const m of part) { try { await F.deleteDoc(msgRef(v, m.id)); done++; } catch (x) {} } }
+    part.forEach(m => [m.img, m.aud].filter(Boolean).forEach(id => F.deleteDoc(F.doc(db, "images", id)).catch(() => {})));
+  }
+  const gone = new Set(list.map(m => m.id)); S.older = S.older.filter(x => !gone.has(x.id)); renderView();
+  return done;
+}
+async function runPurge() {
+  const n = +(document.querySelector("#pg-n [aria-pressed='true']") || {}).dataset.pgn || 10, who = $("pg-who").value, v = S.view;
+  const whoName = who ? $("pg-who").selectedOptions[0].textContent : "";
+  if (!confirm("Delete the newest " + n + " messages" + (who ? " from " + whoName : "") + "? This can't be undone.")) return;
+  $("pg-go").disabled = true; $("pg-go").textContent = "Purging…";
+  try {
+    const field = timeField(v), by = kindOf(v) === "main" || !db ? "uid" : "from";
+    const docs = db ? (await F.getDocs(F.query(msgCol(v), F.orderBy(field, "desc"), F.limit(who ? 500 : n)))).docs.map(d => ({ id: d.id, ...d.data() })) : currentList().slice().reverse();
+    const list = docs.filter(m => !m.call && (!who || m[by] === who)).slice(0, n);
+    if (!list.length) { $("modal").hidden = true; toast("Nothing to purge."); return; }
+    const done = await purgeDocs(list); $("modal").hidden = true;
+    toast(done === list.length ? "🧹 Deleted " + done + " message" + (done === 1 ? "" : "s") : "Deleted " + done + " of " + list.length + ". Some couldn't be deleted.");
+  } catch (e) { $("pg-go").disabled = false; $("pg-go").textContent = "🧹 Purge"; toast("Couldn't purge: " + (e.code || e.message)); }
+}
 document.addEventListener("click", async e => {
   const t = e.target;
+  if (t.closest("#purge-btn")) { purgeModal(); return; }
+  const pgn = t.closest("[data-pgn]"); if (pgn) { document.querySelectorAll("#pg-n button").forEach(b => b.setAttribute("aria-pressed", b === pgn)); return; }
+  if (t.closest("#pg-go")) { runPurge(); return; }
+  if (t.closest("#pg-pick")) { $("modal").hidden = true; S.sel = new Set(); purgeBar(); renderView(); return; }
+  if (t.closest("#pg-cancel")) { S.sel = null; purgeBar(); renderView(); return; }
+  if (t.closest("#pg-del")) {
+    const list = currentList().filter(m => S.sel.has(m.id)); if (!list.length) return;
+    if (!confirm("Delete " + list.length + " message" + (list.length === 1 ? "" : "s") + " for everyone? This can't be undone.")) return;
+    const n = list.length; S.sel = null; purgeBar(); const done = await purgeDocs(list);
+    toast(done === n ? "🧹 Deleted " + done + " message" + (done === 1 ? "" : "s") : "Deleted " + done + " of " + n + ". Some couldn't be deleted."); return;
+  }
+  if (S.sel && t.closest("#msgs .msg") && !t.closest("a, audio, button.older")) {
+    const id = t.closest(".msg").id.slice(2); S.sel.has(id) ? S.sel.delete(id) : S.sel.add(id); t.closest(".msg").classList.toggle("sel"); purgeBar(); return;
+  }
   if (!t.closest("#emoji-pop, #emoji-btn")) $("emoji-pop").hidden = true;
   if (!t.closest("#rx-pop, [data-rxpick]")) $("rx-pop").hidden = true;
   if (t.closest("[data-signout]")) { stopTyping(); if (rdb && S.uid) await R.set(R.ref(rdb, "status/" + S.uid), { state: "offline", last: R.serverTimestamp() }).catch(() => {}); if (auth) fb.a.signOut(auth); return; }
