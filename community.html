@@ -97,6 +97,23 @@ nav.main a:hover { color: var(--text); background: var(--panel-2); }
 .linkbtn:hover { text-decoration: underline; }
 .small-print { font-size: .8rem; color: var(--muted); }
 
+/* ---------- join requests (members only) ---------- */
+.join-big { font-size: 2.6rem; line-height: 1; }
+.gate textarea.field { min-height: 70px; resize: vertical; font: inherit; }
+.jr { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); margin: 6px 0; text-align: left; }
+.jr small { color: var(--muted); }
+.jr .acts { display: flex; gap: 6px; }
+/* ---------- roles ---------- */
+:root { --r-owner: #d9480f; --r-mod: #7048e8; --r-top: #b07d00; --r-ranked: #1478c2; }
+:root[data-theme="dark"] { --r-owner: #ff8a4c; --r-mod: #a98bff; --r-top: #f0c04a; --r-ranked: #4aa8f0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --r-owner: #ff8a4c; --r-mod: #a98bff; --r-top: #f0c04a; --r-ranked: #4aa8f0; } }
+.rtag { font-size: .62rem; font-weight: 900; letter-spacing: .03em; border-radius: 4px; padding: 1px 5px; color: #fff; vertical-align: 1px; }
+.rank-b { font-size: .68rem; font-weight: 800; border-radius: 5px; padding: 0 5px; background: var(--soft); color: var(--muted); }
+.rank-b.t10 { background: color-mix(in srgb, var(--r-top) 18%, transparent); color: var(--r-top); }
+.mod-opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
+.mod-opts button { border: 1px solid var(--line); background: var(--soft); border-radius: 10px; padding: 9px; font-weight: 700; }
+.mod-opts button[aria-pressed="true"] { border-color: var(--blue); color: var(--blue); }
+
 /* ---------- app ---------- */
 .mtabs { display: none; gap: 6px; margin-bottom: 10px; }
 .mtabs button { flex: 1; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 8px; font-weight: 700; color: var(--muted); position: relative; }
@@ -474,6 +491,12 @@ html.embed-bubble .gate { padding: 18px; }
     <button class="linkbtn small-print" type="button" data-signout>Sign out</button>
   </section>
 
+  <!-- Join request: the chat is members only, everyone asks the owner to get in -->
+  <section id="join" class="card gate" hidden>
+    <div id="join-body" style="display:grid;gap:12px"></div>
+    <button class="linkbtn small-print" type="button" data-signout>Sign out</button>
+  </section>
+
   <!-- Banned -->
   <section id="banned" class="card gate" hidden>
     <h2>You can't use the community</h2>
@@ -484,16 +507,19 @@ html.embed-bubble .gate { padding: 18px; }
   <!-- The app -->
   <section id="appwrap" hidden>
     <div class="mtabs" role="group" aria-label="Show">
-      <button type="button" data-mtab="side" aria-pressed="false">Friends <span class="badge" id="mt-badge" hidden></span></button>
+      <button type="button" data-mtab="side" aria-pressed="false">Chats <span class="badge" id="mt-badge" hidden></span></button>
       <button type="button" data-mtab="conv" aria-pressed="true">Chat</button>
-      <button type="button" data-mtab="online" aria-pressed="false">Online <span id="mt-online"></span></button>
+      <button type="button" data-mtab="online" aria-pressed="false">Members <span id="mt-online"></span></button>
     </div>
     <div class="app" id="app" data-tab="conv">
       <aside class="pane side">
         <div class="me" id="me"></div>
         <div class="scroll">
           <h3 class="h3row">Chats <button class="linkbtn" type="button" id="new-group">+ New group</button></h3>
-          <button class="item" type="button" data-open="main" id="open-main"><span class="hash">#</span><span><b>Main chat</b><small>Everyone</small></span><span id="main-badge"></span></button>
+          <div id="jr-wrap" hidden><h3>Join requests <span class="badge" id="jr-n"></span></h3><div id="jr-list"></div></div>
+          <h3>Channels</h3>
+          <div id="ch-list"></div>
+          <h3>Direct messages + groups</h3>
           <div id="dm-list"></div>
           <div id="inv-wrap" hidden><h3>Group invites</h3><div id="inv-list"></div></div>
           <div id="req-wrap"><h3>Friend requests</h3><div id="req-list"></div></div>
@@ -602,7 +628,7 @@ function ago(t) {
 const mmss = n => { const s = Math.floor(n / 1000); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 function toast(t) { const el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 3000); }
-function show(id) { ["loading", "gate", "verify", "setup", "banned", "appwrap"].forEach(x => { $(x).hidden = x !== id; }); }
+function show(id) { ["loading", "gate", "verify", "setup", "join", "banned", "appwrap"].forEach(x => { $(x).hidden = x !== id; }); }
 function parseCSV(s) {
   const rows = []; let row = [], f = "", q = false;
   for (let i = 0; i < s.length; i++) { const c = s[i];
@@ -614,7 +640,11 @@ function parseCSV(s) {
 // which kind of conversation a view is: "main", a DM ("uidA_uidB") or a group ("grp:ID")
 // public channels everyone can read: the main chat and the Oceania Championships channel
 const PUB = {
-  main: { col: "messages", title: "Main chat", sub: "Everyone in the Oceania community", icon: "#" }
+  announcements: { col: "ch_announcements", title: "announcements", sub: "News from the owner", icon: "📢", ownerOnly: true },
+  main: { col: "messages", title: "general", sub: "Chat with the Oceania community", icon: "#" },
+  pbflex: { col: "ch_pbflex", title: "pb-flex", sub: "New PB? Flex it here 🔥", icon: "#" },
+  clips: { col: "ch_clips", title: "clips", sub: "Clips, runs and fails", icon: "#" },
+  help: { col: "ch_help", title: "help", sub: "Stuck on a map? Ask here", icon: "#" }
 };
 const kindOf = v => PUB[v] ? "main" : v.startsWith("grp:") ? "grp" : "dm";
 const gidOf = v => v.slice(4);
@@ -651,6 +681,7 @@ async function loadRankings() {
 
 // ======================= STATE =======================
 const S = {
+  members: {}, membersOn: false, chatSet: {}, joinReqs: [], lastPost: {},
   uid: null, me: null, admin: false, users: {}, known: {}, status: {},
   friends: [], chats: {}, groups: {}, invites: [], reads: {}, blocked: {},
   view: "main", live: [], older: [], cursor: null, pubLive: { main: [] }, pubCursor: {}, pubFirst: { main: true },
@@ -717,7 +748,7 @@ function renderMe() {
     '<div class="me-actions"><button class="btn small" type="button" id="edit-profile">Edit profile</button><button class="btn small" type="button" id="notify-btn" title="Notifications">' + (canNotify() ? "🔔 On" : "🔕 Off") + '</button><button class="btn small" type="button" id="edit-link">' + (u.player ? "Ranking link" : "Link ranking") + '</button><button class="btn small" type="button" data-signout>Sign out</button></div>';
 }
 function personRow(u, sub) {
-  return '<button class="item" type="button" data-user="' + esc(u.uid) + '">' + avatar(u) + "<span><b>" + esc(u.name) + (u.uid === S.uid ? ' <span class="muted" style="font-weight:500">(you)</span>' : "") + "</b><small>" + sub + "</small></span><span></span></button>";
+  return '<button class="item" type="button" data-user="' + esc(u.uid) + '">' + avatar(u) + "<span><b" + roleStyle(u.uid) + ">" + esc(u.name) + (u.uid === S.uid ? ' <span class="muted" style="font-weight:500">(you)</span>' : "") + "</b><small>" + sub + "</small></span><span></span></button>";
 }
 const badge = n => n ? '<span class="badge">' + (n > 99 ? "99+" : n) + "</span>" : "<span></span>";
 function lastLine(c) {
@@ -733,7 +764,8 @@ function renderLists() {
   Object.entries(S.groups).forEach(([gid, g]) => { const id = "grp:" + gid; convs.push({ id, at: ms(g.lastAt), html: () => groupAv(g) + "<span><b>" + esc(g.name) + "</b><small>" + (g.lastText ? esc((g.lastFrom === me ? "You" : nameOf(g.lastFrom)) + ": " + g.lastText) : (g.members || []).length + " members") + "</small></span>" }); });
   convs.sort((a, b) => b.at - a.at);
   $("dm-list").innerHTML = convs.length ? convs.map(c => '<button class="item" type="button" data-open="' + esc(c.id) + '"' + (S.view === c.id ? ' aria-current="true"' : "") + ">" + c.html() + badge(S.view === c.id ? 0 : S.unread[c.id]) + "</button>").join("") : '<p class="empty">No friends yet. Tap someone in Online or the chat to add them.</p>';
-  Object.keys(PUB).forEach(v => { $("open-" + v).setAttribute("aria-current", String(S.view === v)); $(v + "-badge").outerHTML = '<span id="' + v + '-badge">' + (S.view === v ? "" : badge(S.unread[v]).replace("<span></span>", "")) + "</span>"; });
+  $("ch-list").innerHTML = Object.keys(PUB).map(v => { const c = PUB[v], n = S.view === v ? 0 : S.unread[v]; return '<button class="item" type="button" data-open="' + v + '" id="open-' + v + '" aria-current="' + (S.view === v) + '"><span class="hash">' + c.icon + "</span><span><b>" + esc(c.title) + "</b><small>" + esc(c.sub) + "</small></span>" + (n ? badge(n) : c.ownerOnly ? '<span title="Only the owner can post here">🔒</span>' : slowOf(v) ? '<span title="Slowmode">🐢</span>' : "<span></span>") + "</button>"; }).join("");
+  renderJoinReqs();
   const tot = Object.entries(S.unread).reduce((a, [k, v]) => a + (PUB[k] || k === S.view ? 0 : v || 0), 0);
   $("mt-badge").hidden = !tot; $("mt-badge").textContent = tot;
   // group invites
@@ -745,13 +777,13 @@ function renderLists() {
   $("req-list").innerHTML = inc.map(f => { const u = S.users[f.from] || { name: "…", uid: f.from }; return '<div class="req">' + avatar(u) + '<span><b data-user="' + f.from + '" style="cursor:pointer">' + esc(u.name) + '</b></span><div class="acts"><button class="btn small primary" type="button" data-accept="' + f.id + '">Accept</button><button class="btn small" type="button" data-decline="' + f.id + '">Decline</button></div></div>'; }).join("");
   $("sent-list").innerHTML = out.map(f => { const u = S.users[f.to] || { name: "…", uid: f.to }; return '<div class="req">' + avatar(u) + '<span><b>' + esc(u.name) + '</b><small class="muted"> Waiting…</small></span><div class="acts"><button class="btn small" type="button" data-decline="' + f.id + '">Cancel</button></div></div>'; }).join("");
   // online + offline
-  const people = Array.from(new Set(Object.keys(S.status).concat(Object.keys(S.known)))).map(uid => S.users[uid]).filter(Boolean);
+  const people = Array.from(new Set(Object.keys(S.status).concat(Object.keys(S.known)))).map(uid => S.users[uid]).filter(u => u && (!S.membersOn || isMemberUid(u.uid)));
   if (S.me && !people.includes(S.me)) people.push(S.me);
   const on = people.filter(isOnline).sort((a, b) => a.name.localeCompare(b.name));
   const off = people.filter(u => !isOnline(u)).sort((a, b) => lastOnline(b) - lastOnline(a)).slice(0, OFFLINE_SHOWN);
   const sub = u => u.status ? esc(u.status) : u.player ? esc(u.player) + (RANKSET[u.playerLower] ? " · #" + RANKSET[u.playerLower].place : "") : "";
   $("mt-online").textContent = "(" + on.length + ")";
-  $("online-list").innerHTML = '<h3>Online · ' + on.length + "</h3>" + (on.length ? on.map(u => personRow(u, sub(u) || "&nbsp;")).join("") : '<p class="empty">Nobody else is online right now.</p>') +
+  $("online-list").innerHTML = ROLE_ORDER.map(r => { const g = on.filter(u => roleOf(u.uid) === r); return g.length ? '<h3 style="color:' + ROLES[r].color + '">' + ROLES[r].icon + ROLES[r].name + " · " + g.length + "</h3>" + g.map(u => personRow(u, sub(u) || "&nbsp;")).join("") : ""; }).join("") + (on.length ? "" : '<h3>Online · 0</h3><p class="empty">Nobody else is online right now.</p>') +
     (off.length ? '<h3>Offline · ' + off.length + "</h3>" + '<div class="offl">' + off.map(u => personRow(u, "Last online " + esc(ago(lastOnline(u))) + (sub(u) ? " · " + sub(u) : ""))).join("") + "</div>" : "");
   // admin reports
   $("admin-wrap").hidden = !S.admin;
@@ -761,7 +793,7 @@ function renderLists() {
 }
 function renderConvTop() {
   const k = kindOf(S.view);
-  if (k === "main") { const c = PUB[S.view]; $("conv-top").innerHTML = '<span class="hash">' + c.icon + '</span><div class="ttl"><b>' + c.title + "</b><small>" + c.sub + "</small></div>" + purgeBtn(); return; }
+  if (k === "main") { const c = PUB[S.view], sl = slowOf(S.view); $("conv-top").innerHTML = '<span class="hash">' + c.icon + '</span><div class="ttl"><b>' + esc(c.title) + "</b><small>" + esc(c.sub) + (sl ? " · 🐢 Slowmode " + slowTxt(sl) : "") + "</small></div>" + (isMod() && !c.ownerOnly ? '<button class="tool" type="button" id="ch-settings" title="Channel settings" aria-label="Channel settings">⚙️</button>' : "") + purgeBtn(); return; }
   if (k === "grp") {
     const g = S.groups[gidOf(S.view)] || { name: "Group", members: [] };
     const on = (g.members || []).filter(u => isOnline(S.users[u])).length;
@@ -838,7 +870,7 @@ function canPin() { const k = kindOf(S.view); return !S.adminView && (k === "mai
 function renderMsgs(list) {
   const box = $("msgs");
   if (!list.length) { box.innerHTML = '<p class="empty" style="margin:auto">' + (S.loading ? "Loading…" : PUB[S.view] ? "No messages yet. Say hi!" : "No messages yet. Say hi 👋") + "</p>"; return; }
-  let html = S.cursor ? '<button class="older" type="button" id="load-older">Load older messages</button>' : '<p class="begin">' + (PUB[S.view] ? "This is the start of " + (S.view === "main" ? "the main chat" : "the " + PUB[S.view].title + " channel") + "." : "This is the start of your conversation.") + "</p>";
+  let html = S.cursor ? '<button class="older" type="button" id="load-older">Load older messages</button>' : '<p class="begin">' + (PUB[S.view] ? "This is the start of " + (S.view === "main" ? "#general" : "the " + PUB[S.view].title + " channel") + "." : "This is the start of your conversation.") + "</p>";
   let last = "", divided = false, myLast = null, prev = null;
   for (const m of list) if (m.uid === S.uid && !m.call) myLast = m;
   for (const m of list) {
@@ -856,7 +888,7 @@ function renderMsgs(list) {
     const rp = m.rp && m.rp.id ? '<div class="replyq" data-jump="' + esc(m.rp.id) + '">↪ <b>' + esc(m.rp.n) + "</b> " + esc(m.rp.t || "📎 Attachment") + "</div>" : "";
     const img = m.img ? '<img class="img" alt="Image from ' + esc(u.name || m.name) + '" data-imgid="' + esc(m.img) + '"' + (IMG.has(m.img) ? ' src="' + IMG.get(m.img) + '"' : "") + ">" : "";
     const aud = m.aud ? '<div class="voice"><span>🎤</span><audio controls preload="none" data-audid="' + esc(m.aud) + '"' + (IMG.has(m.aud) ? ' src="' + IMG.get(m.aud) + '"' : "") + "></audio><small>" + mmss((m.len || 0) * 1000) + "</small></div>" : "";
-    const canDel = mine || (S.admin && kindOf(S.view) === "main") || (kindOf(S.view) === "grp" && (S.groups[gidOf(S.view)] || {}).owner === S.uid);
+    const canDel = mine || (kindOf(S.view) === "main" && (S.admin || (isMod() && roleOf(m.uid) !== "owner"))) || (kindOf(S.view) === "grp" && (S.groups[gidOf(S.view)] || {}).owner === S.uid);
     const acts = S.adminView ? "<span></span>" : '<div class="acts2"><button type="button" title="React" aria-label="React" data-rxpick="' + esc(m.id) + '">😊</button><button type="button" title="Reply" aria-label="Reply" data-reply="' + esc(m.id) + '">↩</button>' +
       (mine && m.text ? '<button type="button" title="Edit" aria-label="Edit" data-edit="' + esc(m.id) + '">✏️</button>' : "") +
       (canPin() ? '<button type="button" title="' + (m.pinned ? "Unpin" : "Pin") + '" aria-label="' + (m.pinned ? "Unpin" : "Pin") + '" data-pin="' + esc(m.id) + '">📌</button>' : "") +
@@ -865,7 +897,7 @@ function renderMsgs(list) {
     const cls = "msg" + (S.sel && S.sel.has(m.id) ? " sel" : "") + (mine ? " mine" : "") + (cont ? " cont" : "") + (rp ? " hasrp" : "") + (!mine && mentionsMe(m.text) ? " mentioned" : "") + (m.pinned ? " pinned" : "");
     const txt = m.text ? '<div class="text' + (isJumbo(m.text) ? " jumbo" : "") + '">' + fmtText(m.text) + (cont && m.edited ? ' <span class="edited">(edited)</span>' : "") + "</div>" : "";
     html += '<div class="' + cls + '" id="m-' + esc(m.id) + '">' + (cont ? '<span class="ht" title="' + esc(fullTime(d)) + '">' + timeLabel(d) + "</span>" : '<span data-user="' + esc(m.uid) + '">' + avatar(u) + "</span>") + '<div class="bub">' + rp +
-      (cont ? "" : '<div class="meta"><b data-user="' + esc(m.uid) + '">' + esc(u.name || m.name) + "</b>" + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + '<time title="' + esc(fullTime(d)) + '">' + discordTime(d) + "</time>" + (m.edited ? '<span class="edited">(edited)</span>' : "") + (m.pinned ? '<span class="edited">📌</span>' : "") + "</div>") +
+      (cont ? "" : '<div class="meta"><b data-user="' + esc(m.uid) + '"' + roleStyle(m.uid) + ">" + esc(u.name || m.name) + "</b>" + roleTag(m.uid) + (u.player ? '<span class="pl">' + esc(u.player) + "</span>" : "") + rankBadge(u) + '<time title="' + esc(fullTime(d)) + '">' + discordTime(d) + "</time>" + (m.edited ? '<span class="edited">(edited)</span>' : "") + (m.pinned ? '<span class="edited">📌</span>' : "") + "</div>") +
       txt + (m.text ? embeds(m.text) : "") + img + aud + rx + seen + "</div>" + acts + "</div>";
   }
   const stick = S.stick || renderMsgs.first, keep = renderMsgs.keepFrom;
@@ -919,12 +951,14 @@ function profileCard(uid) {
     if (!blocked) acts += '<button class="btn small" type="button" data-block="' + uid + '">Block</button>';
     acts += '<button class="btn small danger" type="button" data-report="' + uid + '">Report</button>';
     if (S.admin) acts += '<button class="btn small danger" type="button" data-ban="' + uid + '">Ban</button>';
+    if (isMod() && roleOf(uid) !== "owner" && (S.admin || roleOf(uid) !== "mod")) acts += '<button class="btn small" type="button" data-timeout="' + uid + '">⏳ ' + (timedOut(uid) ? "Timed out" : "Time out") + "</button>";
+    if (S.admin && isMemberUid(uid)) acts += '<button class="btn small" type="button" data-setmod="' + uid + '">' + (roleOf(uid) === "mod" ? "Remove Mod" : "🛡️ Make Mod") + "</button>";
   } else acts = '<button class="btn small primary" type="button" id="edit-profile">Edit profile</button>';
   const bn = BANNERS[u.banner] || color(u.name);
   const mg = me ? [] : Object.entries(S.groups).filter(([, g]) => (g.members || []).includes(uid) && (g.members || []).includes(S.uid));
   const mutual = mg.length ? '<div class="mutual"><b>Mutual groups · ' + mg.length + '</b><div class="chips">' + mg.map(([id, g]) => '<button type="button" data-open="grp:' + esc(id) + '">👥 ' + esc(g.name || "Group") + "</button>").join("") + "</div></div>" : "";
   $("modal-card").innerHTML = '<div class="pbanner" style="background:linear-gradient(135deg,' + bn + "," + bn + 'cc)"></div><button class="x onbanner" type="button" data-close aria-label="Close">×</button>' + avatar(u, "xl pav") +
-    "<div><h2 style=\"font-size:1.3rem\">" + esc(u.name) + "</h2>" + statusText(u) + "</div>" +
+    "<div><h2 style=\"font-size:1.3rem\"><span" + roleStyle(uid) + ">" + esc(u.name) + "</span> " + roleTag(uid) + "</h2>" + statusText(u) + (timedOut(uid) ? '<div class="small-print" style="color:var(--red)">⏳ Timed out until ' + esc(timeLabel(new Date(timedOut(uid)))) + "</div>" : "") + "</div>" +
     (u.status ? '<p class="pstatus">' + esc(u.status) + "</p>" : "") + (u.bio ? '<p class="pbio">' + esc(u.bio) + "</p>" : "") +
     (u.player ? '<p><b>' + esc(u.player) + "</b>" + (RANKSET[u.playerLower] ? " · Oceania #" + RANKSET[u.playerLower].place : "") + '<br><a class="btn small" href="rankings.html?player=' + encodeURIComponent(u.player) + '">See ranking ›</a></p>' : '<p class="muted">Not linked to the rankings</p>') +
     mutual + '<div class="acts">' + acts + "</div>";
@@ -981,7 +1015,7 @@ async function start() {
     try { if ((await F.getDoc(F.doc(db, "banned", user.uid))).exists()) { show("banned"); return; } } catch (e) {}
     const snap = await F.getDoc(F.doc(db, "users", user.uid)).catch(() => null);
     if (!snap || !snap.exists()) { $("s-name").value = (user.displayName || "").replace(/[^A-Za-z0-9_ .()-]/g, "").slice(0, 20); show("setup"); return; }
-    enterApp(user);
+    gateThenEnter(user);
   });
 }
 const unsubs = []; let beat = null;
@@ -1029,6 +1063,15 @@ function enterApp(user) {
   unsubs.push(F.onSnapshot(F.collection(db, "users", S.uid, "reads"), s => { S.reads = {}; s.docs.forEach(d => { S.reads[d.id] = d.data(); }); refreshUnread(); renderLists(); }));
   unsubs.push(F.onSnapshot(F.collection(db, "users", S.uid, "blocked"), s => { S.blocked = {}; s.docs.forEach(d => { S.blocked[d.id] = true; }); drawAll(); }));
   unsubs.push(F.onSnapshot(F.query(F.collection(db, "calls"), F.where("to", "==", S.uid)), onCallsSnap, () => {}));
+  unsubs.push(F.onSnapshot(F.collection(db, "members"), s => {
+    S.members = {}; s.docs.forEach(d => { S.members[d.id] = d.data(); }); S.membersOn = true;
+    if (S.admin && (!S.members[S.uid] || S.members[S.uid].role !== "owner")) F.setDoc(F.doc(db, "members", S.uid), { role: "owner", at: F.serverTimestamp() }, { merge: true }).catch(() => {});
+    clearTimeout(S.toTimer); const next = Math.min(...Object.values(S.members).map(m => ms(m.timeoutUntil)).filter(t => t > Date.now()));
+    if (isFinite(next)) S.toTimer = setTimeout(() => { syncComposer(); drawAll(); }, next - Date.now() + 500);
+    syncComposer(); drawAll();
+  }, () => {}));
+  unsubs.push(F.onSnapshot(F.doc(db, "settings", "chat"), s => { S.chatSet = s.exists() ? s.data() : {}; renderConvTop(); renderLists(); }, () => {}));
+  if (S.admin) unsubs.push(F.onSnapshot(F.query(F.collection(db, "joinRequests"), F.where("status", "==", "pending")), s => { S.joinReqs = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => ms(a.at) - ms(b.at)); s.docChanges().forEach(ch => { if (S.first.jr === false && ch.type === "added") notify("🆕 Join request", ch.doc.data().name + " wants to join", "main"); }); S.first.jr = false; renderLists(); }, () => {}));
   if (S.admin) unsubs.push(F.onSnapshot(F.collection(db, "reports"), s => { S.reports = s.docs.map(d => ({ id: d.id, ...d.data() })); S.reports.forEach(r => { watchUser(r.by); watchUser(r.against); }); renderLists(); }, () => {}));
   // the public channels are always listened to, so mentions and unread counts work from anywhere
   Object.keys(PUB).forEach(v => unsubs.push(F.onSnapshot(F.query(F.collection(db, PUB[v].col), F.orderBy("createdAt", "desc"), F.limit(PAGE)), s => {
@@ -1083,9 +1126,11 @@ function viewOk(v) {
   const g = S.groups[gidOf(v)]; return !!(g && (g.members || []).includes(S.uid));
 }
 function syncComposer() {
-  const ok = viewOk(S.view) && !S.adminView;
+  const lock = lockReason();
+  const ok = viewOk(S.view) && !S.adminView && !lock;
+  $("c-hint").textContent = lock || "No links. Be nice.";
   ["c-text", "c-send", "emoji-btn", "img-btn", "mic-btn"].forEach(id => { $(id).disabled = !ok; });
-  $("c-text").placeholder = PUB[S.view] ? "Message " + (S.view === "main" ? "the main chat" : PUB[S.view].title) + " · @ to mention" : ok ? "Message · @ to mention" : kindOf(S.view) === "dm" ? "You need to be friends to message" : "You're not in this group";
+  $("c-text").placeholder = lock ? lock : PUB[S.view] ? "Message #" + PUB[S.view].title + " · @ to mention" : ok ? "Message · @ to mention" : kindOf(S.view) === "dm" ? "You need to be friends to message" : "You're not in this group";
 }
 function openView(id, keep) {
   if (S.sel) { S.sel = null; purgeBar(); }
@@ -1403,6 +1448,8 @@ async function sendMessage(extraIn) {
   if (!extraIn.aud && canPurge() && PURGE_RE.test($("c-text").value)) { const raw = $("c-text").value; $("c-text").value = ""; $("c-text").dispatchEvent(new Event("input")); purgeCmd(raw); return; }
   if (!db) { toast("Sending works on the live website."); return; }
   const where = S.view, k = kindOf(where);
+  if (lockReason()) { toast(lockReason()); return; }
+  if (k === "main" && slowOf(where) && !isMod()) { const wait = slowOf(where) * 1000 - (Date.now() - (S.lastPost[where] || 0)); if (wait > 0) { toast("🐢 Slowmode: wait " + Math.ceil(wait / 1000) + "s"); return; } }
   let text = extraIn.aud ? "" : clean($("c-text").value).slice(0, 300), img = extraIn.aud ? null : S.pendingImg;
   if (!text && !img && !extraIn.aud) return;
   if (text.startsWith("/")) { const out = slashCmd(text); if (out == null) return; text = out.slice(0, 300); }
@@ -1418,7 +1465,7 @@ async function sendMessage(extraIn) {
   if (S.replyTo && !extraIn.aud) extra.rp = S.replyTo;
   const mn = text ? mentionedIds(text) : []; if (mn.length) extra.mn = mn;
   const preview = (text || (img ? "📷 Image" : "🎤 Voice message")).slice(0, 60);
-  if (k === "main") b.set(F.doc(msgCol(where)), { name: S.me.name, text, uid: S.uid, createdAt: F.serverTimestamp(), ...extra });
+  if (k === "main") { b.set(F.doc(msgCol(where)), { name: S.me.name, text, uid: S.uid, createdAt: F.serverTimestamp(), ...extra }); S.lastPost[where] = Date.now(); }
   else if (k === "dm") {
     const f = S.friends.find(x => x.id === where);
     b.set(F.doc(msgCol(where)), { from: S.uid, text, at: F.serverTimestamp(), ...extra });
@@ -1545,7 +1592,7 @@ $("s-form").addEventListener("submit", async e => {
   b.set(F.doc(db, "usernames", name.toLowerCase()), { uid: u.uid });
   if (player) b.set(F.doc(db, "playerClaims", player.toLowerCase()), { uid: u.uid });
   b.set(F.doc(db, "users", u.uid), { name, nameLower: name.toLowerCase(), photo: u.photoURL || "", player: player || "", playerLower: (player || "").toLowerCase(), createdAt: F.serverTimestamp(), lastSeen: F.serverTimestamp() });
-  try { await b.commit(); enterApp(u); }
+  try { await b.commit(); gateThenEnter(u); }
   catch (err) {
     const taken = await F.getDoc(F.doc(db, "usernames", name.toLowerCase())).then(s => s.exists()).catch(() => false);
     const claimed = player ? await F.getDoc(F.doc(db, "playerClaims", player.toLowerCase())).then(s => s.exists()).catch(() => false) : false;
@@ -1727,6 +1774,134 @@ function callAction(a, btn) {
 }
 
 // ---------- clicks ----------
+// ===== ROLES: Owner + Mods are saved in members/{uid}; Top 10 / Ranked come from the rankings =====
+const ROLES = {
+  owner:  { name: "Owner",  icon: "👑 ", color: "var(--r-owner)" },
+  mod:    { name: "Mods",   icon: "🛡️ ", color: "var(--r-mod)" },
+  top:    { name: "Top 10", icon: "⭐ ", color: "var(--r-top)" },
+  ranked: { name: "Ranked", icon: "",    color: "var(--r-ranked)" },
+  member: { name: "Members", icon: "",   color: "inherit" }
+};
+const ROLE_ORDER = ["owner", "mod", "top", "ranked", "member"];
+function placeOf(uid) { const u = S.users[uid]; return u && u.playerLower && RANKSET[u.playerLower] ? RANKSET[u.playerLower].place : 0; }
+function roleOf(uid) {
+  const m = S.members[uid] || {};
+  if (m.role === "owner" || (uid === S.uid && S.admin)) return "owner";
+  if (m.role === "mod") return "mod";
+  const pl = placeOf(uid); return pl ? (pl <= 10 ? "top" : "ranked") : "member";
+}
+const isMod = () => S.admin || (S.members[S.uid] || {}).role === "mod";
+const isMemberUid = uid => !!S.members[uid] || (uid === S.uid && S.admin);
+function roleStyle(uid) { const r = roleOf(uid); return r === "member" ? "" : ' style="color:' + ROLES[r].color + '"'; }
+function roleTag(uid) { const r = roleOf(uid); return r === "owner" || r === "mod" ? ' <span class="rtag" style="background:' + ROLES[r].color + '">' + (r === "owner" ? "👑 OWNER" : "🛡️ MOD") + "</span>" : ""; }
+function rankBadge(u) { const pl = u && u.playerLower && RANKSET[u.playerLower] ? RANKSET[u.playerLower].place : 0; return pl ? ' <span class="rank-b' + (pl <= 10 ? " t10" : "") + '" title="Place on the Oceania rankings">#' + pl + "</span>" : ""; }
+function timedOut(uid) { const t = ms((S.members[uid] || {}).timeoutUntil); return t > Date.now() ? t : 0; }
+const slowOf = v => +(((S.chatSet || {}).slow || {})[v] || 0);
+const slowTxt = n => n >= 60 ? n / 60 + " min" : n + "s";
+function lockReason() {
+  if (!S.uid) return "";
+  if (PUB[S.view] && PUB[S.view].ownerOnly && !S.admin) return "🔒 Only the owner can post in #" + PUB[S.view].title;
+  const t = timedOut(S.uid); if (t) return "⏳ You're timed out until " + timeLabel(new Date(t));
+  return "";
+}
+
+// ===== JOIN REQUESTS: the chat is members only. Everyone asks, the owner lets them in =====
+async function gateThenEnter(user) {
+  if (S.admin) { enterApp(user); return; }
+  let mem = null; try { mem = await F.getDoc(F.doc(db, "members", user.uid)); } catch (e) {}
+  if (mem && mem.exists()) { enterApp(user); return; }
+  show("join"); joinScreen(null);
+  // wait here: as soon as the owner lets them in, the chat opens by itself
+  unsubs.push(F.onSnapshot(F.doc(db, "joinRequests", user.uid), s => joinScreen(s.exists() ? s.data() : null), () => joinScreen(null)));
+  unsubs.push(F.onSnapshot(F.doc(db, "members", user.uid), s => { if (s.exists()) { stopAll(); toast("✅ You're in! Welcome to the community"); enterApp(user); } }, () => {}));
+}
+function joinScreen(req) {
+  const me = S.me || {}, box = $("join-body");
+  if (req && req.status === "pending") {
+    box.innerHTML = '<div class="join-big">⏳</div><h2>Request sent!</h2><p class="muted">The owner will check it soon. This page opens the chat by itself as soon as you\'re let in, so you can leave it open or come back later.</p>' +
+      '<p class="small-print">Sent as <b>' + esc(req.name) + "</b>" + (req.discord ? " · Discord: " + esc(req.discord) : "") + "</p>";
+    return;
+  }
+  if (req && req.status === "declined") {
+    box.innerHTML = '<div class="join-big">🚫</div><h2>Not accepted</h2><p class="muted">Your request to join wasn\'t accepted.' + (req.note ? "</p><p><b>Reason:</b> " + esc(req.note) : "") + '</p><p class="small-print">If you think this is a mistake, message the server owner on Discord.</p>';
+    return;
+  }
+  box.innerHTML = '<div class="join-big">🔐</div><h2>Request to join</h2><p class="muted">The Oceania community chat is members only. Send a quick request and the owner will let you in.</p>' +
+    '<form id="join-form"><label>Your LOLBeans name<input class="field" id="j-name" maxlength="24" required value="' + esc(me.player || me.name || "") + '"></label>' +
+    '<label>Discord username<input class="field" id="j-discord" maxlength="32" required placeholder="So we know who you are"></label>' +
+    '<label>Why do you want to join? (optional)<textarea class="field" id="j-why" maxlength="200" placeholder="Where did you hear about us?"></textarea></label>' +
+    '<button class="btn primary" type="submit" id="j-send">Request to join</button></form><p id="j-msg" class="small-print"></p>';
+}
+document.addEventListener("submit", async e => {
+  if (e.target.id !== "join-form") return;
+  e.preventDefault();
+  const name = clean($("j-name").value).slice(0, 24), discord = clean($("j-discord").value).slice(0, 32), why = clean($("j-why").value).slice(0, 200);
+  if (!name || !discord) return;
+  $("j-send").disabled = true; $("j-msg").textContent = "Sending…";
+  try {
+    await F.setDoc(F.doc(db, "joinRequests", S.uid), { name, discord, why, status: "pending", at: F.serverTimestamp() });
+    auth.currentUser.getIdToken().then(idToken => fetch(NAME_API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "pushJoin", idToken }) })).catch(() => {});
+  } catch (err) { $("j-send").disabled = false; $("j-msg").textContent = "Couldn't send. Try again in a minute."; }
+});
+function renderJoinReqs() {
+  const L = S.admin ? S.joinReqs : [];
+  $("jr-wrap").hidden = !L.length;
+  $("jr-n").textContent = L.length;
+  $("jr-list").innerHTML = L.map(r => '<div class="jr"><span><b>' + esc(r.name) + '</b><small> · Discord: ' + esc(r.discord || "?") + " · " + esc(ago(ms(r.at))) + "</small></span>" +
+    (r.why ? "<small>“" + esc(r.why) + "”</small>" : "") +
+    '<div class="acts"><button class="btn small primary" type="button" data-jr-ok="' + esc(r.id) + '">✅ Let in</button><button class="btn small danger" type="button" data-jr-no="' + esc(r.id) + '">Decline</button></div></div>').join("");
+}
+async function decideJoin(uid, ok) {
+  const r = S.joinReqs.find(x => x.id === uid); if (!r) return;
+  let note = "";
+  if (!ok) { note = prompt("Decline " + r.name + "? Add a reason (optional):", ""); if (note === null) return; note = clean(note).slice(0, 150); }
+  try {
+    const b = F.writeBatch(db);
+    if (ok) { b.set(F.doc(db, "members", uid), { role: "member", at: F.serverTimestamp(), by: S.uid }); b.update(F.doc(db, "joinRequests", uid), { status: "approved", decidedAt: F.serverTimestamp() });
+      b.set(F.doc(F.collection(db, "messages")), { name: S.me.name, uid: S.uid, text: "👋 Welcome " + r.name + " to the community! Say hi", createdAt: F.serverTimestamp() }); }
+    else b.update(F.doc(db, "joinRequests", uid), { status: "declined", note, decidedAt: F.serverTimestamp() });
+    await b.commit(); toast(ok ? "✅ " + r.name + " is in" : "Declined " + r.name);
+  } catch (e) { toast("Couldn't save: " + (e.code || e.message)); }
+}
+
+// ===== MOD TOOLS: timeouts, Make Mod, slowmode =====
+function timeoutDialog(uid) {
+  const u = S.users[uid] || { name: "them" }, on = timedOut(uid);
+  openModal('<span class="join-big">⏳</span><h3 style="margin:0">Time out ' + esc(u.name) + "?</h3><p class=\"muted\" style=\"margin:0\">They can still read, but can't send messages anywhere in the chat until it ends.</p>" +
+    '<div class="mod-opts">' + [["1 min", 1], ["10 min", 10], ["1 hour", 60], ["1 day", 1440], ["1 week", 10080]].map(([l, n]) => '<button type="button" data-tofor="' + esc(uid) + ":" + n + '">' + l + "</button>").join("") +
+    (on ? '<button type="button" data-tofor="' + esc(uid) + ':0">✅ Remove timeout</button>' : "") + "</div>");
+}
+function channelDialog() {
+  const v = S.view, c = PUB[v], cur = slowOf(v);
+  openModal('<span class="join-big">⚙️</span><h3 style="margin:0">#' + esc(c.title) + '</h3><p class="muted" style="margin:0">Slowmode: how often each person can send a message here. Mods and the owner skip it.</p>' +
+    '<div class="mod-opts">' + [["Off", 0], ["5s", 5], ["10s", 10], ["30s", 30], ["1 min", 60], ["5 min", 300]].map(([l, n]) => '<button type="button" data-slowset="' + n + '" aria-pressed="' + (cur === n) + '">' + l + "</button>").join("") + "</div>");
+}
+document.addEventListener("click", async e => {
+  const t = e.target;
+  const ok = t.closest("[data-jr-ok]"), no = t.closest("[data-jr-no]");
+  if (ok || no) { (ok || no).disabled = true; await decideJoin((ok || no).dataset[ok ? "jrOk" : "jrNo"], !!ok); return; }
+  const to = t.closest("[data-timeout]"); if (to) { timeoutDialog(to.dataset.timeout); return; }
+  const tf = t.closest("[data-tofor]"); if (tf) {
+    const [uid, n] = tf.dataset.tofor.split(":"), name = nameOf(uid);
+    try { await F.updateDoc(F.doc(db, "members", uid), { timeoutUntil: +n ? F.Timestamp.fromMillis(Date.now() + n * 60000) : F.deleteField() });
+      $("modal").hidden = true; toast(+n ? "⏳ " + name + " is timed out for " + tf.textContent : "✅ Timeout removed for " + name); }
+    catch (err) { toast("Couldn't do that: " + (err.code || err.message)); }
+    return;
+  }
+  const sm = t.closest("[data-setmod]"); if (sm) {
+    const uid = sm.dataset.setmod, mod = roleOf(uid) === "mod";
+    try { await F.updateDoc(F.doc(db, "members", uid), { role: mod ? "member" : "mod" }); $("modal").hidden = true; toast(mod ? nameOf(uid) + " is no longer a Mod" : "🛡️ " + nameOf(uid) + " is now a Mod"); }
+    catch (err) { toast("Couldn't do that: " + (err.code || err.message)); }
+    return;
+  }
+  if (t.closest("#ch-settings")) { channelDialog(); return; }
+  const ss = t.closest("[data-slowset]"); if (ss) {
+    const n = +ss.dataset.slowset;
+    try { await F.setDoc(F.doc(db, "settings", "chat"), { slow: { [S.view]: n } }, { merge: true }); $("modal").hidden = true; toast(n ? "🐢 Slowmode on: " + slowTxt(n) : "Slowmode off"); }
+    catch (err) { toast("Couldn't save: " + (err.code || err.message)); }
+  }
+});
+
 // ===== PURGE: delete lots of messages at once =====
 // only the owner (the ADMINS account) can purge: in the main chat, and in groups they own
 function canPurge() { const k = kindOf(S.view); return !S.adminView && S.admin && (k === "main" || (k === "grp" && (S.groups[gidOf(S.view)] || {}).owner === S.uid)); }
@@ -1907,6 +2082,10 @@ function demo() {
   S.status = { me: { state: "online", last: now }, j: { state: "online", last: now }, o: { state: "online", last: now }, k: { state: "online", last: now }, s: { state: "offline", last: now - 5 * 60000 }, x: { state: "offline", last: now - 3 * 3600000 }, y: { state: "offline", last: now - 2 * 86400000 } };
   RANKSET = { "goat(ninja)": { name: "Goat(Ninja)", place: 3 }, joshy: { name: "Joshy", place: 1 }, ottal: { name: "Ottal", place: 2 }, sandweech: { name: "Sandweech", place: 4 }, jaffacoolige: { name: "Jaffacoolige", place: 5 }, stryboschkid: { name: "StryboschKid", place: 6 } };
   S.me = S.users.me; S.admin = true;
+  S.members = { me: { role: "owner" }, o: { role: "mod" }, j: { role: "member" }, k: { role: "member" }, s: { role: "member" }, ja: { role: "member" }, st: { role: "member" } };
+  Object.keys(S.users).forEach(u => { if (!S.members[u]) S.members[u] = { role: "member" }; }); S.membersOn = true;
+  S.chatSet = { slow: { main: 10 } };
+  S.joinReqs = [{ id: "x1", name: "beanlover_77", discord: "beanlover77", why: "saw the rankings on tiktok, wanna get ranked", at: ts(now - 1500000) }, { id: "x2", name: "Nzspeed", discord: "nzspeed", why: "", at: ts(now - 7200000) }];
   S.friends = [{ id: "j_me", users: ["j", "me"], from: "me", to: "j", status: "accepted" }, { id: "me_o", users: ["me", "o"], from: "me", to: "o", status: "accepted" }, { id: "k_me", users: ["k", "me"], from: "k", to: "me", status: "pending" }];
   S.chats = { j_me: { lastAt: ts(now - 50000), lastFrom: "j", lastText: "gg that was close" }, me_o: { lastAt: ts(now - 900000), lastFrom: "me", lastText: "rematch tmr?" } };
   S.groups = { champs: { name: "Oceania Champs", owner: "me", members: ["me", "j", "o"], invited: ["s"], lastAt: ts(now - 200000), lastFrom: "o", lastText: "what time is round 1?" } };
