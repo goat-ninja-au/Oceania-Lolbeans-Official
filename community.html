@@ -535,9 +535,10 @@ html.embed-bubble .gate { padding: 18px; }
           <div class="replybar" id="replybar" hidden><span id="reply-to"></span><button class="linkbtn" type="button" id="reply-x" aria-label="Cancel">✕</button></div>
           <div class="preview" id="preview" hidden><span class="pi"><img id="prev-img" alt="Image to send"><span class="muted" id="prev-info"></span></span><button class="linkbtn" type="button" id="prev-x">Remove</button></div>
           <div class="recbar" id="recbar" hidden><span class="dot"></span><span id="rec-time">0:00</span><span class="muted">Recording voice message…</span><button class="linkbtn" type="button" id="rec-x">Cancel</button><button class="send" type="button" id="rec-send">Send</button></div>
-          <form id="c-form"><button class="tool" type="button" id="emoji-btn" title="Emoji" aria-label="Emoji">😊</button><button class="tool" type="button" id="img-btn" title="Send an image" aria-label="Send an image">🖼️</button><button class="tool" type="button" id="mic-btn" title="Voice message" aria-label="Record a voice message">🎤</button><input class="field" id="c-text" maxlength="300" placeholder="Message" autocomplete="off"><button class="send" type="submit" id="c-send">Send</button></form>
+          <form id="c-form"><button class="tool" type="button" id="emoji-btn" title="Emoji" aria-label="Emoji">😊</button><button class="tool" type="button" id="img-btn" title="Send an image" aria-label="Send an image">🖼️</button><button class="tool" type="button" id="file-btn" title="Send a file or recording (up to 20 MB)" aria-label="Send a file">📎</button><button class="tool" type="button" id="mic-btn" title="Voice message" aria-label="Record a voice message">🎤</button><input class="field" id="c-text" maxlength="300" placeholder="Message" autocomplete="off"><button class="send" type="submit" id="c-send">Send</button></form>
           <input type="file" id="img-file" accept="image/*" hidden>
-          <div class="hint"><span id="c-hint">No links. Be nice.</span><span id="c-count">0 / 300</span></div>
+          <input type="file" id="any-file" hidden>
+          <div class="hint"><span id="c-hint">Be nice.</span><span id="c-count">0 / 300</span></div>
         </div>
         <div class="emoji-pop" id="emoji-pop" hidden></div>
         <div class="mention-pop" id="mention-pop" hidden></div>
@@ -764,7 +765,7 @@ function renderLists() {
   Object.entries(S.groups).forEach(([gid, g]) => { const id = "grp:" + gid; convs.push({ id, at: ms(g.lastAt), html: () => groupAv(g) + "<span><b>" + esc(g.name) + "</b><small>" + (g.lastText ? esc((g.lastFrom === me ? "You" : nameOf(g.lastFrom)) + ": " + g.lastText) : (g.members || []).length + " members") + "</small></span>" }); });
   convs.sort((a, b) => b.at - a.at);
   $("dm-list").innerHTML = convs.length ? convs.map(c => '<button class="item" type="button" data-open="' + esc(c.id) + '"' + (S.view === c.id ? ' aria-current="true"' : "") + ">" + c.html() + badge(S.view === c.id ? 0 : S.unread[c.id]) + "</button>").join("") : '<p class="empty">No friends yet. Tap someone in Online or the chat to add them.</p>';
-  $("ch-list").innerHTML = Object.keys(PUB).map(v => { const c = PUB[v], n = S.view === v ? 0 : S.unread[v]; return '<button class="item" type="button" data-open="' + v + '" id="open-' + v + '" aria-current="' + (S.view === v) + '"><span class="hash">' + c.icon + "</span><span><b>" + esc(c.title) + "</b><small>" + esc(c.sub) + "</small></span>" + (n ? badge(n) : c.ownerOnly ? '<span title="Only the owner can post here">🔒</span>' : slowOf(v) ? '<span title="Slowmode">🐢</span>' : "<span></span>") + "</button>"; }).join("");
+  $("ch-list").innerHTML = Object.keys(PUB).map(v => { const c = PUB[v], n = S.view === v ? 0 : S.unread[v]; return '<button class="item" type="button" data-open="' + v + '" id="open-' + v + '" aria-current="' + (S.view === v) + '"><span class="hash">' + c.icon + "</span><span><b>" + esc(c.title) + "</b><small>" + esc(c.sub) + "</small></span>" + (n ? badge(n) : chMuted(v) ? '<span title="Muted">🔕</span>' : c.ownerOnly ? '<span title="Only the owner can post here">🔒</span>' : slowOf(v) ? '<span title="Slowmode">🐢</span>' : "<span></span>") + "</button>"; }).join("");
   renderJoinReqs();
   const tot = Object.entries(S.unread).reduce((a, [k, v]) => a + (PUB[k] || k === S.view ? 0 : v || 0), 0);
   $("mt-badge").hidden = !tot; $("mt-badge").textContent = tot;
@@ -793,7 +794,7 @@ function renderLists() {
 }
 function renderConvTop() {
   const k = kindOf(S.view);
-  if (k === "main") { const c = PUB[S.view], sl = slowOf(S.view); $("conv-top").innerHTML = '<span class="hash">' + c.icon + '</span><div class="ttl"><b>' + esc(c.title) + "</b><small>" + esc(c.sub) + (sl ? " · 🐢 Slowmode " + slowTxt(sl) : "") + "</small></div>" + (isMod() && !c.ownerOnly ? '<button class="tool" type="button" id="ch-settings" title="Channel settings" aria-label="Channel settings">⚙️</button>' : "") + purgeBtn(); return; }
+  if (k === "main") { const c = PUB[S.view], sl = slowOf(S.view); $("conv-top").innerHTML = '<span class="hash">' + c.icon + '</span><div class="ttl"><b>' + esc(c.title) + "</b><small>" + esc(c.sub) + (sl ? " · 🐢 Slowmode " + slowTxt(sl) : "") + "</small></div>" + '<button class="tool" type="button" id="ch-mute" title="' + (chMuted(S.view) ? "Unmute this channel" : "Mute this channel (no unread badges, @mentions still ping you)") + '" aria-label="Mute channel">' + (chMuted(S.view) ? "🔕" : "🔔") + "</button>" + (isMod() && !c.ownerOnly ? '<button class="tool" type="button" id="ch-settings" title="Channel settings" aria-label="Channel settings">⚙️</button>' : "") + purgeBtn(); return; }
   if (k === "grp") {
     const g = S.groups[gidOf(S.view)] || { name: "Group", members: [] };
     const on = (g.members || []).filter(u => isOnline(S.users[u])).length;
@@ -951,14 +952,14 @@ function profileCard(uid) {
     if (!blocked) acts += '<button class="btn small" type="button" data-block="' + uid + '">Block</button>';
     acts += '<button class="btn small danger" type="button" data-report="' + uid + '">Report</button>';
     if (S.admin) acts += '<button class="btn small danger" type="button" data-ban="' + uid + '">Ban</button>';
-    if (isMod() && roleOf(uid) !== "owner" && (S.admin || roleOf(uid) !== "mod")) acts += '<button class="btn small" type="button" data-timeout="' + uid + '">⏳ ' + (timedOut(uid) ? "Timed out" : "Time out") + "</button>";
+    if (isMod() && roleOf(uid) !== "owner" && (S.admin || roleOf(uid) !== "mod")) acts += '<button class="btn small" type="button" data-timeout="' + uid + '">' + (timedOut(uid) ? "🔇 Muted" : "🔇 Mute") + "</button>";
     if (S.admin && isMemberUid(uid)) acts += '<button class="btn small" type="button" data-setmod="' + uid + '">' + (roleOf(uid) === "mod" ? "Remove Mod" : "🛡️ Make Mod") + "</button>";
   } else acts = '<button class="btn small primary" type="button" id="edit-profile">Edit profile</button>';
   const bn = BANNERS[u.banner] || color(u.name);
   const mg = me ? [] : Object.entries(S.groups).filter(([, g]) => (g.members || []).includes(uid) && (g.members || []).includes(S.uid));
   const mutual = mg.length ? '<div class="mutual"><b>Mutual groups · ' + mg.length + '</b><div class="chips">' + mg.map(([id, g]) => '<button type="button" data-open="grp:' + esc(id) + '">👥 ' + esc(g.name || "Group") + "</button>").join("") + "</div></div>" : "";
   $("modal-card").innerHTML = '<div class="pbanner" style="background:linear-gradient(135deg,' + bn + "," + bn + 'cc)"></div><button class="x onbanner" type="button" data-close aria-label="Close">×</button>' + avatar(u, "xl pav") +
-    "<div><h2 style=\"font-size:1.3rem\"><span" + roleStyle(uid) + ">" + esc(u.name) + "</span> " + roleTag(uid) + "</h2>" + statusText(u) + (timedOut(uid) ? '<div class="small-print" style="color:var(--red)">⏳ Timed out until ' + esc(timeLabel(new Date(timedOut(uid)))) + "</div>" : "") + "</div>" +
+    "<div><h2 style=\"font-size:1.3rem\"><span" + roleStyle(uid) + ">" + esc(u.name) + "</span> " + roleTag(uid) + "</h2>" + statusText(u) + (timedOut(uid) ? '<div class="small-print" style="color:var(--red)">🔇 Muted until ' + esc(timeLabel(new Date(timedOut(uid)))) + "</div>" : "") + "</div>" +
     (u.status ? '<p class="pstatus">' + esc(u.status) + "</p>" : "") + (u.bio ? '<p class="pbio">' + esc(u.bio) + "</p>" : "") +
     (u.player ? '<p><b>' + esc(u.player) + "</b>" + (RANKSET[u.playerLower] ? " · Oceania #" + RANKSET[u.playerLower].place : "") + '<br><a class="btn small" href="rankings.html?player=' + encodeURIComponent(u.player) + '">See ranking ›</a></p>' : '<p class="muted">Not linked to the rankings</p>') +
     mutual + '<div class="acts">' + acts + "</div>";
@@ -1086,7 +1087,10 @@ function enterApp(user) {
   openView(PUB[startView] ? startView : "main");
   if (location.hash === "#profile") setTimeout(() => { if (S.me) editProfileForm(); history.replaceState(null, "", location.pathname); }, 900);
 }
+let MUTED_CH = {}; try { MUTED_CH = JSON.parse(localStorage.getItem("olb-muted-ch") || "{}"); } catch (e) {}
+const chMuted = v => !!MUTED_CH[v];
 function countPub(v) {
+  if (chMuted(v)) { S.unread[v] = 0; return; }
   const r = readPub(v);
   S.unread[v] = r ? S.pubLive[v].filter(m => m.uid !== S.uid && m.at && m.at.getTime() > r).length : 0;
 }
@@ -1128,8 +1132,8 @@ function viewOk(v) {
 function syncComposer() {
   const lock = lockReason();
   const ok = viewOk(S.view) && !S.adminView && !lock;
-  $("c-hint").textContent = lock || "No links. Be nice.";
-  ["c-text", "c-send", "emoji-btn", "img-btn", "mic-btn"].forEach(id => { $(id).disabled = !ok; });
+  $("c-hint").textContent = lock || "Be nice.";
+  ["c-text", "c-send", "emoji-btn", "img-btn", "file-btn", "mic-btn"].forEach(id => { $(id).disabled = !ok; });
   $("c-text").placeholder = lock ? lock : PUB[S.view] ? "Message #" + PUB[S.view].title + " · @ to mention" : ok ? "Message · @ to mention" : kindOf(S.view) === "dm" ? "You need to be friends to message" : "You're not in this group";
 }
 function openView(id, keep) {
@@ -1319,6 +1323,25 @@ async function pickImage(file) {
 }
 function clearImg() { S.pendingImg = null; $("preview").hidden = true; $("prev-img").removeAttribute("src"); $("img-file").value = ""; }
 $("img-btn").addEventListener("click", () => $("img-file").click());
+// files + recordings: saved to the owner's Google Drive by the website's script, then sent as a link the chat plays inline
+const MAX_FILE = 20 * 1024 * 1024;
+$("file-btn").addEventListener("click", () => $("any-file").click());
+$("any-file").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  if (f.size > MAX_FILE) { toast("That file is too big. Max 20 MB."); return; }
+  if (!db) { toast("Files work on the live website."); return; }
+  if (lockReason()) { toast(lockReason()); return; }
+  const where = S.view; $("file-btn").disabled = true; toast("⏫ Uploading " + f.name + "…");
+  try {
+    const data = await new Promise((ok, bad) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1] || ""); r.onerror = bad; r.readAsDataURL(f); });
+    const idToken = await auth.currentUser.getIdToken();
+    const res = await (await fetch(NAME_API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "upload", idToken, name: f.name, type: f.type, data }) })).json();
+    if (!res.ok) throw new Error(res.error || "Upload failed");
+    if (S.view !== where) openView(where);
+    $("c-text").value = "📎 " + f.name.slice(0, 60) + " " + res.url; await sendMessage({});
+  } catch (err) { toast("⚠️ " + (err.message || "Upload failed")); }
+  $("file-btn").disabled = false;
+});
 $("img-file").addEventListener("change", e => pickImage(e.target.files[0]));
 $("prev-x").addEventListener("click", clearImg);
 $("c-text").addEventListener("paste", e => { const it = Array.from((e.clipboardData && e.clipboardData.items) || []).find(i => i.type.startsWith("image/")); if (it) { e.preventDefault(); pickImage(it.getAsFile()); } });
@@ -1801,7 +1824,7 @@ const slowTxt = n => n >= 60 ? n / 60 + " min" : n + "s";
 function lockReason() {
   if (!S.uid) return "";
   if (PUB[S.view] && PUB[S.view].ownerOnly && !S.admin) return "🔒 Only the owner can post in #" + PUB[S.view].title;
-  const t = timedOut(S.uid); if (t) return "⏳ You're timed out until " + timeLabel(new Date(t));
+  const t = timedOut(S.uid); if (t) return "🔇 You're muted until " + timeLabel(new Date(t));
   return "";
 }
 
@@ -1857,19 +1880,19 @@ async function decideJoin(uid, ok) {
   if (!ok) { note = prompt("Decline " + r.name + "? Add a reason (optional):", ""); if (note === null) return; note = clean(note).slice(0, 150); }
   try {
     const b = F.writeBatch(db);
-    if (ok) { b.set(F.doc(db, "members", uid), { role: "member", at: F.serverTimestamp(), by: S.uid }); b.update(F.doc(db, "joinRequests", uid), { status: "approved", decidedAt: F.serverTimestamp() });
-      b.set(F.doc(F.collection(db, "messages")), { name: S.me.name, uid: S.uid, text: "👋 Welcome " + r.name + " to the community! Say hi", createdAt: F.serverTimestamp() }); }
+    if (ok) { b.set(F.doc(db, "members", uid), { role: "member", at: F.serverTimestamp(), by: S.uid }); b.update(F.doc(db, "joinRequests", uid), { status: "approved", decidedAt: F.serverTimestamp() }); }
     else b.update(F.doc(db, "joinRequests", uid), { status: "declined", note, decidedAt: F.serverTimestamp() });
     await b.commit(); toast(ok ? "✅ " + r.name + " is in" : "Declined " + r.name);
+    if (ok) { const w = F.writeBatch(db); w.set(F.doc(db, "limits", S.uid), { last: F.serverTimestamp() }); w.set(F.doc(F.collection(db, "messages")), { name: S.me.name, uid: S.uid, text: "👋 Welcome " + ((S.users[uid] || {}).name || r.name) + " to the community! Say hi", createdAt: F.serverTimestamp() }); w.commit().catch(() => {}); }
   } catch (e) { toast("Couldn't save: " + (e.code || e.message)); }
 }
 
 // ===== MOD TOOLS: timeouts, Make Mod, slowmode =====
 function timeoutDialog(uid) {
   const u = S.users[uid] || { name: "them" }, on = timedOut(uid);
-  openModal('<span class="join-big">⏳</span><h3 style="margin:0">Time out ' + esc(u.name) + "?</h3><p class=\"muted\" style=\"margin:0\">They can still read, but can't send messages anywhere in the chat until it ends.</p>" +
+  openModal('<span class="join-big">🔇</span><h3 style="margin:0">Mute ' + esc(u.name) + "?</h3><p class=\"muted\" style=\"margin:0\">They can still read, but can't send messages anywhere in the chat until it ends.</p>" +
     '<div class="mod-opts">' + [["1 min", 1], ["10 min", 10], ["1 hour", 60], ["1 day", 1440], ["1 week", 10080]].map(([l, n]) => '<button type="button" data-tofor="' + esc(uid) + ":" + n + '">' + l + "</button>").join("") +
-    (on ? '<button type="button" data-tofor="' + esc(uid) + ':0">✅ Remove timeout</button>' : "") + "</div>");
+    (on ? '<button type="button" data-tofor="' + esc(uid) + ':0">🔊 Unmute</button>' : "") + "</div>");
 }
 function channelDialog() {
   const v = S.view, c = PUB[v], cur = slowOf(v);
@@ -1884,7 +1907,7 @@ document.addEventListener("click", async e => {
   const tf = t.closest("[data-tofor]"); if (tf) {
     const [uid, n] = tf.dataset.tofor.split(":"), name = nameOf(uid);
     try { await F.updateDoc(F.doc(db, "members", uid), { timeoutUntil: +n ? F.Timestamp.fromMillis(Date.now() + n * 60000) : F.deleteField() });
-      $("modal").hidden = true; toast(+n ? "⏳ " + name + " is timed out for " + tf.textContent : "✅ Timeout removed for " + name); }
+      $("modal").hidden = true; toast(+n ? "🔇 " + name + " is muted for " + tf.textContent : "🔊 " + name + " is unmuted"); }
     catch (err) { toast("Couldn't do that: " + (err.code || err.message)); }
     return;
   }
@@ -1895,6 +1918,7 @@ document.addEventListener("click", async e => {
     return;
   }
   if (t.closest("#ch-settings")) { channelDialog(); return; }
+  if (t.closest("#ch-mute")) { const v = S.view; if (MUTED_CH[v]) delete MUTED_CH[v]; else MUTED_CH[v] = 1; try { localStorage.setItem("olb-muted-ch", JSON.stringify(MUTED_CH)); } catch (e) {} countPub(v); renderLists(); toast(chMuted(v) ? "🔕 Muted #" + PUB[v].title + " for you" : "🔔 Unmuted #" + PUB[v].title); return; }
   const ss = t.closest("[data-slowset]"); if (ss) {
     const n = +ss.dataset.slowset;
     try { await F.setDoc(F.doc(db, "settings", "chat"), { slow: { [S.view]: n } }, { merge: true }); $("modal").hidden = true; toast(n ? "🐢 Slowmode on: " + slowTxt(n) : "Slowmode off"); }
