@@ -535,7 +535,7 @@ html.embed-bubble .gate { padding: 18px; }
           <div class="replybar" id="replybar" hidden><span id="reply-to"></span><button class="linkbtn" type="button" id="reply-x" aria-label="Cancel">✕</button></div>
           <div class="preview" id="preview" hidden><span class="pi"><img id="prev-img" alt="Image to send"><span class="muted" id="prev-info"></span></span><button class="linkbtn" type="button" id="prev-x">Remove</button></div>
           <div class="recbar" id="recbar" hidden><span class="dot"></span><span id="rec-time">0:00</span><span class="muted">Recording voice message…</span><button class="linkbtn" type="button" id="rec-x">Cancel</button><button class="send" type="button" id="rec-send">Send</button></div>
-          <form id="c-form"><button class="tool" type="button" id="emoji-btn" title="Emoji" aria-label="Emoji">😊</button><button class="tool" type="button" id="img-btn" title="Send an image" aria-label="Send an image">🖼️</button><button class="tool" type="button" id="file-btn" title="Send a file or recording (up to 20 MB)" aria-label="Send a file">📎</button><button class="tool" type="button" id="mic-btn" title="Voice message" aria-label="Record a voice message">🎤</button><input class="field" id="c-text" maxlength="300" placeholder="Message" autocomplete="off"><button class="send" type="submit" id="c-send">Send</button></form>
+          <form id="c-form"><button class="tool" type="button" id="emoji-btn" title="Emoji" aria-label="Emoji">😊</button><button class="tool" type="button" id="img-btn" title="Send an image" aria-label="Send an image">🖼️</button><button class="tool" type="button" id="file-btn" title="Send a file, video or recording" aria-label="Send a file">📎</button><button class="tool" type="button" id="mic-btn" title="Voice message" aria-label="Record a voice message">🎤</button><input class="field" id="c-text" maxlength="300" placeholder="Message" autocomplete="off"><button class="send" type="submit" id="c-send">Send</button></form>
           <input type="file" id="img-file" accept="image/*" hidden>
           <input type="file" id="any-file" hidden>
           <div class="hint"><span id="c-hint">Be nice.</span><span id="c-count">0 / 300</span></div>
@@ -1324,23 +1324,36 @@ async function pickImage(file) {
 function clearImg() { S.pendingImg = null; $("preview").hidden = true; $("prev-img").removeAttribute("src"); $("img-file").value = ""; }
 $("img-btn").addEventListener("click", () => $("img-file").click());
 // files + recordings: saved to the owner's Google Drive by the website's script, then sent as a link the chat plays inline
-const MAX_FILE = 20 * 1024 * 1024;
+// no size limit: the browser sends the file straight to Google Drive (only the Drive's free space limits it)
 $("file-btn").addEventListener("click", () => $("any-file").click());
+async function callApi(body) { const idToken = await auth.currentUser.getIdToken(); return (await fetch(NAME_API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ ...body, idToken }) })).json(); }
+function putFile(url, f, onPct) {
+  return new Promise((ok, bad) => {
+    const x = new XMLHttpRequest(); x.open("PUT", url);
+    x.upload.onprogress = e => { if (e.lengthComputable) onPct(Math.floor(e.loaded / e.total * 100)); };
+    x.onload = () => { if (x.status >= 200 && x.status < 300) { try { ok(JSON.parse(x.responseText).id); } catch (e) { bad(new Error("Upload finished but Drive didn't say where")); } } else bad(new Error("Upload failed (" + x.status + ")")); };
+    x.onerror = () => bad(new Error("Upload failed. Check your internet and try again."));
+    x.send(f);
+  });
+}
 $("any-file").addEventListener("change", async e => {
   const f = e.target.files[0]; e.target.value = ""; if (!f) return;
-  if (f.size > MAX_FILE) { toast("That file is too big. Max 20 MB."); return; }
   if (!db) { toast("Files work on the live website."); return; }
   if (lockReason()) { toast(lockReason()); return; }
-  const where = S.view; $("file-btn").disabled = true; toast("⏫ Uploading " + f.name + "…");
+  const where = S.view, mb = f.size / 1048576; $("file-btn").disabled = true;
+  const hint = $("c-hint"), show = t => { hint.textContent = t; };
+  show("⏫ Starting upload of " + f.name + " (" + (mb >= 1 ? mb.toFixed(1) + " MB" : Math.ceil(f.size / 1024) + " KB") + ")…");
   try {
-    const data = await new Promise((ok, bad) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1] || ""); r.onerror = bad; r.readAsDataURL(f); });
-    const idToken = await auth.currentUser.getIdToken();
-    const res = await (await fetch(NAME_API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "upload", idToken, name: f.name, type: f.type, data }) })).json();
-    if (!res.ok) throw new Error(res.error || "Upload failed");
+    const st = await callApi({ action: "uploadStart", name: f.name, type: f.type || "application/octet-stream", size: f.size });
+    if (!st.ok) throw new Error(st.error || "Couldn't start the upload");
+    let last = -1; const id = await putFile(st.url, f, p => { if (p !== last) { last = p; show("⏫ Uploading " + f.name + "… " + p + "% (keep this page open)"); } });
+    show("⏫ Almost done…");
+    const dn = await callApi({ action: "uploadDone", id }); if (!dn.ok) throw new Error(dn.error || "Couldn't finish the upload");
     if (S.view !== where) openView(where);
-    $("c-text").value = "📎 " + f.name.slice(0, 60) + " " + res.url; await sendMessage({});
+    $("c-text").value = "📎 " + f.name.slice(0, 60) + " " + dn.url; await sendMessage({});
+    toast("✅ Sent " + f.name + (f.type.startsWith("video/") ? ". Big videos can take a few minutes before they play." : ""));
   } catch (err) { toast("⚠️ " + (err.message || "Upload failed")); }
-  $("file-btn").disabled = false;
+  show(lockReason() || "Be nice."); $("file-btn").disabled = false;
 });
 $("img-file").addEventListener("change", e => pickImage(e.target.files[0]));
 $("prev-x").addEventListener("click", clearImg);
