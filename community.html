@@ -1210,7 +1210,7 @@ function watchTyping() {
 function drawTyping() {
   const names = Object.entries(S.typers).filter(([k]) => k !== S.uid && !S.blocked[k] && Date.now() - (S.typeSeen[k] || 0) < 6000).map(([k, v]) => (S.users[k] || {}).name || v.name);
   const el = $("c-hint");
-  if (!names.length) { el.textContent = "No links. Be nice."; el.classList.remove("typing"); return; }
+  if (!names.length) { el.textContent = lockReason() || "Be nice."; el.classList.remove("typing"); return; }
   el.classList.add("typing");
   el.textContent = names.length === 1 ? names[0] + " is typing…" : names.length === 2 ? names[0] + " and " + names[1] + " are typing…" : "Several people are typing…";
 }
